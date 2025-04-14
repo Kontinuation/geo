@@ -1,15 +1,17 @@
-//! Convert structs that implement geo-traits to [geo-types] objects.
+//! Convert structs that implement [geo-traits] to [geo-types] objects.
 
-use geo_types::{
+use crate::{
     Coord, CoordNum, Geometry, GeometryCollection, Line, LineString, MultiLineString, MultiPoint,
     MultiPolygon, Point, Polygon, Rect, Triangle,
 };
 
-use crate::{
+use geo_traits::{
     CoordTrait, GeometryCollectionTrait, GeometryTrait, GeometryType, LineStringTrait, LineTrait,
     MultiLineStringTrait, MultiPointTrait, MultiPolygonTrait, PointTrait, PolygonTrait, RectTrait,
     TriangleTrait,
 };
+
+use alloc::vec;
 
 /// Convert any coordinate to a [`Coord`].
 ///

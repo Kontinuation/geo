@@ -4,6 +4,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::iter::FromIterator;
 use core::ops::{Index, IndexMut};
+use geo_traits::{Dimensions, GeometryCollectionTrait};
 
 /// A collection of [`Geometry`](enum.Geometry.html) types.
 ///
@@ -242,6 +243,46 @@ impl<'a, T: CoordNum> GeometryCollection<T> {
 
     pub fn iter_mut(&'a mut self) -> IterMutHelper<'a, T> {
         self.into_iter()
+    }
+}
+
+impl<T: CoordNum> GeometryCollectionTrait for GeometryCollection<T> {
+    type T = T;
+    type GeometryType<'a>
+        = &'a Geometry<Self::T>
+    where
+        Self: 'a;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_geometries(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn geometry_unchecked(&self, i: usize) -> Self::GeometryType<'_> {
+        self.0.get_unchecked(i)
+    }
+}
+
+impl<'a, T: CoordNum> GeometryCollectionTrait for &'a GeometryCollection<T> {
+    type T = T;
+    type GeometryType<'b>
+        = &'a Geometry<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_geometries(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn geometry_unchecked(&self, i: usize) -> Self::GeometryType<'_> {
+        self.0.get_unchecked(i)
     }
 }
 

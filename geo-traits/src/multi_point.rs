@@ -1,15 +1,16 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::iterator::MultiPointIterator;
 use crate::{Dimensions, PointTrait, UnimplementedPoint};
-#[cfg(feature = "geo-types")]
-use geo_types::{CoordNum, MultiPoint, Point};
 
 /// A trait for accessing data from a generic MultiPoint.
 ///
 /// A MultiPoint is a collection of [`Point`s][PointTrait].
 ///
-/// Refer to [geo_types::MultiPoint] for information about semantics and validity.
+/// # Semantics
+///
+/// The _interior_ and the _boundary_ are the union of the interior and the boundary
+/// of the constituent points. In particular, the boundary of a MultiPoint is always empty.
 pub trait MultiPointTrait: Sized {
     /// The coordinate type of this geometry
     type T;
@@ -46,48 +47,6 @@ pub trait MultiPointTrait: Sized {
     ///
     /// Accessing an index out of bounds is UB.
     unsafe fn point_unchecked(&self, i: usize) -> Self::PointType<'_>;
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> MultiPointTrait for MultiPoint<T> {
-    type T = T;
-    type PointType<'a>
-        = &'a Point<Self::T>
-    where
-        Self: 'a;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_points(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn point_unchecked(&self, i: usize) -> Self::PointType<'_> {
-        self.0.get_unchecked(i)
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<'a, T: CoordNum> MultiPointTrait for &'a MultiPoint<T> {
-    type T = T;
-    type PointType<'b>
-        = &'a Point<Self::T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_points(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn point_unchecked(&self, i: usize) -> Self::PointType<'_> {
-        self.0.get_unchecked(i)
-    }
 }
 
 /// An empty struct that implements [MultiPointTrait].

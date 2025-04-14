@@ -1,13 +1,14 @@
-use std::marker::PhantomData;
-
-#[cfg(feature = "geo-types")]
-use geo_types::{Coord, CoordNum, Point};
+use core::marker::PhantomData;
 
 use crate::{CoordTrait, Dimensions, UnimplementedCoord};
 
 /// A trait for accessing data from a generic Point.
 ///
-/// Refer to [geo_types::Point] for information about semantics and validity.
+/// # Semantics
+///
+/// The _interior_ of the point is itself (a singleton set),
+/// and its _boundary_ is empty. A point is _valid_ if and
+/// only if the `Coord` is valid.
 pub trait PointTrait {
     /// The coordinate type of this geometry
     type T;
@@ -24,40 +25,6 @@ pub trait PointTrait {
     ///
     /// According to Simple Features, a Point can have zero coordinates and be considered "empty".
     fn coord(&self) -> Option<Self::CoordType<'_>>;
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> PointTrait for Point<T> {
-    type T = T;
-    type CoordType<'a>
-        = &'a Coord<Self::T>
-    where
-        Self: 'a;
-
-    fn coord(&self) -> Option<Self::CoordType<'_>> {
-        Some(&self.0)
-    }
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> PointTrait for &Point<T> {
-    type T = T;
-    type CoordType<'a>
-        = &'a Coord<Self::T>
-    where
-        Self: 'a;
-
-    fn coord(&self) -> Option<Self::CoordType<'_>> {
-        Some(&self.0)
-    }
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
 }
 
 /// An empty struct that implements [PointTrait].

@@ -3,6 +3,7 @@ use crate::{CoordNum, Point};
 use alloc::vec;
 use alloc::vec::Vec;
 use core::iter::FromIterator;
+use geo_traits::{Dimensions, MultiPointTrait};
 #[cfg(feature = "multithreading")]
 use rayon::prelude::*;
 
@@ -133,6 +134,46 @@ impl<T: CoordNum> MultiPoint<T> {
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut Point<T>> {
         self.0.iter_mut()
+    }
+}
+
+impl<T: CoordNum> MultiPointTrait for MultiPoint<T> {
+    type T = T;
+    type PointType<'a>
+        = &'a Point<Self::T>
+    where
+        Self: 'a;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_points(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn point_unchecked(&self, i: usize) -> Self::PointType<'_> {
+        self.0.get_unchecked(i)
+    }
+}
+
+impl<'a, T: CoordNum> MultiPointTrait for &'a MultiPoint<T> {
+    type T = T;
+    type PointType<'b>
+        = &'a Point<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_points(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn point_unchecked(&self, i: usize) -> Self::PointType<'_> {
+        self.0.get_unchecked(i)
     }
 }
 

@@ -1,16 +1,29 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::iterator::LineStringIterator;
 use crate::{CoordTrait, Dimensions, UnimplementedCoord};
-#[cfg(feature = "geo-types")]
-use geo_types::{Coord, CoordNum, LineString};
 
 /// A trait for accessing data from a generic LineString.
 ///
 /// A LineString is an ordered collection of two or more [points][CoordTrait], representing a path
 /// between locations.
 ///
-/// Refer to [geo_types::LineString] for information about semantics and validity.
+/// # Semantics
+///
+/// 1. A LineString is _closed_ if it is empty, **or** if the first and last coordinates are the same.
+/// 2. The _boundary_ of a LineString is either:
+///     - **empty** if it is _closed_ (see **1**) **or**
+///     - contains the **start** and **end** coordinates.
+/// 3. The _interior_ is the (infinite) set of all coordinates along the LineString, _not including_ the boundary.
+/// 4. A LineString is _simple_ if it does not intersect except **optionally** at the first and last coordinates (in which case it is also _closed_, see **1**).
+/// 5. A _simple_ **and** _closed_ LineString is a `LinearRing` as defined in the OGC-SFA.
+///
+/// # Validity
+///
+/// A LineString is valid if it is either empty or contains 2 or more coordinates.
+///
+/// Further, a closed LineString **must not** self-intersect. Note that its validity is **not** enforced,
+/// and operations and predicates are **undefined** on invalid LineStrings.
 pub trait LineStringTrait: Sized {
     /// The coordinate type of this geometry
     type T;
@@ -48,48 +61,6 @@ pub trait LineStringTrait: Sized {
     ///
     /// Accessing an index out of bounds is UB.
     unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_>;
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> LineStringTrait for LineString<T> {
-    type T = T;
-    type CoordType<'a>
-        = &'a Coord<Self::T>
-    where
-        Self: 'a;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_coords(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
-        self.0.get_unchecked(i)
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<'a, T: CoordNum> LineStringTrait for &'a LineString<T> {
-    type T = T;
-    type CoordType<'b>
-        = &'a Coord<Self::T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_coords(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
-        self.0.get_unchecked(i)
-    }
 }
 
 /// An empty struct that implements [LineStringTrait].

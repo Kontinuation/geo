@@ -2,6 +2,7 @@ use crate::{CoordNum, Polygon};
 
 use alloc::vec;
 use alloc::vec::Vec;
+use geo_traits::{Dimensions, MultiPolygonTrait};
 
 use core::iter::FromIterator;
 #[cfg(feature = "multithreading")]
@@ -118,6 +119,46 @@ impl<T: CoordNum> MultiPolygon<T> {
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut Polygon<T>> {
         self.0.iter_mut()
+    }
+}
+
+impl<T: CoordNum> MultiPolygonTrait for MultiPolygon<T> {
+    type T = T;
+    type PolygonType<'a>
+        = &'a Polygon<Self::T>
+    where
+        Self: 'a;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_polygons(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
+        self.0.get_unchecked(i)
+    }
+}
+
+impl<'a, T: CoordNum> MultiPolygonTrait for &'a MultiPolygon<T> {
+    type T = T;
+    type PolygonType<'b>
+        = &'a Polygon<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_polygons(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
+        self.0.get_unchecked(i)
     }
 }
 

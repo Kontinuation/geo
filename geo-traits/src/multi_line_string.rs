@@ -1,16 +1,28 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::iterator::MultiLineStringIterator;
 use crate::line_string::UnimplementedLineString;
 use crate::{Dimensions, LineStringTrait};
-#[cfg(feature = "geo-types")]
-use geo_types::{CoordNum, LineString, MultiLineString};
 
 /// A trait for accessing data from a generic MultiLineString.
 ///
 /// A MultiLineString is a collection of [`LineString`s][LineStringTrait].
 ///
-/// Refer to [geo_types::MultiLineString] for information about semantics and validity.
+/// # Semantics
+///
+/// The _boundary_ of a MultiLineString is obtained by applying the "mod 2" union rule:
+/// A Point is in the boundary of a MultiLineString if it is in the boundaries of an
+/// odd number of elements of the MultiLineString.
+///
+/// The _interior_ of a MultiLineString is the union of the interior, and boundary of
+/// the constituent LineStrings, _except_ for the boundary as defined above. In other words,
+/// it is the set difference of the boundary from the union of the interior and boundary of
+/// the constituents.
+///
+/// A MultiLineString is _simple_ if and only if all of its elements are simple and the only
+/// intersections between any two elements occur at Points that are on the boundaries of
+/// both elements. A MultiLineString is _closed_ if all of its elements are closed.
+/// The boundary of a closed MultiLineString is always empty.
 pub trait MultiLineStringTrait: Sized {
     /// The coordinate type of this geometry
     type T;
@@ -49,48 +61,6 @@ pub trait MultiLineStringTrait: Sized {
     ///
     /// Accessing an index out of bounds is UB.
     unsafe fn line_string_unchecked(&self, i: usize) -> Self::LineStringType<'_>;
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> MultiLineStringTrait for MultiLineString<T> {
-    type T = T;
-    type LineStringType<'a>
-        = &'a LineString<Self::T>
-    where
-        Self: 'a;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_line_strings(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn line_string_unchecked(&self, i: usize) -> Self::LineStringType<'_> {
-        self.0.get_unchecked(i)
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<'a, T: CoordNum> MultiLineStringTrait for &'a MultiLineString<T> {
-    type T = T;
-    type LineStringType<'b>
-        = &'a LineString<Self::T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_line_strings(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn line_string_unchecked(&self, i: usize) -> Self::LineStringType<'_> {
-        self.0.get_unchecked(i)
-    }
 }
 
 /// An empty struct that implements [MultiLineStringTrait].

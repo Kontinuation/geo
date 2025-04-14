@@ -1,3 +1,5 @@
+use geo_traits::{Dimensions, TriangleTrait};
+
 use crate::{polygon, Coord, CoordNum, Line, Point, Polygon};
 use core::cmp::Ordering;
 
@@ -70,6 +72,54 @@ impl<T: CoordNum> Triangle<T> {
 impl<IC: Into<Coord<T>> + Copy, T: CoordNum> From<[IC; 3]> for Triangle<T> {
     fn from(array: [IC; 3]) -> Self {
         Self(array[0].into(), array[1].into(), array[2].into())
+    }
+}
+
+impl<T: CoordNum> TriangleTrait for Triangle<T> {
+    type T = T;
+    type CoordType<'a>
+        = &'a Coord<Self::T>
+    where
+        Self: 'a;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn first(&self) -> Self::CoordType<'_> {
+        &self.0
+    }
+
+    fn second(&self) -> Self::CoordType<'_> {
+        &self.1
+    }
+
+    fn third(&self) -> Self::CoordType<'_> {
+        &self.2
+    }
+}
+
+impl<'a, T: CoordNum> TriangleTrait for &'a Triangle<T> {
+    type T = T;
+    type CoordType<'b>
+        = &'a Coord<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn first(&self) -> Self::CoordType<'_> {
+        &self.0
+    }
+
+    fn second(&self) -> Self::CoordType<'_> {
+        &self.0
+    }
+
+    fn third(&self) -> Self::CoordType<'_> {
+        &self.0
     }
 }
 

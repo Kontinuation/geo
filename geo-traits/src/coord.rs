@@ -1,13 +1,15 @@
-use std::marker::PhantomData;
-
-#[cfg(feature = "geo-types")]
-use geo_types::{Coord, CoordNum};
+use core::marker::PhantomData;
 
 use crate::Dimensions;
 
 /// A trait for accessing data from a generic Coord.
 ///
-/// Refer to [geo_types::Coord] for information about semantics and validity.
+/// # Semantics
+///
+/// This type does not represent any geospatial primitive,
+/// but is used in their definitions. The only requirement
+/// is that the coordinates it contains are valid numbers
+/// (for eg. not `f64::NAN`).
 pub trait CoordTrait {
     /// The coordinate type of this geometry
     type T;
@@ -63,56 +65,6 @@ pub trait CoordTrait {
     /// individual implementations for more information on their own Safety considerations.
     unsafe fn nth_unchecked(&self, n: usize) -> Self::T {
         self.nth_or_panic(n)
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> CoordTrait for Coord<T> {
-    type T = T;
-
-    fn nth_or_panic(&self, n: usize) -> Self::T {
-        match n {
-            0 => self.x(),
-            1 => self.y(),
-            _ => panic!("Coord only supports 2 dimensions"),
-        }
-    }
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn x(&self) -> Self::T {
-        self.x
-    }
-
-    fn y(&self) -> Self::T {
-        self.y
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> CoordTrait for &Coord<T> {
-    type T = T;
-
-    fn nth_or_panic(&self, n: usize) -> Self::T {
-        match n {
-            0 => self.x(),
-            1 => self.y(),
-            _ => panic!("Coord only supports 2 dimensions"),
-        }
-    }
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn x(&self) -> Self::T {
-        self.x
-    }
-
-    fn y(&self) -> Self::T {
-        self.y
     }
 }
 

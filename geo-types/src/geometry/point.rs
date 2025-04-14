@@ -1,4 +1,5 @@
 use crate::{point, Coord, CoordFloat, CoordNum};
+use geo_traits::{Dimensions, PointTrait};
 
 use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
@@ -748,6 +749,38 @@ where
 impl<T: CoordNum> AsRef<Coord<T>> for Point<T> {
     fn as_ref(&self) -> &Coord<T> {
         &self.0
+    }
+}
+
+impl<T: CoordNum> PointTrait for Point<T> {
+    type T = T;
+    type CoordType<'a>
+        = &'a Coord<Self::T>
+    where
+        Self: 'a;
+
+    fn coord(&self) -> Option<Self::CoordType<'_>> {
+        Some(&self.0)
+    }
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+}
+
+impl<T: CoordNum> PointTrait for &Point<T> {
+    type T = T;
+    type CoordType<'a>
+        = &'a Coord<Self::T>
+    where
+        Self: 'a;
+
+    fn coord(&self) -> Option<Self::CoordType<'_>> {
+        Some(&self.0)
+    }
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
     }
 }
 

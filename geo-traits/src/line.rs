@@ -1,14 +1,15 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::{CoordTrait, Dimensions, UnimplementedCoord};
-#[cfg(feature = "geo-types")]
-use geo_types::{Coord, CoordNum, Line};
 
 /// A trait for accessing data from a generic Line.
 ///
 /// A Line is a line segment made up of exactly two [coordinates][CoordTrait].
 ///
-/// Refer to [geo_types::Line] for information about semantics and validity.
+/// # Semantics
+///
+/// The _interior_ and _boundary_ are defined as with a
+/// `LineString` with the two end points.
 pub trait LineTrait: Sized {
     /// The coordinate type of this geometry
     type T;
@@ -30,48 +31,6 @@ pub trait LineTrait: Sized {
     /// Access the two underlying coordinates
     fn coords(&self) -> [Self::CoordType<'_>; 2] {
         [self.start(), self.end()]
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> LineTrait for Line<T> {
-    type T = T;
-    type CoordType<'a>
-        = &'a Coord<Self::T>
-    where
-        Self: 'a;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn start(&self) -> Self::CoordType<'_> {
-        &self.start
-    }
-
-    fn end(&self) -> Self::CoordType<'_> {
-        &self.end
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<'a, T: CoordNum> LineTrait for &'a Line<T> {
-    type T = T;
-    type CoordType<'b>
-        = &'a Coord<Self::T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn start(&self) -> Self::CoordType<'_> {
-        &self.start
-    }
-
-    fn end(&self) -> Self::CoordType<'_> {
-        &self.end
     }
 }
 

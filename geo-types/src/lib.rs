@@ -122,6 +122,8 @@ impl<T: CoordNum + Float> CoordFloat for T {}
 pub mod geometry;
 pub use geometry::*;
 
+pub mod to_geo;
+
 pub use geometry::line_string::PointsIter;
 
 #[allow(deprecated)]

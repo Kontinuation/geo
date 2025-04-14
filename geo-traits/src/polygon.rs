@@ -1,10 +1,8 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::iterator::PolygonInteriorIterator;
 use crate::line_string::UnimplementedLineString;
 use crate::{Dimensions, LineStringTrait};
-#[cfg(feature = "geo-types")]
-use geo_types::{CoordNum, LineString, Polygon};
 
 /// A trait for accessing data from a generic Polygon.
 ///
@@ -12,7 +10,29 @@ use geo_types::{CoordNum, LineString, Polygon};
 /// [`LineString`][LineStringTrait]. It may contain zero or more holes (_interior rings_), also
 /// represented by `LineString`s.
 ///
-/// Refer to [geo_types::Polygon] for information about semantics and validity.
+/// # Semantics
+///
+/// The _boundary_ of the polygon is the union of the boundaries of the exterior and interiors.
+/// The interior is all the points inside the polygon (not on the boundary).
+///
+/// The `Polygon` structure guarantees that all exterior and interior rings will
+/// be _closed_, such that the first and last coordinate of each ring has
+/// the same value.
+///
+/// # Validity
+///
+/// - The exterior and interior rings must be valid `LinearRing`s (see [`LineStringTrait`]).
+///
+/// - No two rings in the boundary may cross, and may intersect at a `Point` only as a tangent.
+///   In other words, the rings must be distinct, and for every pair of common points in two
+///   of the rings, there must be a neighborhood (a topological open set) around one that
+///   does not contain the other point.
+///
+/// - The closure of the interior of the `Polygon` must equal the `Polygon` itself.
+///   For instance, the exterior may not contain a spike.
+///
+/// - The interior of the polygon must be a connected point-set. That is, any two distinct
+///   points in the interior must admit a curve between these two that lies in the interior.
 pub trait PolygonTrait: Sized {
     /// The coordinate type of this geometry
     type T;
@@ -52,66 +72,6 @@ pub trait PolygonTrait: Sized {
     ///
     /// Accessing an index out of bounds is UB.
     unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_>;
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> PolygonTrait for Polygon<T> {
-    type T = T;
-    type RingType<'a>
-        = &'a LineString<Self::T>
-    where
-        Self: 'a;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn exterior(&self) -> Option<Self::RingType<'_>> {
-        let ext_ring = Polygon::exterior(self);
-        if LineStringTrait::num_coords(&ext_ring) == 0 {
-            None
-        } else {
-            Some(ext_ring)
-        }
-    }
-
-    fn num_interiors(&self) -> usize {
-        Polygon::interiors(self).len()
-    }
-
-    unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_> {
-        unsafe { Polygon::interiors(self).get_unchecked(i) }
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<'a, T: CoordNum> PolygonTrait for &'a Polygon<T> {
-    type T = T;
-    type RingType<'b>
-        = &'a LineString<Self::T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn exterior(&self) -> Option<Self::RingType<'_>> {
-        let ext_ring = Polygon::exterior(self);
-        if LineStringTrait::num_coords(&ext_ring) == 0 {
-            None
-        } else {
-            Some(ext_ring)
-        }
-    }
-
-    fn num_interiors(&self) -> usize {
-        Polygon::interiors(self).len()
-    }
-
-    unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_> {
-        unsafe { Polygon::interiors(self).get_unchecked(i) }
-    }
 }
 
 /// An empty struct that implements [PolygonTrait].

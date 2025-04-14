@@ -1,7 +1,4 @@
-use std::marker::PhantomData;
-
-#[cfg(feature = "geo-types")]
-use geo_types::{Coord, CoordNum, Rect};
+use core::marker::PhantomData;
 
 use crate::{CoordTrait, Dimensions, UnimplementedCoord};
 
@@ -26,48 +23,6 @@ pub trait RectTrait {
 
     /// The maximum coordinate of this Rect
     fn max(&self) -> Self::CoordType<'_>;
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> RectTrait for Rect<T> {
-    type T = T;
-    type CoordType<'b>
-        = Coord<T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn min(&self) -> Self::CoordType<'_> {
-        Rect::min(*self)
-    }
-
-    fn max(&self) -> Self::CoordType<'_> {
-        Rect::max(*self)
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<'a, T: CoordNum + 'a> RectTrait for &'a Rect<T> {
-    type T = T;
-    type CoordType<'b>
-        = Coord<T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn min(&self) -> Self::CoordType<'_> {
-        Rect::min(**self)
-    }
-
-    fn max(&self) -> Self::CoordType<'_> {
-        Rect::max(**self)
-    }
 }
 
 /// An empty struct that implements [RectTrait].

@@ -4,6 +4,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 #[cfg(any(feature = "approx", test))]
 use core::iter::FromIterator;
+use geo_traits::{Dimensions, MultiLineStringTrait};
 #[cfg(feature = "multithreading")]
 use rayon::prelude::*;
 
@@ -146,6 +147,47 @@ impl<'a, T: CoordNum + Send + Sync> IntoParallelIterator for &'a mut MultiLineSt
 
     fn into_par_iter(self) -> Self::Iter {
         self.0.par_iter_mut()
+    }
+}
+
+impl<T: CoordNum> MultiLineStringTrait for MultiLineString<T> {
+    type T = T;
+    type LineStringType<'a>
+        = &'a LineString<Self::T>
+    where
+        Self: 'a;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_line_strings(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn line_string_unchecked(&self, i: usize) -> Self::LineStringType<'_> {
+        self.0.get_unchecked(i)
+    }
+}
+
+impl<'a, T: CoordNum> MultiLineStringTrait for &'a MultiLineString<T> {
+    type T = T;
+
+    type LineStringType<'b>
+        = &'a LineString<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_line_strings(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn line_string_unchecked(&self, i: usize) -> Self::LineStringType<'_> {
+        self.0.get_unchecked(i)
     }
 }
 

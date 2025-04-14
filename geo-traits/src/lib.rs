@@ -16,6 +16,7 @@
 //! read.
 
 #![deny(missing_docs)]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 pub use coord::{CoordTrait, UnimplementedCoord};
 pub use dimension::Dimensions;
@@ -44,6 +45,4 @@ mod multi_polygon;
 mod point;
 mod polygon;
 mod rect;
-#[cfg(feature = "geo-types")]
-pub mod to_geo;
 mod triangle;

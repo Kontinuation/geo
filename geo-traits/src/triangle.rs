@@ -1,14 +1,18 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::{CoordTrait, Dimensions, UnimplementedCoord};
-#[cfg(feature = "geo-types")]
-use geo_types::{Coord, CoordNum, Triangle};
 
 /// A trait for accessing data from a generic Triangle.
 ///
 /// A triangle is a bounded area whose three vertices are defined by [coordinates][CoordTrait].
 ///
-/// Refer to [geo_types::Triangle] for information about semantics and validity.
+/// # Semantics and Validity
+///
+/// The semantics and validity are that of the equivalent [`PolygonTrait`][`crate::PolygonTrait`];
+/// in addition, the three vertices **must not** be collinear and they *must* be distinct.
+///
+/// Irrespective of input order the resulting geometry has counter-clockwise (ccw) order
+/// and its vertices are yielded in ccw order by iterators.
 pub trait TriangleTrait: Sized {
     /// The coordinate type of this geometry
     type T;
@@ -33,56 +37,6 @@ pub trait TriangleTrait: Sized {
     /// Access the three underlying coordinates
     fn coords(&self) -> [Self::CoordType<'_>; 3] {
         [self.first(), self.second(), self.third()]
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> TriangleTrait for Triangle<T> {
-    type T = T;
-    type CoordType<'a>
-        = &'a Coord<Self::T>
-    where
-        Self: 'a;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn first(&self) -> Self::CoordType<'_> {
-        &self.0
-    }
-
-    fn second(&self) -> Self::CoordType<'_> {
-        &self.1
-    }
-
-    fn third(&self) -> Self::CoordType<'_> {
-        &self.2
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<'a, T: CoordNum> TriangleTrait for &'a Triangle<T> {
-    type T = T;
-    type CoordType<'b>
-        = &'a Coord<Self::T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn first(&self) -> Self::CoordType<'_> {
-        &self.0
-    }
-
-    fn second(&self) -> Self::CoordType<'_> {
-        &self.0
-    }
-
-    fn third(&self) -> Self::CoordType<'_> {
-        &self.0
     }
 }
 

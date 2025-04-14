@@ -13,6 +13,7 @@ pub(crate) mod triangle;
 // re-export all the geometry variants:
 #[allow(deprecated)]
 pub use coord::{Coord, Coordinate};
+use geo_traits::{Dimensions, GeometryTrait, GeometryType};
 pub use geometry_collection::GeometryCollection;
 pub use line::Line;
 pub use line_string::LineString;
@@ -266,6 +267,309 @@ where
         Geometry::Triangle(_) => type_name::<Triangle<T>>(),
     }
 }
+
+impl<T: CoordNum> GeometryTrait for Geometry<T> {
+    type T = T;
+    type PointType<'b>
+        = Point<Self::T>
+    where
+        Self: 'b;
+    type LineStringType<'b>
+        = LineString<Self::T>
+    where
+        Self: 'b;
+    type PolygonType<'b>
+        = Polygon<Self::T>
+    where
+        Self: 'b;
+    type MultiPointType<'b>
+        = MultiPoint<Self::T>
+    where
+        Self: 'b;
+    type MultiLineStringType<'b>
+        = MultiLineString<Self::T>
+    where
+        Self: 'b;
+    type MultiPolygonType<'b>
+        = MultiPolygon<Self::T>
+    where
+        Self: 'b;
+    type GeometryCollectionType<'b>
+        = GeometryCollection<Self::T>
+    where
+        Self: 'b;
+    type RectType<'b>
+        = Rect<Self::T>
+    where
+        Self: 'b;
+    type TriangleType<'b>
+        = Triangle<Self::T>
+    where
+        Self: 'b;
+    type LineType<'b>
+        = Line<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn as_type(
+        &self,
+    ) -> GeometryType<
+        '_,
+        Point<T>,
+        LineString<T>,
+        Polygon<T>,
+        MultiPoint<T>,
+        MultiLineString<T>,
+        MultiPolygon<T>,
+        GeometryCollection<T>,
+        Rect<T>,
+        Triangle<T>,
+        Line<T>,
+    > {
+        match self {
+            Geometry::Point(p) => GeometryType::Point(p),
+            Geometry::LineString(p) => GeometryType::LineString(p),
+            Geometry::Polygon(p) => GeometryType::Polygon(p),
+            Geometry::MultiPoint(p) => GeometryType::MultiPoint(p),
+            Geometry::MultiLineString(p) => GeometryType::MultiLineString(p),
+            Geometry::MultiPolygon(p) => GeometryType::MultiPolygon(p),
+            Geometry::GeometryCollection(p) => GeometryType::GeometryCollection(p),
+            Geometry::Rect(p) => GeometryType::Rect(p),
+            Geometry::Triangle(p) => GeometryType::Triangle(p),
+            Geometry::Line(p) => GeometryType::Line(p),
+        }
+    }
+}
+
+impl<'a, T: CoordNum + 'a> GeometryTrait for &'a Geometry<T> {
+    type T = T;
+    type PointType<'b>
+        = Point<Self::T>
+    where
+        Self: 'b;
+    type LineStringType<'b>
+        = LineString<Self::T>
+    where
+        Self: 'b;
+    type PolygonType<'b>
+        = Polygon<Self::T>
+    where
+        Self: 'b;
+    type MultiPointType<'b>
+        = MultiPoint<Self::T>
+    where
+        Self: 'b;
+    type MultiLineStringType<'b>
+        = MultiLineString<Self::T>
+    where
+        Self: 'b;
+    type MultiPolygonType<'b>
+        = MultiPolygon<Self::T>
+    where
+        Self: 'b;
+    type GeometryCollectionType<'b>
+        = GeometryCollection<Self::T>
+    where
+        Self: 'b;
+    type RectType<'b>
+        = Rect<Self::T>
+    where
+        Self: 'b;
+    type TriangleType<'b>
+        = Triangle<Self::T>
+    where
+        Self: 'b;
+    type LineType<'b>
+        = Line<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn as_type(
+        &self,
+    ) -> GeometryType<
+        '_,
+        Point<T>,
+        LineString<T>,
+        Polygon<T>,
+        MultiPoint<T>,
+        MultiLineString<T>,
+        MultiPolygon<T>,
+        GeometryCollection<T>,
+        Rect<T>,
+        Triangle<T>,
+        Line<T>,
+    > {
+        match self {
+            Geometry::Point(p) => GeometryType::Point(p),
+            Geometry::LineString(p) => GeometryType::LineString(p),
+            Geometry::Polygon(p) => GeometryType::Polygon(p),
+            Geometry::MultiPoint(p) => GeometryType::MultiPoint(p),
+            Geometry::MultiLineString(p) => GeometryType::MultiLineString(p),
+            Geometry::MultiPolygon(p) => GeometryType::MultiPolygon(p),
+            Geometry::GeometryCollection(p) => GeometryType::GeometryCollection(p),
+            Geometry::Rect(p) => GeometryType::Rect(p),
+            Geometry::Triangle(p) => GeometryType::Triangle(p),
+            Geometry::Line(p) => GeometryType::Line(p),
+        }
+    }
+}
+
+// Specialized implementations on each geo-types concrete type.
+
+macro_rules! impl_specialization {
+    ($geometry_type:ident) => {
+        impl<T: CoordNum> GeometryTrait for $geometry_type<T> {
+            type T = T;
+            type PointType<'b>
+                = Point<Self::T>
+            where
+                Self: 'b;
+            type LineStringType<'b>
+                = LineString<Self::T>
+            where
+                Self: 'b;
+            type PolygonType<'b>
+                = Polygon<Self::T>
+            where
+                Self: 'b;
+            type MultiPointType<'b>
+                = MultiPoint<Self::T>
+            where
+                Self: 'b;
+            type MultiLineStringType<'b>
+                = MultiLineString<Self::T>
+            where
+                Self: 'b;
+            type MultiPolygonType<'b>
+                = MultiPolygon<Self::T>
+            where
+                Self: 'b;
+            type GeometryCollectionType<'b>
+                = GeometryCollection<Self::T>
+            where
+                Self: 'b;
+            type RectType<'b>
+                = Rect<Self::T>
+            where
+                Self: 'b;
+            type TriangleType<'b>
+                = Triangle<Self::T>
+            where
+                Self: 'b;
+            type LineType<'b>
+                = Line<Self::T>
+            where
+                Self: 'b;
+
+            fn dim(&self) -> Dimensions {
+                Dimensions::Xy
+            }
+
+            fn as_type(
+                &self,
+            ) -> GeometryType<
+                '_,
+                Point<T>,
+                LineString<T>,
+                Polygon<T>,
+                MultiPoint<T>,
+                MultiLineString<T>,
+                MultiPolygon<T>,
+                GeometryCollection<T>,
+                Rect<T>,
+                Triangle<T>,
+                Line<T>,
+            > {
+                GeometryType::$geometry_type(self)
+            }
+        }
+
+        impl<'a, T: CoordNum + 'a> GeometryTrait for &'a $geometry_type<T> {
+            type T = T;
+            type PointType<'b>
+                = Point<Self::T>
+            where
+                Self: 'b;
+            type LineStringType<'b>
+                = LineString<Self::T>
+            where
+                Self: 'b;
+            type PolygonType<'b>
+                = Polygon<Self::T>
+            where
+                Self: 'b;
+            type MultiPointType<'b>
+                = MultiPoint<Self::T>
+            where
+                Self: 'b;
+            type MultiLineStringType<'b>
+                = MultiLineString<Self::T>
+            where
+                Self: 'b;
+            type MultiPolygonType<'b>
+                = MultiPolygon<Self::T>
+            where
+                Self: 'b;
+            type GeometryCollectionType<'b>
+                = GeometryCollection<Self::T>
+            where
+                Self: 'b;
+            type RectType<'b>
+                = Rect<Self::T>
+            where
+                Self: 'b;
+            type TriangleType<'b>
+                = Triangle<Self::T>
+            where
+                Self: 'b;
+            type LineType<'b>
+                = Line<Self::T>
+            where
+                Self: 'b;
+
+            fn dim(&self) -> Dimensions {
+                Dimensions::Xy
+            }
+
+            fn as_type(
+                &self,
+            ) -> GeometryType<
+                '_,
+                Point<T>,
+                LineString<T>,
+                Polygon<T>,
+                MultiPoint<T>,
+                MultiLineString<T>,
+                MultiPolygon<T>,
+                GeometryCollection<T>,
+                Rect<T>,
+                Triangle<T>,
+                Line<T>,
+            > {
+                GeometryType::$geometry_type(self)
+            }
+        }
+    };
+}
+
+impl_specialization!(Point);
+impl_specialization!(LineString);
+impl_specialization!(Polygon);
+impl_specialization!(MultiPoint);
+impl_specialization!(MultiLineString);
+impl_specialization!(MultiPolygon);
+impl_specialization!(GeometryCollection);
+impl_specialization!(Rect);
+impl_specialization!(Triangle);
+impl_specialization!(Line);
 
 #[cfg(any(feature = "approx", test))]
 mod approx_integration {

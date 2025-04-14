@@ -30,4 +30,5 @@ doc = false
 
 [patch.crates-io]
 geo = { path = ".." }
+geo-traits = { path = "../../geo-traits" }
 geo-types = { path = "../../geo-types" }

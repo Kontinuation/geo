@@ -1,9 +1,7 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::iterator::GeometryCollectionIterator;
 use crate::{Dimensions, GeometryTrait, UnimplementedGeometry};
-#[cfg(feature = "geo-types")]
-use geo_types::{CoordNum, Geometry, GeometryCollection};
 
 /// A trait for accessing data from a generic GeometryCollection.
 ///
@@ -46,48 +44,6 @@ pub trait GeometryCollectionTrait: Sized {
     ///
     /// Accessing an index out of bounds is UB.
     unsafe fn geometry_unchecked(&self, i: usize) -> Self::GeometryType<'_>;
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> GeometryCollectionTrait for GeometryCollection<T> {
-    type T = T;
-    type GeometryType<'a>
-        = &'a Geometry<Self::T>
-    where
-        Self: 'a;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_geometries(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn geometry_unchecked(&self, i: usize) -> Self::GeometryType<'_> {
-        self.0.get_unchecked(i)
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<'a, T: CoordNum> GeometryCollectionTrait for &'a GeometryCollection<T> {
-    type T = T;
-    type GeometryType<'b>
-        = &'a Geometry<Self::T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_geometries(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn geometry_unchecked(&self, i: usize) -> Self::GeometryType<'_> {
-        self.0.get_unchecked(i)
-    }
 }
 
 /// An empty struct that implements [GeometryCollectionTrait].

@@ -1,14 +1,24 @@
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use crate::iterator::MultiPolygonIterator;
 use crate::polygon::UnimplementedPolygon;
 use crate::{Dimensions, PolygonTrait};
-#[cfg(feature = "geo-types")]
-use geo_types::{CoordNum, MultiPolygon, Polygon};
 
 /// A trait for accessing data from a generic MultiPolygon.
 ///
-/// Refer to [geo_types::MultiPolygon] for information about semantics and validity.
+/// # Semantics
+///
+/// The _interior_ and the _boundary_ are the union of the interior and the boundary
+/// of the constituent polygons.
+///
+/// # Validity
+///
+/// - The interiors of no two constituent polygons may intersect.
+///
+/// - The boundaries of two (distinct) constituent polygons may only intersect at finitely many points.
+///
+/// Note that the validity is not enforced, but expected by the operations and predicates
+/// that operate on it.
 pub trait MultiPolygonTrait: Sized {
     /// The coordinate type of this geometry
     type T;
@@ -47,48 +57,6 @@ pub trait MultiPolygonTrait: Sized {
     ///
     /// Accessing an index out of bounds is UB.
     unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_>;
-}
-
-#[cfg(feature = "geo-types")]
-impl<T: CoordNum> MultiPolygonTrait for MultiPolygon<T> {
-    type T = T;
-    type PolygonType<'a>
-        = &'a Polygon<Self::T>
-    where
-        Self: 'a;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_polygons(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
-        self.0.get_unchecked(i)
-    }
-}
-
-#[cfg(feature = "geo-types")]
-impl<'a, T: CoordNum> MultiPolygonTrait for &'a MultiPolygon<T> {
-    type T = T;
-    type PolygonType<'b>
-        = &'a Polygon<Self::T>
-    where
-        Self: 'b;
-
-    fn dim(&self) -> Dimensions {
-        Dimensions::Xy
-    }
-
-    fn num_polygons(&self) -> usize {
-        self.0.len()
-    }
-
-    unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
-        self.0.get_unchecked(i)
-    }
 }
 
 /// An empty struct that implements [MultiPolygonTrait].

@@ -1,3 +1,5 @@
+use geo_traits::{Dimensions, LineTrait};
+
 use crate::{Coord, CoordNum, Point};
 
 /// A line segment made up of exactly two
@@ -156,6 +158,46 @@ impl<T: CoordNum> Line<T> {
 impl<T: CoordNum> From<[(T, T); 2]> for Line<T> {
     fn from(coord: [(T, T); 2]) -> Self {
         Line::new(coord[0], coord[1])
+    }
+}
+
+impl<T: CoordNum> LineTrait for Line<T> {
+    type T = T;
+    type CoordType<'a>
+        = &'a Coord<Self::T>
+    where
+        Self: 'a;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn start(&self) -> Self::CoordType<'_> {
+        &self.start
+    }
+
+    fn end(&self) -> Self::CoordType<'_> {
+        &self.end
+    }
+}
+
+impl<'a, T: CoordNum> LineTrait for &'a Line<T> {
+    type T = T;
+    type CoordType<'b>
+        = &'a Coord<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn start(&self) -> Self::CoordType<'_> {
+        &self.start
+    }
+
+    fn end(&self) -> Self::CoordType<'_> {
+        &self.end
     }
 }
 

@@ -3,6 +3,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::iter::FromIterator;
 use core::ops::{Index, IndexMut};
+use geo_traits::{Dimensions, LineStringTrait};
 
 /// An ordered collection of [`Coord`]s, representing a path between locations.
 /// To be valid, a `LineString` must be empty, or have two or more coords.
@@ -424,6 +425,46 @@ impl<T: CoordNum> Index<usize> for LineString<T> {
 impl<T: CoordNum> IndexMut<usize> for LineString<T> {
     fn index_mut(&mut self, index: usize) -> &mut Coord<T> {
         self.0.index_mut(index)
+    }
+}
+
+impl<T: CoordNum> LineStringTrait for LineString<T> {
+    type T = T;
+    type CoordType<'a>
+        = &'a Coord<Self::T>
+    where
+        Self: 'a;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_coords(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
+        self.0.get_unchecked(i)
+    }
+}
+
+impl<'a, T: CoordNum> LineStringTrait for &'a LineString<T> {
+    type T = T;
+    type CoordType<'b>
+        = &'a Coord<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn num_coords(&self) -> usize {
+        self.0.len()
+    }
+
+    unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
+        self.0.get_unchecked(i)
     }
 }
 

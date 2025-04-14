@@ -1,3 +1,5 @@
+use geo_traits::{Dimensions, RectTrait};
+
 use crate::{coord, polygon, Coord, CoordFloat, CoordNum, Line, Polygon};
 
 /// An _axis-aligned_ bounded 2D rectangle whose area is
@@ -377,6 +379,46 @@ impl<T: CoordFloat> Rect<T> {
 }
 
 static RECT_INVALID_BOUNDS_ERROR: &str = "Failed to create Rect: 'min' coordinate's x/y value must be smaller or equal to the 'max' x/y value";
+
+impl<T: CoordNum> RectTrait for Rect<T> {
+    type T = T;
+    type CoordType<'b>
+        = Coord<T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn min(&self) -> Self::CoordType<'_> {
+        Rect::min(*self)
+    }
+
+    fn max(&self) -> Self::CoordType<'_> {
+        Rect::max(*self)
+    }
+}
+
+impl<'a, T: CoordNum + 'a> RectTrait for &'a Rect<T> {
+    type T = T;
+    type CoordType<'b>
+        = Coord<T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn min(&self) -> Self::CoordType<'_> {
+        Rect::min(**self)
+    }
+
+    fn max(&self) -> Self::CoordType<'_> {
+        Rect::max(**self)
+    }
+}
 
 #[cfg(any(feature = "approx", test))]
 mod approx_integration {

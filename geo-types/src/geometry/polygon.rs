@@ -1,6 +1,7 @@
 use crate::{CoordFloat, CoordNum, LineString, Point, Rect, Triangle};
 use alloc::vec;
 use alloc::vec::Vec;
+use geo_traits::{Dimensions, LineStringTrait, PolygonTrait};
 use num_traits::{Float, Signed};
 
 /// A bounded two-dimensional area.
@@ -531,6 +532,64 @@ impl<T: CoordNum> From<Rect<T>> for Polygon<T> {
 impl<T: CoordNum> From<Triangle<T>> for Polygon<T> {
     fn from(t: Triangle<T>) -> Self {
         Polygon::new(vec![t.0, t.1, t.2, t.0].into(), Vec::new())
+    }
+}
+
+impl<T: CoordNum> PolygonTrait for Polygon<T> {
+    type T = T;
+    type RingType<'a>
+        = &'a LineString<Self::T>
+    where
+        Self: 'a;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn exterior(&self) -> Option<Self::RingType<'_>> {
+        let ext_ring = Polygon::exterior(self);
+        if LineStringTrait::num_coords(&ext_ring) == 0 {
+            None
+        } else {
+            Some(ext_ring)
+        }
+    }
+
+    fn num_interiors(&self) -> usize {
+        Polygon::interiors(self).len()
+    }
+
+    unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_> {
+        unsafe { Polygon::interiors(self).get_unchecked(i) }
+    }
+}
+
+impl<'a, T: CoordNum> PolygonTrait for &'a Polygon<T> {
+    type T = T;
+    type RingType<'b>
+        = &'a LineString<Self::T>
+    where
+        Self: 'b;
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn exterior(&self) -> Option<Self::RingType<'_>> {
+        let ext_ring = Polygon::exterior(self);
+        if LineStringTrait::num_coords(&ext_ring) == 0 {
+            None
+        } else {
+            Some(ext_ring)
+        }
+    }
+
+    fn num_interiors(&self) -> usize {
+        Polygon::interiors(self).len()
+    }
+
+    unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_> {
+        unsafe { Polygon::interiors(self).get_unchecked(i) }
     }
 }
 

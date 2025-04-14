@@ -1,4 +1,5 @@
 use crate::{coord, CoordNum, Point};
+use geo_traits::{CoordTrait, Dimensions};
 
 /// A lightweight struct used to store coordinates on the 2-dimensional
 /// Cartesian plane.
@@ -261,6 +262,54 @@ impl<T: CoordNum> Zero for Coord<T> {
     #[inline]
     fn is_zero(&self) -> bool {
         self.x.is_zero() && self.y.is_zero()
+    }
+}
+
+impl<T: CoordNum> CoordTrait for Coord<T> {
+    type T = T;
+
+    fn nth_or_panic(&self, n: usize) -> Self::T {
+        match n {
+            0 => self.x(),
+            1 => self.y(),
+            _ => panic!("Coord only supports 2 dimensions"),
+        }
+    }
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn x(&self) -> Self::T {
+        self.x
+    }
+
+    fn y(&self) -> Self::T {
+        self.y
+    }
+}
+
+impl<T: CoordNum> CoordTrait for &Coord<T> {
+    type T = T;
+
+    fn nth_or_panic(&self, n: usize) -> Self::T {
+        match n {
+            0 => self.x(),
+            1 => self.y(),
+            _ => panic!("Coord only supports 2 dimensions"),
+        }
+    }
+
+    fn dim(&self) -> Dimensions {
+        Dimensions::Xy
+    }
+
+    fn x(&self) -> Self::T {
+        self.x
+    }
+
+    fn y(&self) -> Self::T {
+        self.y
     }
 }
 
