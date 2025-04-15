@@ -244,6 +244,9 @@ pub use geo_types::{coord, line_string, point, polygon, wkt, CoordFloat, CoordNu
 pub mod geometry;
 pub use geometry::*;
 
+pub mod geo_trait_marker;
+pub use geo_trait_marker::*;
+
 /// This module includes all the functions of geometric calculations
 pub mod algorithm;
 mod geometry_cow;
