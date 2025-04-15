@@ -129,6 +129,7 @@ where
 /// This is used internally for [`UnimplementedGeometryCollection`], so that
 /// `UnimplementedGeometryCollection` can be used as the `GeometryCollectionType` of the
 /// `GeometryTrait` by implementations that don't have a GeometryCollection concept
+#[derive(PartialEq)]
 pub struct UnimplementedGeometry<T>(PhantomData<T>);
 
 impl<T> GeometryTrait for UnimplementedGeometry<T> {

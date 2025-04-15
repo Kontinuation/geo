@@ -38,6 +38,7 @@ pub trait LineTrait: Sized {
 ///
 /// This can be used as the `LineType` of the `GeometryTrait` by implementations that don't
 /// have a Line concept
+#[derive(PartialEq)]
 pub struct UnimplementedLine<T>(PhantomData<T>);
 
 impl<T> LineTrait for UnimplementedLine<T> {
