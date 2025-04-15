@@ -8,7 +8,7 @@ use geo_types::CoordNum;
 /// For example, if we want to implement the `AreaTrait` for `PointTrait`, `LineStringTrait`,
 /// `PolygonTrait`, etc, an ideal way is to write this:
 ///
-/// ```rust
+/// ```rust,ignore
 /// pub trait AreaTrait<T: CoordNum> {
 ///     fn area(&self) -> T;
 /// }
@@ -28,7 +28,7 @@ use geo_types::CoordNum;
 ///
 /// But this will get a compile error:
 ///
-/// ```
+/// ```text
 /// error[E0119]: conflicting implementations of trait `AreaTrait<_>`
 ///   --> geo-generic-alg/src/algorithm/area.rs:14:1
 ///   |
@@ -39,6 +39,40 @@ use geo_types::CoordNum;
 ///   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ conflicting implementation
 /// ```
 ///
+/// To avoid this, we can use the `GeoTraitTypeMarker` as the type parameter of the trait,
+/// and then implement the trait for various marker types.
+///
+/// ```rust,ignore
+/// pub trait AreaTrait<M: GeoTraitTypeMarker>
+/// {
+///     fn signed_area_trait(&self) -> M::T;
+///
+///     fn unsigned_area_trait(&self) -> M::T;
+/// }
+///
+/// impl<T: CoordNum, P: PointTrait<T = T>> AreaTrait<PointTraitMarker<T>> for P {
+///     fn signed_area_trait(&self) -> T {
+///         T::zero()
+///     }
+///
+///     fn unsigned_area_trait(&self) -> T {
+///         T::zero()
+///     }
+/// }
+///
+/// impl<T: CoordNum, LS: LineStringTrait<T = T>> AreaTrait<LineStringTraitMarker<T>> for LS {
+///     fn signed_area_trait(&self) -> T {
+///         todo!()
+///     }
+///
+///     fn unsigned_area_trait(&self) -> T {
+///         todo!()
+///     }
+/// }
+/// ```
+///
+/// This way, we can implement the trait for the new type parameter, and avoid the compile error.
+/// Now the AreaTrait is generic over the marker type instead of the coordinate type.
 ///
 pub trait GeoTraitTypeMarker {
     type T;
@@ -57,6 +91,7 @@ macro_rules! define_geo_trait_type_marker {
 }
 
 define_geo_trait_type_marker!(PointTraitMarker, PointTrait);
+define_geo_trait_type_marker!(LineTraitMarker, LineTrait);
 define_geo_trait_type_marker!(LineStringTraitMarker, LineStringTrait);
 define_geo_trait_type_marker!(PolygonTraitMarker, PolygonTrait);
 define_geo_trait_type_marker!(MultiPointTraitMarker, MultiPointTrait);
@@ -64,3 +99,5 @@ define_geo_trait_type_marker!(MultiLineStringTraitMarker, MultiLineStringTrait);
 define_geo_trait_type_marker!(MultiPolygonTraitMarker, MultiPolygonTrait);
 define_geo_trait_type_marker!(GeometryCollectionTraitMarker, GeometryCollectionTrait);
 define_geo_trait_type_marker!(GeometryTraitMarker, GeometryTrait);
+define_geo_trait_type_marker!(RectTraitMarker, RectTrait);
+define_geo_trait_type_marker!(TriangleTraitMarker, TriangleTrait);

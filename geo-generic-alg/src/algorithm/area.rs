@@ -1,42 +1,46 @@
-use crate::geometry::*;
+use geo_traits::*;
+use geo_traits_ext::{LineStringTraitExt, RectTraitExt, TriangleTraitExt};
+use geo_types::to_geo::ToGeoCoord;
+
+use crate::geo_trait_marker::*;
 use crate::{CoordFloat, CoordNum};
 
-pub(crate) fn twice_signed_ring_area<T>(linestring: &LineString<T>) -> T
-where
-    T: CoordNum,
-{
+pub(crate) fn twice_signed_ring_area<T: CoordNum, LS: LineStringTraitExt<T>>(linestring: &LS) -> T {
     // LineString with less than 3 points is empty, or a
     // single point, or is not closed.
-    if linestring.0.len() < 3 {
+    let num_coords = linestring.num_coords();
+    if num_coords < 3 {
         return T::zero();
     }
 
-    // Above test ensures the vector has at least 2 elements.
-    // We check if linestring is closed, and return 0 otherwise.
-    if linestring.0.first().unwrap() != linestring.0.last().unwrap() {
-        return T::zero();
+    unsafe {
+        // Above test ensures the vector has at least 2 elements.
+        // We check if linestring is closed, and return 0 otherwise.
+        if linestring.coord_unchecked(0) != linestring.coord_unchecked(num_coords - 1) {
+            return T::zero();
+        }
+
+        // Use a reasonable shift for the line-string coords
+        // to avoid numerical-errors when summing the
+        // determinants.
+        //
+        // Note: we can't use the `Centroid` trait as it
+        // requires `T: Float` and in fact computes area in the
+        // implementation. Another option is to use the average
+        // of the coordinates, but it is not fool-proof to
+        // divide by the length of the linestring (eg. a long
+        // line-string with T = u8)
+        let shift = linestring.coord_unchecked(0).to_coord();
+
+        let mut tmp = T::zero();
+        for line in linestring.lines() {
+            use crate::MapCoords;
+            let line = line.map_coords(|c| c - shift);
+            tmp = tmp + line.determinant();
+        }
+
+        tmp
     }
-
-    // Use a reasonable shift for the line-string coords
-    // to avoid numerical-errors when summing the
-    // determinants.
-    //
-    // Note: we can't use the `Centroid` trait as it
-    // requires `T: Float` and in fact computes area in the
-    // implementation. Another option is to use the average
-    // of the coordinates, but it is not fool-proof to
-    // divide by the length of the linestring (eg. a long
-    // line-string with T = u8)
-    let shift = linestring.0[0];
-
-    let mut tmp = T::zero();
-    for line in linestring.lines() {
-        use crate::MapCoords;
-        let line = line.map_coords(|c| c - shift);
-        tmp = tmp + line.determinant();
-    }
-
-    tmp
 }
 
 /// Signed and unsigned planar area of a geometry.
@@ -65,24 +69,24 @@ where
 /// assert_eq!(polygon.signed_area(), -30.);
 /// assert_eq!(polygon.unsigned_area(), 30.);
 /// ```
-pub trait Area<T>
+pub trait Area<M: GeoTraitTypeMarker>
 where
-    T: CoordNum,
+    M::T: CoordNum,
 {
-    fn signed_area(&self) -> T;
+    fn signed_area(&self) -> M::T;
 
-    fn unsigned_area(&self) -> T;
+    fn unsigned_area(&self) -> M::T;
 }
 
 // Calculation of simple (no interior holes) Polygon area
-pub(crate) fn get_linestring_area<T>(linestring: &LineString<T>) -> T
+pub(crate) fn get_linestring_area<T, LS: LineStringTrait<T = T>>(linestring: &LS) -> T
 where
     T: CoordFloat,
 {
     twice_signed_ring_area(linestring) / (T::one() + T::one())
 }
 
-impl<T> Area<T> for Point<T>
+impl<T, P: PointTrait<T = T>> Area<PointTraitMarker<T>> for P
 where
     T: CoordNum,
 {
@@ -95,7 +99,7 @@ where
     }
 }
 
-impl<T> Area<T> for LineString<T>
+impl<T, LS: LineStringTrait<T = T>> Area<LineStringTraitMarker<T>> for LS
 where
     T: CoordNum,
 {
@@ -108,7 +112,7 @@ where
     }
 }
 
-impl<T> Area<T> for Line<T>
+impl<T, L: LineTrait<T = T>> Area<LineTraitMarker<T>> for L
 where
     T: CoordNum,
 {
@@ -124,25 +128,33 @@ where
 /// **Note.** The implementation handles polygons whose
 /// holes do not all have the same orientation. The sign of
 /// the output is the same as that of the exterior shell.
-impl<T> Area<T> for Polygon<T>
+impl<T, P: PolygonTrait<T = T>> Area<PolygonTraitMarker<T>> for P
 where
     T: CoordFloat,
 {
     fn signed_area(&self) -> T {
-        let area = get_linestring_area(self.exterior());
+        match self.exterior() {
+            Some(exterior) => {
+                let area = get_linestring_area(&exterior);
 
-        // We could use winding order here, but that would
-        // result in computing the shoelace formula twice.
-        let is_negative = area < T::zero();
+                // We could use winding order here, but that would
+                // result in computing the shoelace formula twice.
+                let is_negative = area < T::zero();
 
-        let area = self.interiors().iter().fold(area.abs(), |total, next| {
-            total - get_linestring_area(next).abs()
-        });
+                let area = self
+                    .interiors()
+                    .into_iter()
+                    .fold(area.abs(), |total, next| {
+                        total - get_linestring_area(&next).abs()
+                    });
 
-        if is_negative {
-            -area
-        } else {
-            area
+                if is_negative {
+                    -area
+                } else {
+                    area
+                }
+            }
+            None => T::zero(),
         }
     }
 
@@ -151,7 +163,7 @@ where
     }
 }
 
-impl<T> Area<T> for MultiPoint<T>
+impl<T, MP: MultiPointTrait<T = T>> Area<MultiPointTraitMarker<T>> for MP
 where
     T: CoordNum,
 {
@@ -164,7 +176,7 @@ where
     }
 }
 
-impl<T> Area<T> for MultiLineString<T>
+impl<T, MLS: MultiLineStringTrait<T = T>> Area<MultiLineStringTraitMarker<T>> for MLS
 where
     T: CoordNum,
 {
@@ -183,25 +195,25 @@ where
 /// necessarily the sum of the `unsigned_area` of the
 /// constituent polygons unless they are all oriented the
 /// same.
-impl<T> Area<T> for MultiPolygon<T>
+impl<T, MP: MultiPolygonTrait<T = T>> Area<MultiPolygonTraitMarker<T>> for MP
 where
     T: CoordFloat,
 {
     fn signed_area(&self) -> T {
-        self.0
-            .iter()
+        self.polygons()
+            .into_iter()
             .fold(T::zero(), |total, next| total + next.signed_area())
     }
 
     fn unsigned_area(&self) -> T {
-        self.0
-            .iter()
+        self.polygons()
+            .into_iter()
             .fold(T::zero(), |total, next| total + next.signed_area().abs())
     }
 }
 
 /// Because a `Rect` has no winding order, the area will always be positive.
-impl<T> Area<T> for Rect<T>
+impl<T, R: RectTrait<T = T>> Area<RectTraitMarker<T>> for R
 where
     T: CoordNum,
 {
@@ -214,7 +226,7 @@ where
     }
 }
 
-impl<T> Area<T> for Triangle<T>
+impl<T: CoordFloat, TT: TriangleTrait<T = T>> Area<TriangleTraitMarker<T>> for TT
 where
     T: CoordFloat,
 {
@@ -230,30 +242,30 @@ where
     }
 }
 
-impl<T> Area<T> for Geometry<T>
+impl<T, G: GeometryTrait<T = T>> Area<GeometryTraitMarker<T>> for G
 where
     T: CoordFloat,
 {
-    crate::geometry_delegate_impl! {
+    crate::geometry_trait_delegate_impl! {
         fn signed_area(&self) -> T;
         fn unsigned_area(&self) -> T;
     }
 }
 
-impl<T> Area<T> for GeometryCollection<T>
+impl<T, GC: GeometryCollectionTrait<T = T>> Area<GeometryCollectionTraitMarker<T>> for GC
 where
     T: CoordFloat,
 {
     fn signed_area(&self) -> T {
-        self.0
-            .iter()
+        self.geometries()
+            .into_iter()
             .map(|g| g.signed_area())
             .fold(T::zero(), |acc, next| acc + next)
     }
 
     fn unsigned_area(&self) -> T {
-        self.0
-            .iter()
+        self.geometries()
+            .into_iter()
             .map(|g| g.unsigned_area())
             .fold(T::zero(), |acc, next| acc + next)
     }
@@ -401,6 +413,17 @@ mod test {
         );
         // triangles are always ccw, thus positive
         assert_relative_eq!(triangle.signed_area(), 0.5);
+    }
+
+    #[test]
+    fn area_geometry_test() {
+        let geom = wkt! {
+            MULTIPOLYGON(
+                ((0. 0.,5. 0.,5. 6.,0. 6.,0. 0.)),
+                ((1. 1.,2. 1.,2. 2.,1. 2.,1. 1.))
+            )
+        };
+        assert_relative_eq!(geom.signed_area(), 31.0);
     }
 
     #[test]

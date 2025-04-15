@@ -20,6 +20,10 @@
 
 pub use coord::CoordTraitExt;
 pub use line_string::LineStringTraitExt;
+pub use rect::RectTraitExt;
+pub use triangle::TriangleTraitExt;
 
 mod coord;
 mod line_string;
+mod rect;
+mod triangle;

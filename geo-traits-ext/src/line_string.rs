@@ -1,9 +1,8 @@
 // Extend LineStringTrait traits for the `geo-traits` crate
 
 use geo_traits::LineStringTrait;
+use geo_types::to_geo::ToGeoCoord;
 use geo_types::{CoordNum, Line, Triangle};
-
-use crate::CoordTraitExt;
 
 pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> {
     /// Return an iterator yielding one [`Line`] for each line segment

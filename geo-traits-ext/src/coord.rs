@@ -4,12 +4,8 @@ use geo_traits::CoordTrait;
 use geo_types::CoordNum;
 
 pub trait CoordTraitExt<T: CoordNum>: CoordTrait<T = T> {
-    fn to_coord(&self) -> geo_types::Coord<Self::T> {
-        geo_types::Coord {
-            x: self.x(),
-            y: self.y(),
-        }
-    }
+    // We don't need to extend anything here, because we already have the
+    // `ToGeoCoord` trait in `to_geo.rs`
 }
 
 impl<C, T> CoordTraitExt<T> for C
