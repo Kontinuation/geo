@@ -1,3 +1,4 @@
+use geo_traits::*;
 use geo_types::CoordNum;
 
 /// GeoTraitTypeMarker is for implementing the same algorithm trait for multiple geo-traits
@@ -90,6 +91,7 @@ macro_rules! define_geo_trait_type_marker {
     };
 }
 
+define_geo_trait_type_marker!(CoordTraitMarker, CoordTrait);
 define_geo_trait_type_marker!(PointTraitMarker, PointTrait);
 define_geo_trait_type_marker!(LineTraitMarker, LineTrait);
 define_geo_trait_type_marker!(LineStringTraitMarker, LineStringTrait);

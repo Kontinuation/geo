@@ -2,7 +2,7 @@
 
 use geo_traits::LineStringTrait;
 use geo_types::to_geo::ToGeoCoord;
-use geo_types::{CoordNum, Line, Triangle};
+use geo_types::{Coord, CoordNum, Line, Triangle};
 
 pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> {
     /// Return an iterator yielding one [`Line`] for each line segment
@@ -77,6 +77,10 @@ pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> {
             let coord3 = self.coord_unchecked(i + 2);
             Triangle::new(coord1.to_coord(), coord2.to_coord(), coord3.to_coord())
         })
+    }
+
+    fn coord_iter(&self) -> impl Iterator<Item = Coord<T>> {
+        self.coords().map(|c| c.to_coord())
     }
 
     fn is_closed(&self) -> bool {

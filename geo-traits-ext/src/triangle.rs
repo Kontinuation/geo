@@ -1,7 +1,7 @@
 // Extend TriangleTrait traits for the `geo-traits` crate
 
 use geo_traits::TriangleTrait;
-use geo_types::{polygon, to_geo::ToGeoCoord, CoordNum, Line, Polygon};
+use geo_types::{polygon, to_geo::ToGeoCoord, Coord, CoordNum, Line, Polygon};
 
 pub trait TriangleTraitExt<T: CoordNum>: TriangleTrait<T = T> {
     fn to_array(&self) -> [Self::CoordType<'_>; 3] {
@@ -23,6 +23,12 @@ pub trait TriangleTraitExt<T: CoordNum>: TriangleTrait<T = T> {
             self.third().to_coord(),
             self.first().to_coord(),
         ]
+    }
+
+    fn coord_iter(&self) -> impl Iterator<Item = Coord<T>> {
+        [self.first(), self.second(), self.third()]
+            .into_iter()
+            .map(|c| c.to_coord())
     }
 }
 
