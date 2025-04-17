@@ -10,6 +10,7 @@ members = [
   "geo-traits-ext",
   "geo-generic-alg",
   "jts-test-runner",
+  "geo-generic-tests",
 ]
 
 [patch.crates-io]
