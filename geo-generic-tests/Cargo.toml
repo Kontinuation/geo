@@ -13,6 +13,7 @@ geo-traits-ext = { path = "../geo-traits-ext" }
 byteorder = "1"
 num_enum = "0.7"
 thiserror = "1"
+delegate = "0.13.3"
 
 [dev-dependencies]
 

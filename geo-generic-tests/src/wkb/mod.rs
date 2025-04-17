@@ -11,4 +11,4 @@ pub mod reader;
 #[cfg(test)]
 pub mod test;
 
-pub use common::{Endianness, WKBType};
+pub use common::Endianness;

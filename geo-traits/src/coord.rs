@@ -10,7 +10,7 @@ use crate::Dimensions;
 /// but is used in their definitions. The only requirement
 /// is that the coordinates it contains are valid numbers
 /// (for eg. not `f64::NAN`).
-pub trait CoordTrait: PartialEq {
+pub trait CoordTrait {
     /// The coordinate type of this geometry
     type T;
 
@@ -68,7 +68,7 @@ pub trait CoordTrait: PartialEq {
     }
 }
 
-impl<T: Copy + PartialEq> CoordTrait for (T, T) {
+impl<T: Copy> CoordTrait for (T, T) {
     type T = T;
 
     fn nth_or_panic(&self, n: usize) -> Self::T {
@@ -97,12 +97,6 @@ impl<T: Copy + PartialEq> CoordTrait for (T, T) {
 /// This can be used as the `CoordType` of the `GeometryTrait` by implementations that don't have a
 /// Coord concept
 pub struct UnimplementedCoord<T>(PhantomData<T>);
-
-impl<T> PartialEq for UnimplementedCoord<T> {
-    fn eq(&self, _other: &Self) -> bool {
-        true
-    }
-}
 
 impl<T> CoordTrait for UnimplementedCoord<T> {
     type T = T;

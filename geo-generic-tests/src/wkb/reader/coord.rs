@@ -2,7 +2,7 @@ use std::io::Cursor;
 
 use crate::wkb::common::WKBDimension;
 use crate::wkb::reader::util::ReadBytesExt;
-use crate::Endianness;
+use crate::wkb::Endianness;
 use geo_traits::{CoordTrait, Dimensions};
 
 const F64_WIDTH: u64 = 8;
@@ -77,12 +77,6 @@ impl<'a> Coord<'a> {
     pub fn size(&self) -> u64 {
         // A 2D Coord is just two f64s
         self.dim.size() as u64 * 8
-    }
-}
-
-impl PartialEq for Coord<'_> {
-    fn eq(&self, other: &Self) -> bool {
-        self.get_x() == other.get_x() && self.get_y() == other.get_y()
     }
 }
 

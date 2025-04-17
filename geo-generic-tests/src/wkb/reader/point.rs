@@ -1,7 +1,7 @@
 use crate::wkb::common::WKBDimension;
 use crate::wkb::reader::coord::Coord;
 use crate::wkb::reader::util::has_srid;
-use crate::Endianness;
+use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::{CoordTrait, PointTrait};
 

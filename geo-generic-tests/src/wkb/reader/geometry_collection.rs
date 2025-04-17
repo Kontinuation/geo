@@ -4,7 +4,7 @@ use crate::wkb::common::WKBDimension;
 use crate::wkb::error::WKBResult;
 use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::reader::Wkb;
-use crate::Endianness;
+use crate::wkb::Endianness;
 use geo_traits::{Dimensions, GeometryCollectionTrait};
 
 /// skip endianness and wkb type

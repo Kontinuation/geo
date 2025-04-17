@@ -17,7 +17,9 @@ pub(crate) fn twice_signed_ring_area<T: CoordNum, LS: LineStringTraitExt<T>>(lin
     unsafe {
         // Above test ensures the vector has at least 2 elements.
         // We check if linestring is closed, and return 0 otherwise.
-        if linestring.coord_unchecked(0) != linestring.coord_unchecked(num_coords - 1) {
+        if linestring.coord_unchecked(0).to_coord()
+            != linestring.coord_unchecked(num_coords - 1).to_coord()
+        {
             return T::zero();
         }
 

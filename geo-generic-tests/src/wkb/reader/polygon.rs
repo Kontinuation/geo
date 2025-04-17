@@ -3,7 +3,7 @@ use std::io::Cursor;
 use crate::wkb::common::WKBDimension;
 use crate::wkb::reader::linearring::WKBLinearRing;
 use crate::wkb::reader::util::{has_srid, ReadBytesExt};
-use crate::Endianness;
+use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::PolygonTrait;
 

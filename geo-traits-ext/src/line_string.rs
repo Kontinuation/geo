@@ -84,7 +84,11 @@ pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> {
     }
 
     fn is_closed(&self) -> bool {
-        self.coords().next() == self.coords().last()
+        match (self.coords().next(), self.coords().last()) {
+            (Some(first), Some(last)) => first.to_coord() == last.to_coord(),
+            (None, None) => true,
+            _ => false,
+        }
     }
 }
 

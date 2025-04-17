@@ -24,11 +24,13 @@ use multipolygon::MultiPolygon;
 use point::Point;
 use polygon::Polygon;
 
-use crate::error::WKBResult;
+use crate::wkb::error::WKBResult;
 
 /// Parse a WKB byte slice into a geometry.
 ///
 /// This is an alias for [`Wkb::try_new`].
+#[allow(dead_code)]
+
 pub fn read_wkb(buf: &[u8]) -> WKBResult<Wkb> {
     Wkb::try_new(buf)
 }

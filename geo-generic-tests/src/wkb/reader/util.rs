@@ -1,7 +1,7 @@
 use byteorder::{BigEndian, LittleEndian};
 
 use crate::wkb::common::WKBGeometryCode;
-use crate::Endianness;
+use crate::wkb::Endianness;
 use std::io::{Cursor, Error};
 
 pub(crate) trait ReadBytesExt: byteorder::ReadBytesExt {
