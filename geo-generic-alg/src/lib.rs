@@ -247,6 +247,8 @@ pub use geometry::*;
 pub mod geo_trait_marker;
 pub use geo_trait_marker::*;
 
+pub mod impl_geo_trait;
+
 /// This module includes all the functions of geometric calculations
 pub mod algorithm;
 mod geometry_cow;

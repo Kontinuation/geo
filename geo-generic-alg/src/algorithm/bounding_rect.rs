@@ -250,18 +250,18 @@ macro_rules! impl_bounding_rect {
     };
 }
 
-impl_bounding_rect! { <T>, Coord<T>, CoordTraitMarker }
-impl_bounding_rect! { <T>, Point<T>, PointTraitMarker }
-impl_bounding_rect! { <T>, Line<T>, LineTraitMarker }
-impl_bounding_rect! { <T>, LineString<T>, LineStringTraitMarker }
-impl_bounding_rect! { <T>, MultiLineString<T>, MultiLineStringTraitMarker }
-impl_bounding_rect! { <T>, MultiPoint<T>, MultiPointTraitMarker }
-impl_bounding_rect! { <T>, Polygon<T>, PolygonTraitMarker }
-impl_bounding_rect! { <T>, MultiPolygon<T>, MultiPolygonTraitMarker }
-impl_bounding_rect! { <T>, Triangle<T>, TriangleTraitMarker }
-impl_bounding_rect! { <T>, Rect<T>, RectTraitMarker }
-impl_bounding_rect! { <T>, GeometryCollection<T>, GeometryCollectionTraitMarker }
-impl_bounding_rect! { <T>, Geometry<T>, GeometryTraitMarker }
+impl_bounding_rect!(<T>, Coord<T>, CoordTraitMarker);
+impl_bounding_rect!(<T>, Point<T>, PointTraitMarker);
+impl_bounding_rect!(<T>, Line<T>, LineTraitMarker);
+impl_bounding_rect!(<T>, LineString<T>, LineStringTraitMarker);
+impl_bounding_rect!(<T>, MultiLineString<T>, MultiLineStringTraitMarker);
+impl_bounding_rect!(<T>, MultiPoint<T>, MultiPointTraitMarker);
+impl_bounding_rect!(<T>, Polygon<T>, PolygonTraitMarker);
+impl_bounding_rect!(<T>, MultiPolygon<T>, MultiPolygonTraitMarker);
+impl_bounding_rect!(<T>, Triangle<T>, TriangleTraitMarker);
+impl_bounding_rect!(<T>, Rect<T>, RectTraitMarker);
+impl_bounding_rect!(<T>, GeometryCollection<T>, GeometryCollectionTraitMarker);
+impl_bounding_rect!(<T>, Geometry<T>, GeometryTraitMarker);
 
 // Return a new rectangle that encompasses the provided rectangles
 fn bounding_rect_merge<T: CoordNum>(a: Rect<T>, b: Rect<T>) -> Rect<T> {

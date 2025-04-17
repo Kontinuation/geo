@@ -1,4 +1,3 @@
-use geo_traits::*;
 use geo_types::CoordNum;
 
 /// GeoTraitTypeMarker is for implementing the same algorithm trait for multiple geo-traits
