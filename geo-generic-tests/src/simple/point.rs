@@ -1,6 +1,7 @@
 use delegate::delegate;
 
 use geo_traits::PointTrait;
+use geo_traits_ext::{forward_point_trait_ext_funcs, PointTraitExt};
 use geo_types::CoordNum;
 
 use super::coord::SimpleCoord;
@@ -48,6 +49,24 @@ impl<T: CoordNum> PointTrait for SimplePoint<T> {
             fn coord(&self) -> Option<Self::CoordType<'_>>;
         }
     }
+}
+
+impl<T: CoordNum> PointTraitExt<T> for SimplePoint<T> {
+    type CoordTypeExt<'a>
+        = &'a SimpleCoord<T>
+    where
+        Self: 'a;
+
+    forward_point_trait_ext_funcs!();
+}
+
+impl<'a, T: CoordNum> PointTraitExt<T> for &'a SimplePoint<T> {
+    type CoordTypeExt<'b>
+        = &'b SimpleCoord<T>
+    where
+        Self: 'b;
+
+    forward_point_trait_ext_funcs!();
 }
 
 #[cfg(test)]

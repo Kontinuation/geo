@@ -19,17 +19,27 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 pub use coord::CoordTraitExt;
+pub use geometry::{GeometryTraitExt, GeometryTypeExt};
+pub use geometry_collection::GeometryCollectionTraitExt;
+pub use line::LineTraitExt;
 pub use line_string::LineStringTraitExt;
 pub use multi_line_string::MultiLineStringTraitExt;
 pub use multi_point::MultiPointTraitExt;
+pub use multi_polygon::MultiPolygonTraitExt;
+pub use point::PointTraitExt;
 pub use polygon::PolygonTraitExt;
 pub use rect::RectTraitExt;
 pub use triangle::TriangleTraitExt;
 
 mod coord;
+mod geometry;
+mod geometry_collection;
+mod line;
 mod line_string;
 mod multi_line_string;
 mod multi_point;
+mod multi_polygon;
+mod point;
 mod polygon;
 mod rect;
 mod triangle;

@@ -2,9 +2,7 @@ use crate::geo_trait_marker::*;
 use crate::utils::{partial_max, partial_min};
 use crate::{coord, geometry::*, CoordNum, GeometryCow};
 use geo_traits::*;
-use geo_traits_ext::{
-    LineStringTraitExt, MultiLineStringTraitExt, MultiPointTraitExt, TriangleTraitExt,
-};
+use geo_traits_ext::*;
 use geo_types::private_utils::get_bounding_rect;
 use geo_types::to_geo::{ToGeoCoord, ToGeoRect};
 
@@ -45,7 +43,7 @@ where
     fn bounding_rect_trait(&self) -> Self::Output;
 }
 
-impl<T, C: CoordTrait<T = T>> BoundingRectTrait<CoordTraitMarker<T>> for C
+impl<T, C: CoordTraitExt<T>> BoundingRectTrait<CoordTraitMarker<T>> for C
 where
     T: CoordNum,
 {
@@ -58,7 +56,7 @@ where
     }
 }
 
-impl<T, P: PointTrait<T = T>> BoundingRectTrait<PointTraitMarker<T>> for P
+impl<T, P: PointTraitExt<T>> BoundingRectTrait<PointTraitMarker<T>> for P
 where
     T: CoordNum,
 {
@@ -77,7 +75,7 @@ where
     }
 }
 
-impl<T, MP: MultiPointTrait<T = T>> BoundingRectTrait<MultiPointTraitMarker<T>> for MP
+impl<T, MP: MultiPointTraitExt<T>> BoundingRectTrait<MultiPointTraitMarker<T>> for MP
 where
     T: CoordNum,
 {
@@ -90,7 +88,7 @@ where
     }
 }
 
-impl<T, L: LineTrait<T = T>> BoundingRectTrait<LineTraitMarker<T>> for L
+impl<T, L: LineTraitExt<T>> BoundingRectTrait<LineTraitMarker<T>> for L
 where
     T: CoordNum,
 {
@@ -101,7 +99,7 @@ where
     }
 }
 
-impl<T, LS: LineStringTrait<T = T>> BoundingRectTrait<LineStringTraitMarker<T>> for LS
+impl<T, LS: LineStringTraitExt<T>> BoundingRectTrait<LineStringTraitMarker<T>> for LS
 where
     T: CoordNum,
 {
@@ -114,7 +112,7 @@ where
     }
 }
 
-impl<T, MLS: MultiLineStringTrait<T = T>> BoundingRectTrait<MultiLineStringTraitMarker<T>> for MLS
+impl<T, MLS: MultiLineStringTraitExt<T>> BoundingRectTrait<MultiLineStringTraitMarker<T>> for MLS
 where
     T: CoordNum,
 {
@@ -127,7 +125,7 @@ where
     }
 }
 
-impl<T, P: PolygonTrait<T = T>> BoundingRectTrait<PolygonTraitMarker<T>> for P
+impl<T, P: PolygonTraitExt<T>> BoundingRectTrait<PolygonTraitMarker<T>> for P
 where
     T: CoordNum,
 {
@@ -144,7 +142,7 @@ where
     }
 }
 
-impl<T, MP: MultiPolygonTrait<T = T>> BoundingRectTrait<MultiPolygonTraitMarker<T>> for MP
+impl<T, MP: MultiPolygonTraitExt<T>> BoundingRectTrait<MultiPolygonTraitMarker<T>> for MP
 where
     T: CoordNum,
 {
@@ -158,7 +156,7 @@ where
     }
 }
 
-impl<T: CoordNum, TT: TriangleTrait<T = T>> BoundingRectTrait<TriangleTraitMarker<T>> for TT
+impl<T: CoordNum, TT: TriangleTraitExt<T>> BoundingRectTrait<TriangleTraitMarker<T>> for TT
 where
     T: CoordNum,
 {
@@ -169,7 +167,7 @@ where
     }
 }
 
-impl<T, R: RectTrait<T = T>> BoundingRectTrait<RectTraitMarker<T>> for R
+impl<T, R: RectTraitExt<T>> BoundingRectTrait<RectTraitMarker<T>> for R
 where
     T: CoordNum,
 {
@@ -180,18 +178,18 @@ where
     }
 }
 
-impl<T, G: GeometryTrait<T = T>> BoundingRectTrait<GeometryTraitMarker<T>> for G
+impl<T, G: GeometryTraitExt<T>> BoundingRectTrait<GeometryTraitMarker<T>> for G
 where
     T: CoordNum,
 {
     type Output = Option<Rect<T>>;
 
-    crate::geometry_trait_delegate_impl! {
+    crate::geometry_trait_ext_delegate_impl! {
        fn bounding_rect_trait(&self) -> Self::Output;
     }
 }
 
-impl<T, GC: GeometryCollectionTrait<T = T>> BoundingRectTrait<GeometryCollectionTraitMarker<T>>
+impl<T, GC: GeometryCollectionTraitExt<T>> BoundingRectTrait<GeometryCollectionTraitMarker<T>>
     for GC
 where
     T: CoordNum,
@@ -199,7 +197,7 @@ where
     type Output = Option<Rect<T>>;
 
     fn bounding_rect_trait(&self) -> Self::Output {
-        self.geometries().into_iter().fold(None, |acc, next| {
+        self.geometries_ext().into_iter().fold(None, |acc, next| {
             let next_bounding_rect = next.bounding_rect_trait();
 
             match (acc, next_bounding_rect) {

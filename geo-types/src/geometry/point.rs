@@ -768,12 +768,12 @@ impl<T: CoordNum> PointTrait for Point<T> {
     }
 }
 
-impl<T: CoordNum> PointTrait for &Point<T> {
+impl<'a, T: CoordNum> PointTrait for &'a Point<T> {
     type T = T;
-    type CoordType<'a>
+    type CoordType<'b>
         = &'a Coord<Self::T>
     where
-        Self: 'a;
+        Self: 'b;
 
     fn coord(&self) -> Option<Self::CoordType<'_>> {
         Some(&self.0)

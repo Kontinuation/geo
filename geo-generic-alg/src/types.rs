@@ -1,4 +1,5 @@
 use crate::{GeoFloat, Point};
+use geo_traits_ext::GeometryTypeExt;
 
 /// The result of trying to find the closest spot on an object to a point.
 #[cfg_attr(feature = "use-serde", derive(Serialize, Deserialize))]
@@ -158,13 +159,13 @@ macro_rules! __geometry_delegate_impl_helper {
 }
 
 #[macro_export]
-macro_rules! geometry_trait_delegate_impl {
-    ($($a:tt)*) => { $crate::__geometry_trait_delegate_impl_helper!{ GeometryType, $($a)* } }
+macro_rules! geometry_trait_ext_delegate_impl {
+    ($($a:tt)*) => { $crate::__geometry_trait_ext_delegate_impl_helper!{ GeometryTypeExt, $($a)* } }
 }
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __geometry_trait_delegate_impl_helper {
+macro_rules! __geometry_trait_ext_delegate_impl_helper {
     (
         $enum:ident,
         $(
@@ -175,7 +176,7 @@ macro_rules! __geometry_trait_delegate_impl_helper {
             $(
                 $(#[$outer])*
                 fn $func_name(&$($self_life)? self, $($arg_name: $arg_type),*) -> $return {
-                    match self.as_type() {
+                    match self.as_type_ext() {
                         $enum::Point(g) => g.$func_name($($arg_name),*).into(),
                         $enum::Line(g) =>  g.$func_name($($arg_name),*).into(),
                         $enum::LineString(g) => g.$func_name($($arg_name),*).into(),
@@ -186,6 +187,7 @@ macro_rules! __geometry_trait_delegate_impl_helper {
                         $enum::GeometryCollection(g) => g.$func_name($($arg_name),*).into(),
                         $enum::Rect(g) => g.$func_name($($arg_name),*).into(),
                         $enum::Triangle(g) => g.$func_name($($arg_name),*).into(),
+                        $enum::_Unused(_) => unimplemented!("GeometryTypeExt::as_type_ext() returned _Unused"),
                     }
                 }
             )+

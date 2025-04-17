@@ -1,4 +1,5 @@
 use geo_traits::*;
+use geo_traits_ext::{forward_geometry_trait_ext_funcs, GeometryTraitExt, GeometryTypeExt};
 use geo_types::CoordNum;
 
 use super::{line_string::SimpleLineString, point::SimplePoint, polygon::SimplePolygon};
@@ -167,6 +168,114 @@ impl<T: CoordNum> GeometryTrait for SimpleGeometry<T> {
             SimpleGeometry::Polygon(p) => geo_traits::GeometryType::Polygon(p),
         }
     }
+}
+
+impl<'a, T: CoordNum> GeometryTraitExt<T> for &'a SimpleGeometry<T> {
+    type PointTypeExt<'b>
+        = SimplePoint<T>
+    where
+        Self: 'b;
+
+    type LineStringTypeExt<'b>
+        = SimpleLineString<T>
+    where
+        Self: 'b;
+
+    type PolygonTypeExt<'b>
+        = SimplePolygon<T>
+    where
+        Self: 'b;
+
+    type MultiPointTypeExt<'b>
+        = UnimplementedMultiPoint<T>
+    where
+        Self: 'b;
+
+    type MultiLineStringTypeExt<'b>
+        = UnimplementedMultiLineString<T>
+    where
+        Self: 'b;
+
+    type MultiPolygonTypeExt<'b>
+        = UnimplementedMultiPolygon<T>
+    where
+        Self: 'b;
+
+    type GeometryCollectionTypeExt<'b>
+        = UnimplementedGeometryCollection<T>
+    where
+        Self: 'b;
+
+    type RectTypeExt<'b>
+        = UnimplementedRect<T>
+    where
+        Self: 'b;
+
+    type TriangleTypeExt<'b>
+        = UnimplementedTriangle<T>
+    where
+        Self: 'b;
+
+    type LineTypeExt<'b>
+        = UnimplementedLine<T>
+    where
+        Self: 'b;
+
+    forward_geometry_trait_ext_funcs!();
+}
+
+impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
+    type PointTypeExt<'b>
+        = SimplePoint<T>
+    where
+        Self: 'b;
+
+    type LineStringTypeExt<'b>
+        = SimpleLineString<T>
+    where
+        Self: 'b;
+
+    type PolygonTypeExt<'b>
+        = SimplePolygon<T>
+    where
+        Self: 'b;
+
+    type MultiPointTypeExt<'b>
+        = UnimplementedMultiPoint<T>
+    where
+        Self: 'b;
+
+    type MultiLineStringTypeExt<'b>
+        = UnimplementedMultiLineString<T>
+    where
+        Self: 'b;
+
+    type MultiPolygonTypeExt<'b>
+        = UnimplementedMultiPolygon<T>
+    where
+        Self: 'b;
+
+    type GeometryCollectionTypeExt<'b>
+        = UnimplementedGeometryCollection<T>
+    where
+        Self: 'b;
+
+    type RectTypeExt<'b>
+        = UnimplementedRect<T>
+    where
+        Self: 'b;
+
+    type TriangleTypeExt<'b>
+        = UnimplementedTriangle<T>
+    where
+        Self: 'b;
+
+    type LineTypeExt<'b>
+        = UnimplementedLine<T>
+    where
+        Self: 'b;
+
+    forward_geometry_trait_ext_funcs!();
 }
 
 #[cfg(test)]

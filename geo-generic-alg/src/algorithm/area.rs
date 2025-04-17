@@ -1,5 +1,4 @@
-use geo_traits::*;
-use geo_traits_ext::{LineStringTraitExt, RectTraitExt, TriangleTraitExt};
+use geo_traits_ext::*;
 use geo_types::to_geo::ToGeoCoord;
 use geo_types::*;
 
@@ -91,14 +90,14 @@ where
 }
 
 // Calculation of simple (no interior holes) Polygon area
-pub(crate) fn get_linestring_area<T, LS: LineStringTrait<T = T>>(linestring: &LS) -> T
+pub(crate) fn get_linestring_area<T, LS: LineStringTraitExt<T>>(linestring: &LS) -> T
 where
     T: CoordFloat,
 {
     twice_signed_ring_area(linestring) / (T::one() + T::one())
 }
 
-impl<T, P: PointTrait<T = T>> AreaTrait<PointTraitMarker<T>> for P
+impl<T, P: PointTraitExt<T>> AreaTrait<PointTraitMarker<T>> for P
 where
     T: CoordNum,
 {
@@ -111,7 +110,7 @@ where
     }
 }
 
-impl<T, LS: LineStringTrait<T = T>> AreaTrait<LineStringTraitMarker<T>> for LS
+impl<T, LS: LineStringTraitExt<T>> AreaTrait<LineStringTraitMarker<T>> for LS
 where
     T: CoordNum,
 {
@@ -124,7 +123,7 @@ where
     }
 }
 
-impl<T, L: LineTrait<T = T>> AreaTrait<LineTraitMarker<T>> for L
+impl<T, L: LineTraitExt<T>> AreaTrait<LineTraitMarker<T>> for L
 where
     T: CoordNum,
 {
@@ -140,12 +139,12 @@ where
 /// **Note.** The implementation handles polygons whose
 /// holes do not all have the same orientation. The sign of
 /// the output is the same as that of the exterior shell.
-impl<T, P: PolygonTrait<T = T>> AreaTrait<PolygonTraitMarker<T>> for P
+impl<T, P: PolygonTraitExt<T>> AreaTrait<PolygonTraitMarker<T>> for P
 where
     T: CoordFloat,
 {
     fn signed_area_trait(&self) -> T {
-        match self.exterior() {
+        match self.exterior_ext() {
             Some(exterior) => {
                 let area = get_linestring_area(&exterior);
 
@@ -154,7 +153,7 @@ where
                 let is_negative = area < T::zero();
 
                 let area = self
-                    .interiors()
+                    .interiors_ext()
                     .into_iter()
                     .fold(area.abs(), |total, next| {
                         total - get_linestring_area(&next).abs()
@@ -175,7 +174,7 @@ where
     }
 }
 
-impl<T, MP: MultiPointTrait<T = T>> AreaTrait<MultiPointTraitMarker<T>> for MP
+impl<T, MP: MultiPointTraitExt<T>> AreaTrait<MultiPointTraitMarker<T>> for MP
 where
     T: CoordNum,
 {
@@ -188,7 +187,7 @@ where
     }
 }
 
-impl<T, MLS: MultiLineStringTrait<T = T>> AreaTrait<MultiLineStringTraitMarker<T>> for MLS
+impl<T, MLS: MultiLineStringTraitExt<T>> AreaTrait<MultiLineStringTraitMarker<T>> for MLS
 where
     T: CoordNum,
 {
@@ -207,25 +206,27 @@ where
 /// necessarily the sum of the `unsigned_area` of the
 /// constituent polygons unless they are all oriented the
 /// same.
-impl<T, MP: MultiPolygonTrait<T = T>> AreaTrait<MultiPolygonTraitMarker<T>> for MP
+impl<T, MP: MultiPolygonTraitExt<T>> AreaTrait<MultiPolygonTraitMarker<T>> for MP
 where
     T: CoordFloat,
 {
     fn signed_area_trait(&self) -> T {
-        self.polygons()
+        self.polygons_ext()
             .into_iter()
             .fold(T::zero(), |total, next| total + next.signed_area_trait())
     }
 
     fn unsigned_area_trait(&self) -> T {
-        self.polygons().into_iter().fold(T::zero(), |total, next| {
-            total + next.signed_area_trait().abs()
-        })
+        self.polygons_ext()
+            .into_iter()
+            .fold(T::zero(), |total, next| {
+                total + next.signed_area_trait().abs()
+            })
     }
 }
 
 /// Because a `Rect` has no winding order, the area will always be positive.
-impl<T, R: RectTrait<T = T>> AreaTrait<RectTraitMarker<T>> for R
+impl<T, R: RectTraitExt<T>> AreaTrait<RectTraitMarker<T>> for R
 where
     T: CoordNum,
 {
@@ -238,7 +239,7 @@ where
     }
 }
 
-impl<T: CoordFloat, TT: TriangleTrait<T = T>> AreaTrait<TriangleTraitMarker<T>> for TT
+impl<T: CoordFloat, TT: TriangleTraitExt<T>> AreaTrait<TriangleTraitMarker<T>> for TT
 where
     T: CoordFloat,
 {
@@ -254,29 +255,29 @@ where
     }
 }
 
-impl<T, G: GeometryTrait<T = T>> AreaTrait<GeometryTraitMarker<T>> for G
+impl<T, G: GeometryTraitExt<T>> AreaTrait<GeometryTraitMarker<T>> for G
 where
     T: CoordFloat,
 {
-    crate::geometry_trait_delegate_impl! {
+    crate::geometry_trait_ext_delegate_impl! {
         fn signed_area_trait(&self) -> T;
         fn unsigned_area_trait(&self) -> T;
     }
 }
 
-impl<T, GC: GeometryCollectionTrait<T = T>> AreaTrait<GeometryCollectionTraitMarker<T>> for GC
+impl<T, GC: GeometryCollectionTraitExt<T>> AreaTrait<GeometryCollectionTraitMarker<T>> for GC
 where
     T: CoordFloat,
 {
     fn signed_area_trait(&self) -> T {
-        self.geometries()
+        self.geometries_ext()
             .into_iter()
             .map(|g| g.signed_area_trait())
             .fold(T::zero(), |acc, next| acc + next)
     }
 
     fn unsigned_area_trait(&self) -> T {
-        self.geometries()
+        self.geometries_ext()
             .into_iter()
             .map(|g| g.unsigned_area_trait())
             .fold(T::zero(), |acc, next| acc + next)

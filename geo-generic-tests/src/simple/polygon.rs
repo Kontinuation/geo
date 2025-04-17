@@ -1,5 +1,6 @@
 use delegate::delegate;
 use geo_traits::PolygonTrait;
+use geo_traits_ext::{forward_polygon_trait_ext_funcs, PolygonTraitExt};
 use geo_types::CoordNum;
 
 use super::line_string::SimpleLineString;
@@ -55,6 +56,24 @@ impl<T: CoordNum> PolygonTrait for SimplePolygon<T> {
             unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_>;
         }
     }
+}
+
+impl<T: CoordNum> PolygonTraitExt<T> for SimplePolygon<T> {
+    type RingTypeExt<'a>
+        = &'a SimpleLineString<T>
+    where
+        Self: 'a;
+
+    forward_polygon_trait_ext_funcs!();
+}
+
+impl<'a, T: CoordNum> PolygonTraitExt<T> for &'a SimplePolygon<T> {
+    type RingTypeExt<'b>
+        = &'a SimpleLineString<T>
+    where
+        Self: 'b;
+
+    forward_polygon_trait_ext_funcs!();
 }
 
 #[cfg(test)]

@@ -1,6 +1,7 @@
 use delegate::delegate;
 
 use geo_traits::CoordTrait;
+use geo_traits_ext::CoordTraitExt;
 use geo_types::CoordNum;
 
 pub struct SimpleCoord<T: CoordNum> {
@@ -50,6 +51,10 @@ impl<T: CoordNum> CoordTrait for SimpleCoord<T> {
         }
     }
 }
+
+impl<T: CoordNum> CoordTraitExt<T> for SimpleCoord<T> {}
+
+impl<T: CoordNum> CoordTraitExt<T> for &SimpleCoord<T> {}
 
 #[cfg(test)]
 mod tests {

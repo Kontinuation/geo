@@ -1,10 +1,20 @@
 // Extend LineStringTrait traits for the `geo-traits` crate
 
-use geo_traits::LineStringTrait;
+use geo_traits::{LineStringTrait, UnimplementedCoord, UnimplementedLineString};
 use geo_types::to_geo::ToGeoCoord;
-use geo_types::{Coord, CoordNum, Line, Triangle};
+use geo_types::{Coord, CoordNum, Line, LineString, Triangle};
+
+use crate::CoordTraitExt;
 
 pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> {
+    type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
+    where
+        Self: 'a;
+
+    fn coord_ext(&self, i: usize) -> Option<Self::CoordTypeExt<'_>>;
+    fn coord_unchecked_ext(&self, i: usize) -> Self::CoordTypeExt<'_>;
+    fn coords_ext(&self) -> impl Iterator<Item = Self::CoordTypeExt<'_>>;
+
     /// Return an iterator yielding one [`Line`] for each line segment
     /// in the [`LineString`][`geo_types::LineString`].
     ///
@@ -92,9 +102,55 @@ pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> {
     }
 }
 
-impl<LS, T> LineStringTraitExt<T> for LS
+#[macro_export]
+macro_rules! forward_line_string_trait_ext_funcs {
+    () => {
+        fn coord_ext(&self, i: usize) -> Option<Self::CoordTypeExt<'_>> {
+            <Self as LineStringTrait>::coord(self, i)
+        }
+
+        fn coord_unchecked_ext(&self, i: usize) -> Self::CoordTypeExt<'_> {
+            unsafe { <Self as LineStringTrait>::coord_unchecked(self, i) }
+        }
+
+        fn coords_ext(&self) -> impl Iterator<Item = Self::CoordTypeExt<'_>> {
+            <Self as LineStringTrait>::coords(self)
+        }
+    };
+}
+
+impl<T> LineStringTraitExt<T> for LineString<T>
 where
-    LS: LineStringTrait<T = T>,
     T: CoordNum,
 {
+    type CoordTypeExt<'a>
+        = <Self as LineStringTrait>::CoordType<'a>
+    where
+        Self: 'a;
+
+    forward_line_string_trait_ext_funcs!();
+}
+
+impl<'a, T> LineStringTraitExt<T> for &'a LineString<T>
+where
+    T: CoordNum,
+{
+    type CoordTypeExt<'b>
+        = &'a Coord<T>
+    where
+        Self: 'b;
+
+    forward_line_string_trait_ext_funcs!();
+}
+
+impl<T> LineStringTraitExt<T> for UnimplementedLineString<T>
+where
+    T: CoordNum,
+{
+    type CoordTypeExt<'a>
+        = UnimplementedCoord<T>
+    where
+        Self: 'a;
+
+    forward_line_string_trait_ext_funcs!();
 }

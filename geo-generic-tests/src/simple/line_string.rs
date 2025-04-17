@@ -1,5 +1,6 @@
 use delegate::delegate;
 use geo_traits::LineStringTrait;
+use geo_traits_ext::{forward_line_string_trait_ext_funcs, LineStringTraitExt};
 use geo_types::CoordNum;
 
 use super::coord::SimpleCoord;
@@ -50,6 +51,24 @@ impl<T: CoordNum> LineStringTrait for SimpleLineString<T> {
             unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_>;
         }
     }
+}
+
+impl<T: CoordNum> LineStringTraitExt<T> for SimpleLineString<T> {
+    type CoordTypeExt<'a>
+        = &'a SimpleCoord<T>
+    where
+        Self: 'a;
+
+    forward_line_string_trait_ext_funcs!();
+}
+
+impl<'a, T: CoordNum> LineStringTraitExt<T> for &'a SimpleLineString<T> {
+    type CoordTypeExt<'b>
+        = &'a SimpleCoord<T>
+    where
+        Self: 'b;
+
+    forward_line_string_trait_ext_funcs!();
 }
 
 #[cfg(test)]

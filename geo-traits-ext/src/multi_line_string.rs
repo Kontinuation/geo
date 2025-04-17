@@ -1,13 +1,42 @@
 // Extend MultiLineStringTrait traits for the `geo-traits` crate
 
-use geo_traits::{LineStringTrait, MultiLineStringTrait};
+use geo_traits::{
+    LineStringTrait, MultiLineStringTrait, UnimplementedLineString, UnimplementedMultiLineString,
+};
 use geo_types::to_geo::ToGeoCoord;
-use geo_types::{Coord, CoordNum};
+use geo_types::{Coord, CoordNum, LineString, MultiLineString};
+
+use crate::LineStringTraitExt;
 
 pub trait MultiLineStringTraitExt<T: CoordNum>: MultiLineStringTrait<T = T> {
+    type LineStringTypeExt<'a>: 'a + LineStringTraitExt<T>
+    where
+        Self: 'a;
+
+    fn line_string_ext(&self, i: usize) -> Option<Self::LineStringTypeExt<'_>>;
+    fn line_string_unchecked_ext(&self, i: usize) -> Self::LineStringTypeExt<'_>;
+    fn line_strings_ext(&self) -> impl Iterator<Item = Self::LineStringTypeExt<'_>>;
+
     fn coord_iter(&self) -> impl Iterator<Item = Coord<T>> {
         CoordIter::new(self)
     }
+}
+
+#[macro_export]
+macro_rules! forward_multi_line_string_trait_ext_funcs {
+    () => {
+        fn line_string_ext(&self, i: usize) -> Option<Self::LineStringTypeExt<'_>> {
+            <Self as MultiLineStringTrait>::line_string(self, i)
+        }
+
+        fn line_string_unchecked_ext(&self, i: usize) -> Self::LineStringTypeExt<'_> {
+            unsafe { <Self as MultiLineStringTrait>::line_string_unchecked(self, i) }
+        }
+
+        fn line_strings_ext(&self) -> impl Iterator<Item = Self::LineStringTypeExt<'_>> {
+            <Self as MultiLineStringTrait>::line_strings(self)
+        }
+    };
 }
 
 struct CoordIter<'a, T: CoordNum, MLS: MultiLineStringTrait<T = T>> {
@@ -61,9 +90,38 @@ impl<'a, T: CoordNum, MLS: MultiLineStringTrait<T = T>> Iterator for CoordIter<'
     }
 }
 
-impl<T, MLS> MultiLineStringTraitExt<T> for MLS
+impl<T> MultiLineStringTraitExt<T> for MultiLineString<T>
 where
     T: CoordNum,
-    MLS: MultiLineStringTrait<T = T>,
 {
+    type LineStringTypeExt<'a>
+        = <Self as MultiLineStringTrait>::LineStringType<'a>
+    where
+        Self: 'a;
+
+    forward_multi_line_string_trait_ext_funcs!();
+}
+
+impl<'a, T> MultiLineStringTraitExt<T> for &'a MultiLineString<T>
+where
+    T: CoordNum,
+{
+    type LineStringTypeExt<'b>
+        = &'a LineString<T>
+    where
+        Self: 'b;
+
+    forward_multi_line_string_trait_ext_funcs!();
+}
+
+impl<T> MultiLineStringTraitExt<T> for UnimplementedMultiLineString<T>
+where
+    T: CoordNum,
+{
+    type LineStringTypeExt<'a>
+        = UnimplementedLineString<T>
+    where
+        Self: 'a;
+
+    forward_multi_line_string_trait_ext_funcs!();
 }
