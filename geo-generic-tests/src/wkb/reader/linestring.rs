@@ -130,11 +130,6 @@ where
 }
 
 impl<'a> LineStringTraitExt<f64> for LineString<'a> {
-    type CoordTypeExt<'b>
-        = Coord<'a>
-    where
-        Self: 'b;
-
     forward_line_string_trait_ext_funcs!();
 }
 
@@ -146,11 +141,6 @@ impl<'a, 'b> LineStringTraitExt<f64> for &'b LineString<'a>
 where
     'a: 'b,
 {
-    type CoordTypeExt<'c>
-        = Coord<'a>
-    where
-        Self: 'c;
-
     forward_line_string_trait_ext_funcs!();
 }
 

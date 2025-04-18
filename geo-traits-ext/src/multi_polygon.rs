@@ -1,7 +1,7 @@
 // Extend MultiPolygonTrait traits for the `geo-traits` crate
 
-use geo_traits::{MultiPolygonTrait, UnimplementedMultiPolygon, UnimplementedPolygon};
-use geo_types::{CoordNum, MultiPolygon, Polygon};
+use geo_traits::{MultiPolygonTrait, UnimplementedMultiPolygon};
+use geo_types::{CoordNum, MultiPolygon};
 
 use crate::{GeoTraitExtWithTypeTag, MultiPolygonTag, PolygonTraitExt};
 
@@ -20,6 +20,11 @@ pub trait MultiPolygonTraitExt<T: CoordNum>:
 #[macro_export]
 macro_rules! forward_multi_polygon_trait_ext_funcs {
     () => {
+        type PolygonTypeExt<'__l_inner>
+            = <Self as MultiPolygonTrait>::PolygonType<'__l_inner>
+        where
+            Self: '__l_inner;
+
         fn polygon_ext(&self, i: usize) -> Option<Self::PolygonTypeExt<'_>> {
             <Self as MultiPolygonTrait>::polygon(self, i)
         }
@@ -38,11 +43,6 @@ impl<T> MultiPolygonTraitExt<T> for MultiPolygon<T>
 where
     T: CoordNum,
 {
-    type PolygonTypeExt<'a>
-        = <Self as MultiPolygonTrait>::PolygonType<'a>
-    where
-        Self: 'a;
-
     forward_multi_polygon_trait_ext_funcs!();
 }
 
@@ -54,11 +54,6 @@ impl<'a, T> MultiPolygonTraitExt<T> for &'a MultiPolygon<T>
 where
     T: CoordNum,
 {
-    type PolygonTypeExt<'b>
-        = &'a Polygon<T>
-    where
-        Self: 'b;
-
     forward_multi_polygon_trait_ext_funcs!();
 }
 
@@ -70,11 +65,6 @@ impl<T> MultiPolygonTraitExt<T> for UnimplementedMultiPolygon<T>
 where
     T: CoordNum,
 {
-    type PolygonTypeExt<'a>
-        = UnimplementedPolygon<T>
-    where
-        Self: 'a;
-
     forward_multi_polygon_trait_ext_funcs!();
 }
 

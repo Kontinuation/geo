@@ -94,11 +94,6 @@ impl<'a> GeometryCollectionTrait for GeometryCollection<'a> {
 }
 
 impl<'a> GeometryCollectionTraitExt<f64> for GeometryCollection<'a> {
-    type GeometryTypeExt<'b>
-        = &'b Wkb<'a>
-    where
-        Self: 'b;
-
     forward_geometry_collection_trait_ext_funcs!();
 }
 

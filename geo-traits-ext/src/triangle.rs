@@ -1,6 +1,6 @@
 // Extend TriangleTrait traits for the `geo-traits` crate
 
-use geo_traits::{TriangleTrait, UnimplementedCoord, UnimplementedTriangle};
+use geo_traits::{TriangleTrait, UnimplementedTriangle};
 use geo_types::{polygon, to_geo::ToGeoCoord, Coord, CoordNum, Line, Polygon, Triangle};
 
 use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, TriangleTag};
@@ -46,6 +46,11 @@ pub trait TriangleTraitExt<T: CoordNum>: TriangleTrait<T = T> + GeoTraitExtWithT
 #[macro_export]
 macro_rules! forward_triangle_trait_ext_funcs {
     () => {
+        type CoordTypeExt<'__l_inner>
+            = <Self as TriangleTrait>::CoordType<'__l_inner>
+        where
+            Self: '__l_inner;
+
         fn first_ext(&self) -> Self::CoordTypeExt<'_> {
             <Self as TriangleTrait>::first(self)
         }
@@ -68,11 +73,6 @@ impl<T> TriangleTraitExt<T> for Triangle<T>
 where
     T: CoordNum,
 {
-    type CoordTypeExt<'a>
-        = <Self as TriangleTrait>::CoordType<'a>
-    where
-        Self: 'a;
-
     forward_triangle_trait_ext_funcs!();
 }
 
@@ -84,11 +84,6 @@ impl<'a, T> TriangleTraitExt<T> for &'a Triangle<T>
 where
     T: CoordNum,
 {
-    type CoordTypeExt<'b>
-        = &'a Coord<T>
-    where
-        Self: 'b;
-
     forward_triangle_trait_ext_funcs!();
 }
 
@@ -100,11 +95,6 @@ impl<T> TriangleTraitExt<T> for UnimplementedTriangle<T>
 where
     T: CoordNum,
 {
-    type CoordTypeExt<'a>
-        = UnimplementedCoord<T>
-    where
-        Self: 'a;
-
     forward_triangle_trait_ext_funcs!();
 }
 

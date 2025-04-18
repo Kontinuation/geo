@@ -123,11 +123,6 @@ where
 }
 
 impl<'a> MultiPolygonTraitExt<f64> for MultiPolygon<'a> {
-    type PolygonTypeExt<'b>
-        = Polygon<'a>
-    where
-        Self: 'b;
-
     forward_multi_polygon_trait_ext_funcs!();
 }
 
@@ -139,11 +134,6 @@ impl<'a, 'b> MultiPolygonTraitExt<f64> for &'b MultiPolygon<'a>
 where
     'a: 'b,
 {
-    type PolygonTypeExt<'c>
-        = Polygon<'a>
-    where
-        Self: 'c;
-
     forward_multi_polygon_trait_ext_funcs!();
 }
 

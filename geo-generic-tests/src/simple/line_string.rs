@@ -56,11 +56,6 @@ impl<T: CoordNum> LineStringTrait for SimpleLineString<T> {
 }
 
 impl<T: CoordNum> LineStringTraitExt<T> for SimpleLineString<T> {
-    type CoordTypeExt<'a>
-        = &'a SimpleCoord<T>
-    where
-        Self: 'a;
-
     forward_line_string_trait_ext_funcs!();
 }
 
@@ -69,11 +64,6 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for SimpleLineString<T> {
 }
 
 impl<'a, T: CoordNum> LineStringTraitExt<T> for &'a SimpleLineString<T> {
-    type CoordTypeExt<'b>
-        = &'a SimpleCoord<T>
-    where
-        Self: 'b;
-
     forward_line_string_trait_ext_funcs!();
 }
 

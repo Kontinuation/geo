@@ -54,11 +54,6 @@ impl<T: CoordNum> PointTrait for SimplePoint<T> {
 }
 
 impl<T: CoordNum> PointTraitExt<T> for SimplePoint<T> {
-    type CoordTypeExt<'a>
-        = &'a SimpleCoord<T>
-    where
-        Self: 'a;
-
     forward_point_trait_ext_funcs!();
 }
 
@@ -67,11 +62,6 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for SimplePoint<T> {
 }
 
 impl<'a, T: CoordNum> PointTraitExt<T> for &'a SimplePoint<T> {
-    type CoordTypeExt<'b>
-        = &'a SimpleCoord<T>
-    where
-        Self: 'b;
-
     forward_point_trait_ext_funcs!();
 }
 

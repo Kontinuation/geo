@@ -1,4 +1,4 @@
-// Geometry type markers
+// Geometry type tags for dispatching algorithm traits to the corresponding implementation
 
 pub trait GeoTypeTag {}
 

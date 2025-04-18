@@ -1,10 +1,8 @@
 // Extend MultiLineStringTrait traits for the `geo-traits` crate
 
-use geo_traits::{
-    LineStringTrait, MultiLineStringTrait, UnimplementedLineString, UnimplementedMultiLineString,
-};
+use geo_traits::{LineStringTrait, MultiLineStringTrait, UnimplementedMultiLineString};
 use geo_types::to_geo::ToGeoCoord;
-use geo_types::{Coord, CoordNum, LineString, MultiLineString};
+use geo_types::{Coord, CoordNum, MultiLineString};
 
 use crate::{GeoTraitExtWithTypeTag, LineStringTraitExt, MultiLineStringTag};
 
@@ -27,6 +25,11 @@ pub trait MultiLineStringTraitExt<T: CoordNum>:
 #[macro_export]
 macro_rules! forward_multi_line_string_trait_ext_funcs {
     () => {
+        type LineStringTypeExt<'__l_inner>
+            = <Self as MultiLineStringTrait>::LineStringType<'__l_inner>
+        where
+            Self: '__l_inner;
+
         fn line_string_ext(&self, i: usize) -> Option<Self::LineStringTypeExt<'_>> {
             <Self as MultiLineStringTrait>::line_string(self, i)
         }
@@ -96,11 +99,6 @@ impl<T> MultiLineStringTraitExt<T> for MultiLineString<T>
 where
     T: CoordNum,
 {
-    type LineStringTypeExt<'a>
-        = <Self as MultiLineStringTrait>::LineStringType<'a>
-    where
-        Self: 'a;
-
     forward_multi_line_string_trait_ext_funcs!();
 }
 
@@ -112,11 +110,6 @@ impl<'a, T> MultiLineStringTraitExt<T> for &'a MultiLineString<T>
 where
     T: CoordNum,
 {
-    type LineStringTypeExt<'b>
-        = &'a LineString<T>
-    where
-        Self: 'b;
-
     forward_multi_line_string_trait_ext_funcs!();
 }
 
@@ -128,11 +121,6 @@ impl<T> MultiLineStringTraitExt<T> for UnimplementedMultiLineString<T>
 where
     T: CoordNum,
 {
-    type LineStringTypeExt<'a>
-        = UnimplementedLineString<T>
-    where
-        Self: 'a;
-
     forward_multi_line_string_trait_ext_funcs!();
 }
 

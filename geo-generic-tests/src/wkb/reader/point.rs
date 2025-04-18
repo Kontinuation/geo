@@ -119,11 +119,6 @@ where
 }
 
 impl<'a> PointTraitExt<f64> for Point<'a> {
-    type CoordTypeExt<'b>
-        = Coord<'a>
-    where
-        Self: 'b;
-
     forward_point_trait_ext_funcs!();
 }
 
@@ -132,11 +127,6 @@ impl<'a> GeoTraitExtWithTypeTag for Point<'a> {
 }
 
 impl<'a> PointTraitExt<f64> for &Point<'a> {
-    type CoordTypeExt<'b>
-        = Coord<'a>
-    where
-        Self: 'b;
-
     forward_point_trait_ext_funcs!();
 }
 

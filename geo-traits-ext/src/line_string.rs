@@ -1,6 +1,6 @@
 // Extend LineStringTrait traits for the `geo-traits` crate
 
-use geo_traits::{LineStringTrait, UnimplementedCoord, UnimplementedLineString};
+use geo_traits::{LineStringTrait, UnimplementedLineString};
 use geo_types::to_geo::ToGeoCoord;
 use geo_types::{Coord, CoordNum, Line, LineString, Triangle};
 
@@ -105,6 +105,11 @@ pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> + GeoTraitExtW
 #[macro_export]
 macro_rules! forward_line_string_trait_ext_funcs {
     () => {
+        type CoordTypeExt<'__l_inner>
+            = <Self as LineStringTrait>::CoordType<'__l_inner>
+        where
+            Self: '__l_inner;
+
         fn coord_ext(&self, i: usize) -> Option<Self::CoordTypeExt<'_>> {
             <Self as LineStringTrait>::coord(self, i)
         }
@@ -123,11 +128,6 @@ impl<T> LineStringTraitExt<T> for LineString<T>
 where
     T: CoordNum,
 {
-    type CoordTypeExt<'a>
-        = <Self as LineStringTrait>::CoordType<'a>
-    where
-        Self: 'a;
-
     forward_line_string_trait_ext_funcs!();
 }
 
@@ -139,11 +139,6 @@ impl<'a, T> LineStringTraitExt<T> for &'a LineString<T>
 where
     T: CoordNum,
 {
-    type CoordTypeExt<'b>
-        = &'a Coord<T>
-    where
-        Self: 'b;
-
     forward_line_string_trait_ext_funcs!();
 }
 
@@ -155,11 +150,6 @@ impl<T> LineStringTraitExt<T> for UnimplementedLineString<T>
 where
     T: CoordNum,
 {
-    type CoordTypeExt<'a>
-        = UnimplementedCoord<T>
-    where
-        Self: 'a;
-
     forward_line_string_trait_ext_funcs!();
 }
 

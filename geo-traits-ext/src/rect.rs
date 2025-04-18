@@ -1,6 +1,6 @@
 // Extend RectTrait traits for the `geo-traits` crate
 
-use geo_traits::{CoordTrait, RectTrait, UnimplementedCoord, UnimplementedRect};
+use geo_traits::{CoordTrait, RectTrait, UnimplementedRect};
 use geo_types::{coord, Coord, CoordNum, Line, LineString, Polygon, Rect};
 
 use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, RectTag};
@@ -166,6 +166,11 @@ pub trait RectTraitExt<T: CoordNum>: RectTrait<T = T> + GeoTraitExtWithTypeTag {
 #[macro_export]
 macro_rules! forward_rect_trait_ext_funcs {
     () => {
+        type CoordTypeExt<'__l_inner>
+            = <Self as RectTrait>::CoordType<'__l_inner>
+        where
+            Self: '__l_inner;
+
         fn min_ext(&self) -> Self::CoordTypeExt<'_> {
             <Self as RectTrait>::min(self)
         }
@@ -180,11 +185,6 @@ impl<T> RectTraitExt<T> for Rect<T>
 where
     T: CoordNum,
 {
-    type CoordTypeExt<'a>
-        = Coord<T>
-    where
-        Self: 'a;
-
     forward_rect_trait_ext_funcs!();
 }
 
@@ -196,11 +196,6 @@ impl<'a, T> RectTraitExt<T> for &'a Rect<T>
 where
     T: CoordNum,
 {
-    type CoordTypeExt<'b>
-        = Coord<T>
-    where
-        Self: 'b;
-
     forward_rect_trait_ext_funcs!();
 }
 
@@ -212,11 +207,6 @@ impl<T> RectTraitExt<T> for UnimplementedRect<T>
 where
     T: CoordNum,
 {
-    type CoordTypeExt<'a>
-        = UnimplementedCoord<T>
-    where
-        Self: 'a;
-
     forward_rect_trait_ext_funcs!();
 }
 

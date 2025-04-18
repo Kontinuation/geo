@@ -96,11 +96,6 @@ impl<'a> LineStringTrait for WKBLinearRing<'a> {
 }
 
 impl<'a> LineStringTraitExt<f64> for WKBLinearRing<'a> {
-    type CoordTypeExt<'b>
-        = Coord<'a>
-    where
-        Self: 'b;
-
     forward_line_string_trait_ext_funcs!();
 }
 

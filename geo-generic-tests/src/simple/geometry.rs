@@ -174,56 +174,6 @@ impl<T: CoordNum> GeometryTrait for SimpleGeometry<T> {
 }
 
 impl<'a, T: CoordNum> GeometryTraitExt<T> for &'a SimpleGeometry<T> {
-    type PointTypeExt<'b>
-        = SimplePoint<T>
-    where
-        Self: 'b;
-
-    type LineStringTypeExt<'b>
-        = SimpleLineString<T>
-    where
-        Self: 'b;
-
-    type PolygonTypeExt<'b>
-        = SimplePolygon<T>
-    where
-        Self: 'b;
-
-    type MultiPointTypeExt<'b>
-        = UnimplementedMultiPoint<T>
-    where
-        Self: 'b;
-
-    type MultiLineStringTypeExt<'b>
-        = UnimplementedMultiLineString<T>
-    where
-        Self: 'b;
-
-    type MultiPolygonTypeExt<'b>
-        = UnimplementedMultiPolygon<T>
-    where
-        Self: 'b;
-
-    type GeometryCollectionTypeExt<'b>
-        = UnimplementedGeometryCollection<T>
-    where
-        Self: 'b;
-
-    type RectTypeExt<'b>
-        = UnimplementedRect<T>
-    where
-        Self: 'b;
-
-    type TriangleTypeExt<'b>
-        = UnimplementedTriangle<T>
-    where
-        Self: 'b;
-
-    type LineTypeExt<'b>
-        = UnimplementedLine<T>
-    where
-        Self: 'b;
-
     forward_geometry_trait_ext_funcs!(T);
 }
 
@@ -232,56 +182,6 @@ impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a SimpleGeometry<T> {
 }
 
 impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
-    type PointTypeExt<'b>
-        = SimplePoint<T>
-    where
-        Self: 'b;
-
-    type LineStringTypeExt<'b>
-        = SimpleLineString<T>
-    where
-        Self: 'b;
-
-    type PolygonTypeExt<'b>
-        = SimplePolygon<T>
-    where
-        Self: 'b;
-
-    type MultiPointTypeExt<'b>
-        = UnimplementedMultiPoint<T>
-    where
-        Self: 'b;
-
-    type MultiLineStringTypeExt<'b>
-        = UnimplementedMultiLineString<T>
-    where
-        Self: 'b;
-
-    type MultiPolygonTypeExt<'b>
-        = UnimplementedMultiPolygon<T>
-    where
-        Self: 'b;
-
-    type GeometryCollectionTypeExt<'b>
-        = UnimplementedGeometryCollection<T>
-    where
-        Self: 'b;
-
-    type RectTypeExt<'b>
-        = UnimplementedRect<T>
-    where
-        Self: 'b;
-
-    type TriangleTypeExt<'b>
-        = UnimplementedTriangle<T>
-    where
-        Self: 'b;
-
-    type LineTypeExt<'b>
-        = UnimplementedLine<T>
-    where
-        Self: 'b;
-
     forward_geometry_trait_ext_funcs!(T);
 }
 

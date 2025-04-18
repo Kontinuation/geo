@@ -132,11 +132,6 @@ where
 }
 
 impl<'a> MultiPointTraitExt<f64> for MultiPoint<'a> {
-    type PointTypeExt<'b>
-        = Point<'a>
-    where
-        Self: 'b;
-
     forward_multi_point_trait_ext_funcs!();
 }
 
@@ -148,11 +143,6 @@ impl<'a, 'b> MultiPointTraitExt<f64> for &'b MultiPoint<'a>
 where
     'a: 'b,
 {
-    type PointTypeExt<'c>
-        = Point<'a>
-    where
-        Self: 'c;
-
     forward_multi_point_trait_ext_funcs!();
 }
 

@@ -61,11 +61,6 @@ impl<'a, T: CoordNum> PolygonTrait for &'a SimplePolygon<T> {
 }
 
 impl<T: CoordNum> PolygonTraitExt<T> for SimplePolygon<T> {
-    type RingTypeExt<'a>
-        = &'a SimpleLineString<T>
-    where
-        Self: 'a;
-
     forward_polygon_trait_ext_funcs!();
 }
 
@@ -74,11 +69,6 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for SimplePolygon<T> {
 }
 
 impl<'a, T: CoordNum> PolygonTraitExt<T> for &'a SimplePolygon<T> {
-    type RingTypeExt<'b>
-        = &'a SimpleLineString<T>
-    where
-        Self: 'b;
-
     forward_polygon_trait_ext_funcs!();
 }
 

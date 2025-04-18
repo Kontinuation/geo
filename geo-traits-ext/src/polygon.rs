@@ -1,7 +1,7 @@
 // Extend PolygonTrait traits for the `geo-traits` crate
 
-use geo_traits::{PolygonTrait, UnimplementedLineString, UnimplementedPolygon};
-use geo_types::{CoordNum, LineString, Polygon};
+use geo_traits::{PolygonTrait, UnimplementedPolygon};
+use geo_types::{CoordNum, Polygon};
 
 use crate::{GeoTraitExtWithTypeTag, LineStringTraitExt, PolygonTag};
 
@@ -33,6 +33,11 @@ pub trait PolygonTraitExt<T: CoordNum>: PolygonTrait<T = T> + GeoTraitExtWithTyp
 #[macro_export]
 macro_rules! forward_polygon_trait_ext_funcs {
     () => {
+        type RingTypeExt<'__l_inner>
+            = <Self as PolygonTrait>::RingType<'__l_inner>
+        where
+            Self: '__l_inner;
+
         fn exterior_ext(&self) -> Option<Self::RingTypeExt<'_>> {
             <Self as PolygonTrait>::exterior(self)
         }
@@ -57,11 +62,6 @@ impl<T> PolygonTraitExt<T> for Polygon<T>
 where
     T: CoordNum,
 {
-    type RingTypeExt<'a>
-        = Self::RingType<'a>
-    where
-        Self: 'a;
-
     forward_polygon_trait_ext_funcs!();
 }
 
@@ -73,11 +73,6 @@ impl<'a, T> PolygonTraitExt<T> for &'a Polygon<T>
 where
     T: CoordNum,
 {
-    type RingTypeExt<'b>
-        = &'a LineString<T>
-    where
-        Self: 'b;
-
     forward_polygon_trait_ext_funcs!();
 }
 
@@ -89,11 +84,6 @@ impl<T> PolygonTraitExt<T> for UnimplementedPolygon<T>
 where
     T: CoordNum,
 {
-    type RingTypeExt<'a>
-        = UnimplementedLineString<T>
-    where
-        Self: 'a;
-
     forward_polygon_trait_ext_funcs!();
 }
 

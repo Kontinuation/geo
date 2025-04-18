@@ -1,7 +1,7 @@
 // Extend MultiPointTrait traits for the `geo-traits` crate
 
-use geo_traits::{MultiPointTrait, PointTrait, UnimplementedMultiPoint, UnimplementedPoint};
-use geo_types::{to_geo::ToGeoCoord, Coord, CoordNum, MultiPoint, Point};
+use geo_traits::{MultiPointTrait, PointTrait, UnimplementedMultiPoint};
+use geo_types::{to_geo::ToGeoCoord, Coord, CoordNum, MultiPoint};
 
 use crate::{GeoTraitExtWithTypeTag, MultiPointTag, PointTraitExt};
 
@@ -22,6 +22,11 @@ pub trait MultiPointTraitExt<T: CoordNum>: MultiPointTrait<T = T> + GeoTraitExtW
 #[macro_export]
 macro_rules! forward_multi_point_trait_ext_funcs {
     () => {
+        type PointTypeExt<'__l_inner>
+            = <Self as MultiPointTrait>::PointType<'__l_inner>
+        where
+            Self: '__l_inner;
+
         fn point_ext(&self, i: usize) -> Option<Self::PointTypeExt<'_>> {
             <Self as MultiPointTrait>::point(self, i)
         }
@@ -40,11 +45,6 @@ impl<T> MultiPointTraitExt<T> for MultiPoint<T>
 where
     T: CoordNum,
 {
-    type PointTypeExt<'a>
-        = <Self as MultiPointTrait>::PointType<'a>
-    where
-        Self: 'a;
-
     forward_multi_point_trait_ext_funcs!();
 }
 
@@ -56,11 +56,6 @@ impl<'a, T> MultiPointTraitExt<T> for &'a MultiPoint<T>
 where
     T: CoordNum,
 {
-    type PointTypeExt<'b>
-        = &'a Point<T>
-    where
-        Self: 'b;
-
     forward_multi_point_trait_ext_funcs!();
 }
 
@@ -72,11 +67,6 @@ impl<T> MultiPointTraitExt<T> for UnimplementedMultiPoint<T>
 where
     T: CoordNum,
 {
-    type PointTypeExt<'a>
-        = UnimplementedPoint<T>
-    where
-        Self: 'a;
-
     forward_multi_point_trait_ext_funcs!();
 }
 

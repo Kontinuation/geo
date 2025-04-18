@@ -147,11 +147,6 @@ where
 }
 
 impl<'a> PolygonTraitExt<f64> for Polygon<'a> {
-    type RingTypeExt<'b>
-        = WKBLinearRing<'a>
-    where
-        Self: 'b;
-
     forward_polygon_trait_ext_funcs!();
 }
 
@@ -163,11 +158,6 @@ impl<'a, 'b> PolygonTraitExt<f64> for &'b Polygon<'a>
 where
     'a: 'b,
 {
-    type RingTypeExt<'c>
-        = WKBLinearRing<'a>
-    where
-        Self: 'c;
-
     forward_polygon_trait_ext_funcs!();
 }
 

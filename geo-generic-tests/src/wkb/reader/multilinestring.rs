@@ -124,11 +124,6 @@ where
 }
 
 impl<'a> MultiLineStringTraitExt<f64> for MultiLineString<'a> {
-    type LineStringTypeExt<'b>
-        = LineString<'a>
-    where
-        Self: 'b;
-
     forward_multi_line_string_trait_ext_funcs!();
 }
 
@@ -140,11 +135,6 @@ impl<'a, 'b> MultiLineStringTraitExt<f64> for &'b MultiLineString<'a>
 where
     'a: 'b,
 {
-    type LineStringTypeExt<'c>
-        = LineString<'a>
-    where
-        Self: 'c;
-
     forward_multi_line_string_trait_ext_funcs!();
 }
 
