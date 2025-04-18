@@ -194,7 +194,6 @@ impl<T> GeometryTraitExt<T> for &Geometry<T>
 where
     T: CoordNum,
 {
-
     forward_geometry_trait_ext_funcs!(T);
 }
 

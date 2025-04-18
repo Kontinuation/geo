@@ -164,7 +164,8 @@ where
     fn bounding_rect_trait(&self) -> Self::Output {
         self.polygons_ext().fold(None, |acc, p| {
             let rect = p
-                .exterior_ext().and_then(|e| get_bounding_rect(e.coord_iter()));
+                .exterior_ext()
+                .and_then(|e| get_bounding_rect(e.coord_iter()));
             match (acc, rect) {
                 (None, None) => None,
                 (Some(r), None) | (None, Some(r)) => Some(r),

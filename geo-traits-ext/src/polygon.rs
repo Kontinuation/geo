@@ -15,9 +15,9 @@ pub trait PolygonTraitExt<T: CoordNum>: PolygonTrait<T = T> + GeoTraitExtWithTyp
         &self,
     ) -> impl DoubleEndedIterator + ExactSizeIterator<Item = Self::RingTypeExt<'_>>;
     fn interior_ext(&self, i: usize) -> Option<Self::RingTypeExt<'_>>;
-    
+
     /// Returns an interior ring by index without bounds checking.
-    /// 
+    ///
     /// # Safety
     /// The caller must ensure that `i` is a valid index less than the number of interior rings.
     /// Otherwise, this function may cause undefined behavior.

@@ -164,11 +164,9 @@ where
                 // result in computing the shoelace formula twice.
                 let is_negative = area < T::zero();
 
-                let area = self
-                    .interiors_ext()
-                    .fold(area.abs(), |total, next| {
-                        total - get_linestring_area(&next).abs()
-                    });
+                let area = self.interiors_ext().fold(area.abs(), |total, next| {
+                    total - get_linestring_area(&next).abs()
+                });
 
                 if is_negative {
                     -area
@@ -227,10 +225,9 @@ where
     }
 
     fn unsigned_area_trait(&self) -> T {
-        self.polygons_ext()
-            .fold(T::zero(), |total, next| {
-                total + next.signed_area_trait().abs()
-            })
+        self.polygons_ext().fold(T::zero(), |total, next| {
+            total + next.signed_area_trait().abs()
+        })
     }
 }
 
