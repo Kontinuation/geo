@@ -183,47 +183,6 @@ impl<T> GeometryTraitExt<T> for Geometry<T>
 where
     T: CoordNum,
 {
-    // type PointTypeExt<'b>
-    //     = Point<T>
-    // where
-    //     Self: 'b;
-    // type LineStringTypeExt<'b>
-    //     = LineString<T>
-    // where
-    //     Self: 'b;
-    // type PolygonTypeExt<'b>
-    //     = Polygon<T>
-    // where
-    //     Self: 'b;
-    // type MultiPointTypeExt<'b>
-    //     = MultiPoint<T>
-    // where
-    //     Self: 'b;
-    // type MultiLineStringTypeExt<'b>
-    //     = MultiLineString<T>
-    // where
-    //     Self: 'b;
-    // type MultiPolygonTypeExt<'b>
-    //     = MultiPolygon<T>
-    // where
-    //     Self: 'b;
-    // type GeometryCollectionTypeExt<'b>
-    //     = GeometryCollection<T>
-    // where
-    //     Self: 'b;
-    // type TriangleTypeExt<'b>
-    //     = Triangle<T>
-    // where
-    //     Self: 'b;
-    // type RectTypeExt<'b>
-    //     = Rect<T>
-    // where
-    //     Self: 'b;
-    // type LineTypeExt<'b>
-    //     = Line<T>
-    // where
-    //     Self: 'b;
-
     forward_geometry_trait_ext_funcs!(T);
 }
 
@@ -231,55 +190,15 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for Geometry<T> {
     type Tag = GeometryTag;
 }
 
-impl<'a, T> GeometryTraitExt<T> for &'a Geometry<T>
+impl<T> GeometryTraitExt<T> for &Geometry<T>
 where
     T: CoordNum,
 {
-    // type PointTypeExt<'b>
-    //     = Point<T>
-    // where
-    //     Self: 'b;
-    // type LineStringTypeExt<'b>
-    //     = LineString<T>
-    // where
-    //     Self: 'b;
-    // type PolygonTypeExt<'b>
-    //     = Polygon<T>
-    // where
-    //     Self: 'b;
-    // type MultiPointTypeExt<'b>
-    //     = MultiPoint<T>
-    // where
-    //     Self: 'b;
-    // type MultiLineStringTypeExt<'b>
-    //     = MultiLineString<T>
-    // where
-    //     Self: 'b;
-    // type MultiPolygonTypeExt<'b>
-    //     = MultiPolygon<T>
-    // where
-    //     Self: 'b;
-    // type GeometryCollectionTypeExt<'b>
-    //     = GeometryCollection<T>
-    // where
-    //     Self: 'b;
-    // type TriangleTypeExt<'b>
-    //     = Triangle<T>
-    // where
-    //     Self: 'b;
-    // type RectTypeExt<'b>
-    //     = Rect<T>
-    // where
-    //     Self: 'b;
-    // type LineTypeExt<'b>
-    //     = Line<T>
-    // where
-    //     Self: 'b;
 
     forward_geometry_trait_ext_funcs!(T);
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Geometry<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &Geometry<T> {
     type Tag = GeometryTag;
 }
 
@@ -287,47 +206,6 @@ impl<T> GeometryTraitExt<T> for UnimplementedGeometry<T>
 where
     T: CoordNum,
 {
-    // type PointTypeExt<'a>
-    //     = UnimplementedPoint<T>
-    // where
-    //     Self: 'a;
-    // type LineStringTypeExt<'a>
-    //     = UnimplementedLineString<T>
-    // where
-    //     Self: 'a;
-    // type PolygonTypeExt<'a>
-    //     = UnimplementedPolygon<T>
-    // where
-    //     Self: 'a;
-    // type MultiPointTypeExt<'a>
-    //     = UnimplementedMultiPoint<T>
-    // where
-    //     Self: 'a;
-    // type MultiLineStringTypeExt<'a>
-    //     = UnimplementedMultiLineString<T>
-    // where
-    //     Self: 'a;
-    // type MultiPolygonTypeExt<'a>
-    //     = UnimplementedMultiPolygon<T>
-    // where
-    //     Self: 'a;
-    // type GeometryCollectionTypeExt<'a>
-    //     = UnimplementedGeometryCollection<T>
-    // where
-    //     Self: 'a;
-    // type TriangleTypeExt<'a>
-    //     = UnimplementedTriangle<T>
-    // where
-    //     Self: 'a;
-    // type RectTypeExt<'a>
-    //     = UnimplementedRect<T>
-    // where
-    //     Self: 'a;
-    // type LineTypeExt<'a>
-    //     = UnimplementedLine<T>
-    // where
-    //     Self: 'a;
-
     forward_geometry_trait_ext_funcs!(T);
 }
 

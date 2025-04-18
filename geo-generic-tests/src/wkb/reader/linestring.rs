@@ -129,11 +129,11 @@ where
     }
 }
 
-impl<'a> LineStringTraitExt<f64> for LineString<'a> {
+impl LineStringTraitExt<f64> for LineString<'_> {
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeTag for LineString<'a> {
+impl GeoTraitExtWithTypeTag for LineString<'_> {
     type Tag = LineStringTag;
 }
 

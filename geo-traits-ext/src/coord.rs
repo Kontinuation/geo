@@ -16,9 +16,9 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for Coord<T> {
     type Tag = CoordTag;
 }
 
-impl<'a, T> CoordTraitExt<T> for &'a Coord<T> where T: CoordNum {}
+impl<T> CoordTraitExt<T> for &Coord<T> where T: CoordNum {}
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Coord<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &Coord<T> {
     type Tag = CoordTag;
 }
 

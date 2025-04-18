@@ -123,11 +123,11 @@ where
     }
 }
 
-impl<'a> MultiLineStringTraitExt<f64> for MultiLineString<'a> {
+impl MultiLineStringTraitExt<f64> for MultiLineString<'_> {
     forward_multi_line_string_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeTag for MultiLineString<'a> {
+impl GeoTraitExtWithTypeTag for MultiLineString<'_> {
     type Tag = MultiLineStringTag;
 }
 

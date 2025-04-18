@@ -63,13 +63,11 @@ impl<'a, T: CoordNum, MLS: MultiLineStringTrait<T = T>> CoordIter<'a, T, MLS> {
     }
 }
 
-impl<'a, T: CoordNum, MLS: MultiLineStringTrait<T = T>> Iterator for CoordIter<'a, T, MLS> {
+impl<T: CoordNum, MLS: MultiLineStringTrait<T = T>> Iterator for CoordIter<'_, T, MLS> {
     type Item = Coord<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.current_line_string.is_none() {
-            return None;
-        }
+        self.current_line_string.as_ref()?;
 
         let ls = self.current_line_string.as_ref().unwrap();
         if self.idx_coord >= ls.num_coords() {
@@ -106,14 +104,14 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiLineString<T> {
     type Tag = MultiLineStringTag;
 }
 
-impl<'a, T> MultiLineStringTraitExt<T> for &'a MultiLineString<T>
+impl<T> MultiLineStringTraitExt<T> for &MultiLineString<T>
 where
     T: CoordNum,
 {
     forward_multi_line_string_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a MultiLineString<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &MultiLineString<T> {
     type Tag = MultiLineStringTag;
 }
 

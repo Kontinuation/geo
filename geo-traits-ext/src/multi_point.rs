@@ -52,14 +52,14 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiPoint<T> {
     type Tag = MultiPointTag;
 }
 
-impl<'a, T> MultiPointTraitExt<T> for &'a MultiPoint<T>
+impl<T> MultiPointTraitExt<T> for &MultiPoint<T>
 where
     T: CoordNum,
 {
     forward_multi_point_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a MultiPoint<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &MultiPoint<T> {
     type Tag = MultiPointTag;
 }
 

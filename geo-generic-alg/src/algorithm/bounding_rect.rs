@@ -149,7 +149,7 @@ where
         // let coords = line.coords_iter().map(|c| c.to_coord());
         // get_bounding_rect(coords)
         let exterior = self.exterior_ext();
-        exterior.map_or(None, |e| get_bounding_rect(e.coord_iter()))
+        exterior.and_then(|e| get_bounding_rect(e.coord_iter()))
     }
 }
 
@@ -164,8 +164,7 @@ where
     fn bounding_rect_trait(&self) -> Self::Output {
         self.polygons_ext().fold(None, |acc, p| {
             let rect = p
-                .exterior_ext()
-                .map_or(None, |e| get_bounding_rect(e.coord_iter()));
+                .exterior_ext().and_then(|e| get_bounding_rect(e.coord_iter()));
             match (acc, rect) {
                 (None, None) => None,
                 (Some(r), None) | (None, Some(r)) => Some(r),
@@ -215,7 +214,7 @@ where
     type Output = Option<Rect<T>>;
 
     fn bounding_rect_trait(&self) -> Self::Output {
-        self.geometries_ext().into_iter().fold(None, |acc, next| {
+        self.geometries_ext().fold(None, |acc, next| {
             let next_bounding_rect = next.bounding_rect_trait();
 
             match (acc, next_bounding_rect) {

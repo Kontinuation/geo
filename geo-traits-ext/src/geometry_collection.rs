@@ -50,14 +50,14 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for GeometryCollection<T> {
     type Tag = GeometryCollectionTag;
 }
 
-impl<'a, T> GeometryCollectionTraitExt<T> for &'a GeometryCollection<T>
+impl<T> GeometryCollectionTraitExt<T> for &GeometryCollection<T>
 where
     T: CoordNum,
 {
     forward_geometry_collection_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a GeometryCollection<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &GeometryCollection<T> {
     type Tag = GeometryCollectionTag;
 }
 

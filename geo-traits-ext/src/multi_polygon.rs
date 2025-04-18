@@ -50,14 +50,14 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiPolygon<T> {
     type Tag = MultiPolygonTag;
 }
 
-impl<'a, T> MultiPolygonTraitExt<T> for &'a MultiPolygon<T>
+impl<T> MultiPolygonTraitExt<T> for &MultiPolygon<T>
 where
     T: CoordNum,
 {
     forward_multi_polygon_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a MultiPolygon<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &MultiPolygon<T> {
     type Tag = MultiPolygonTag;
 }
 

@@ -63,11 +63,11 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for SimpleLineString<T> {
     type Tag = LineStringTag;
 }
 
-impl<'a, T: CoordNum> LineStringTraitExt<T> for &'a SimpleLineString<T> {
+impl<T: CoordNum> LineStringTraitExt<T> for &SimpleLineString<T> {
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a SimpleLineString<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &SimpleLineString<T> {
     type Tag = LineStringTag;
 }
 

@@ -192,14 +192,14 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for Rect<T> {
     type Tag = RectTag;
 }
 
-impl<'a, T> RectTraitExt<T> for &'a Rect<T>
+impl<T> RectTraitExt<T> for &Rect<T>
 where
     T: CoordNum,
 {
     forward_rect_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Rect<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &Rect<T> {
     type Tag = RectTag;
 }
 

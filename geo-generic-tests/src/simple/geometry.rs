@@ -13,7 +13,7 @@ pub enum SimpleGeometry<T: CoordNum> {
     Polygon(SimplePolygon<T>),
 }
 
-impl<'a, T: CoordNum> GeometryTrait for &'a SimpleGeometry<T> {
+impl<T: CoordNum> GeometryTrait for &SimpleGeometry<T> {
     type T = T;
 
     type PointType<'b>
@@ -173,11 +173,11 @@ impl<T: CoordNum> GeometryTrait for SimpleGeometry<T> {
     }
 }
 
-impl<'a, T: CoordNum> GeometryTraitExt<T> for &'a SimpleGeometry<T> {
+impl<T: CoordNum> GeometryTraitExt<T> for &SimpleGeometry<T> {
     forward_geometry_trait_ext_funcs!(T);
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a SimpleGeometry<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &SimpleGeometry<T> {
     type Tag = GeometryTag;
 }
 

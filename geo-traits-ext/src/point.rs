@@ -38,14 +38,14 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for Point<T> {
     type Tag = PointTag;
 }
 
-impl<'a, T> PointTraitExt<T> for &'a Point<T>
+impl<T> PointTraitExt<T> for &Point<T>
 where
     T: CoordNum,
 {
     forward_point_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Point<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &Point<T> {
     type Tag = PointTag;
 }
 

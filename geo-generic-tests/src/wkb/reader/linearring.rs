@@ -95,10 +95,10 @@ impl<'a> LineStringTrait for WKBLinearRing<'a> {
     }
 }
 
-impl<'a> LineStringTraitExt<f64> for WKBLinearRing<'a> {
+impl LineStringTraitExt<f64> for WKBLinearRing<'_> {
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeTag for WKBLinearRing<'a> {
+impl GeoTraitExtWithTypeTag for WKBLinearRing<'_> {
     type Tag = LineStringTag;
 }

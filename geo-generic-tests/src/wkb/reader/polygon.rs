@@ -146,11 +146,11 @@ where
     }
 }
 
-impl<'a> PolygonTraitExt<f64> for Polygon<'a> {
+impl PolygonTraitExt<f64> for Polygon<'_> {
     forward_polygon_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeTag for Polygon<'a> {
+impl GeoTraitExtWithTypeTag for Polygon<'_> {
     type Tag = PolygonTag;
 }
 

@@ -93,10 +93,10 @@ impl<'a> GeometryCollectionTrait for GeometryCollection<'a> {
     }
 }
 
-impl<'a> GeometryCollectionTraitExt<f64> for GeometryCollection<'a> {
+impl GeometryCollectionTraitExt<f64> for GeometryCollection<'_> {
     forward_geometry_collection_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeTag for GeometryCollection<'a> {
+impl GeoTraitExtWithTypeTag for GeometryCollection<'_> {
     type Tag = GeometryCollectionTag;
 }

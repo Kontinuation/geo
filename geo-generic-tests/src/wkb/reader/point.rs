@@ -118,15 +118,15 @@ where
     }
 }
 
-impl<'a> PointTraitExt<f64> for Point<'a> {
+impl PointTraitExt<f64> for Point<'_> {
     forward_point_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeTag for Point<'a> {
+impl GeoTraitExtWithTypeTag for Point<'_> {
     type Tag = PointTag;
 }
 
-impl<'a> PointTraitExt<f64> for &Point<'a> {
+impl PointTraitExt<f64> for &Point<'_> {
     forward_point_trait_ext_funcs!();
 }
 

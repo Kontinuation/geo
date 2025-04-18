@@ -30,7 +30,6 @@ use crate::wkb::error::WKBResult;
 ///
 /// This is an alias for [`Wkb::try_new`].
 #[allow(dead_code)]
-
 pub fn read_wkb(buf: &[u8]) -> WKBResult<Wkb> {
     Wkb::try_new(buf)
 }

@@ -166,7 +166,6 @@ where
 
                 let area = self
                     .interiors_ext()
-                    .into_iter()
                     .fold(area.abs(), |total, next| {
                         total - get_linestring_area(&next).abs()
                     });
@@ -224,13 +223,11 @@ where
 {
     fn signed_area_trait(&self) -> T {
         self.polygons_ext()
-            .into_iter()
             .fold(T::zero(), |total, next| total + next.signed_area_trait())
     }
 
     fn unsigned_area_trait(&self) -> T {
         self.polygons_ext()
-            .into_iter()
             .fold(T::zero(), |total, next| {
                 total + next.signed_area_trait().abs()
             })
@@ -283,14 +280,12 @@ where
 {
     fn signed_area_trait(&self) -> T {
         self.geometries_ext()
-            .into_iter()
             .map(|g| g.signed_area_trait())
             .fold(T::zero(), |acc, next| acc + next)
     }
 
     fn unsigned_area_trait(&self) -> T {
         self.geometries_ext()
-            .into_iter()
             .map(|g| g.unsigned_area_trait())
             .fold(T::zero(), |acc, next| acc + next)
     }

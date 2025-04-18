@@ -122,11 +122,11 @@ where
     }
 }
 
-impl<'a> MultiPolygonTraitExt<f64> for MultiPolygon<'a> {
+impl MultiPolygonTraitExt<f64> for MultiPolygon<'_> {
     forward_multi_polygon_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeTag for MultiPolygon<'a> {
+impl GeoTraitExtWithTypeTag for MultiPolygon<'_> {
     type Tag = MultiPolygonTag;
 }
 

@@ -15,7 +15,7 @@ impl<T: CoordNum> SimpleCoord<T> {
     }
 }
 
-impl<'a, T: CoordNum> CoordTrait for &'a SimpleCoord<T> {
+impl<T: CoordNum> CoordTrait for &SimpleCoord<T> {
     type T = T;
 
     fn dim(&self) -> geo_traits::Dimensions {

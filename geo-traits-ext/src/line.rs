@@ -48,14 +48,14 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for Line<T> {
     type Tag = LineTag;
 }
 
-impl<'a, T> LineTraitExt<T> for &'a Line<T>
+impl<T> LineTraitExt<T> for &Line<T>
 where
     T: CoordNum,
 {
     forward_line_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Line<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &Line<T> {
     type Tag = LineTag;
 }
 

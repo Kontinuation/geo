@@ -80,14 +80,14 @@ impl<T: CoordNum> GeoTraitExtWithTypeTag for Triangle<T> {
     type Tag = TriangleTag;
 }
 
-impl<'a, T> TriangleTraitExt<T> for &'a Triangle<T>
+impl<T> TriangleTraitExt<T> for &Triangle<T>
 where
     T: CoordNum,
 {
     forward_triangle_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Triangle<T> {
+impl<T: CoordNum> GeoTraitExtWithTypeTag for &Triangle<T> {
     type Tag = TriangleTag;
 }
 
