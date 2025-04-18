@@ -136,7 +136,7 @@ impl<'a> MultiPointTraitExt<f64> for MultiPoint<'a> {
 }
 
 impl<'a> GeoTraitExtWithTypeTag for MultiPoint<'a> {
-    type Marker = MultiPointTag;
+    type Tag = MultiPointTag;
 }
 
 impl<'a, 'b> MultiPointTraitExt<f64> for &'b MultiPoint<'a>
@@ -150,5 +150,5 @@ impl<'a, 'b> GeoTraitExtWithTypeTag for &'b MultiPoint<'a>
 where
     'a: 'b,
 {
-    type Marker = MultiPointTag;
+    type Tag = MultiPointTag;
 }

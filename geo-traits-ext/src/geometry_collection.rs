@@ -47,7 +47,7 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for GeometryCollection<T> {
-    type Marker = GeometryCollectionTag;
+    type Tag = GeometryCollectionTag;
 }
 
 impl<'a, T> GeometryCollectionTraitExt<T> for &'a GeometryCollection<T>
@@ -58,7 +58,7 @@ where
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a GeometryCollection<T> {
-    type Marker = GeometryCollectionTag;
+    type Tag = GeometryCollectionTag;
 }
 
 impl<T> GeometryCollectionTraitExt<T> for UnimplementedGeometryCollection<T>
@@ -69,5 +69,5 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedGeometryCollection<T> {
-    type Marker = GeometryCollectionTag;
+    type Tag = GeometryCollectionTag;
 }

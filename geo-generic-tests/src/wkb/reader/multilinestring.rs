@@ -128,7 +128,7 @@ impl<'a> MultiLineStringTraitExt<f64> for MultiLineString<'a> {
 }
 
 impl<'a> GeoTraitExtWithTypeTag for MultiLineString<'a> {
-    type Marker = MultiLineStringTag;
+    type Tag = MultiLineStringTag;
 }
 
 impl<'a, 'b> MultiLineStringTraitExt<f64> for &'b MultiLineString<'a>
@@ -142,5 +142,5 @@ impl<'a, 'b> GeoTraitExtWithTypeTag for &'b MultiLineString<'a>
 where
     'a: 'b,
 {
-    type Marker = MultiLineStringTag;
+    type Tag = MultiLineStringTag;
 }

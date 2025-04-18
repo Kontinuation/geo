@@ -100,5 +100,5 @@ impl<'a> LineStringTraitExt<f64> for WKBLinearRing<'a> {
 }
 
 impl<'a> GeoTraitExtWithTypeTag for WKBLinearRing<'a> {
-    type Marker = LineStringTag;
+    type Tag = LineStringTag;
 }

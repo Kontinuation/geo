@@ -276,12 +276,12 @@ where
 }
 
 impl<'a> GeoTraitExtWithTypeTag for Wkb<'a> {
-    type Marker = GeometryTag;
+    type Tag = GeometryTag;
 }
 
 impl<'a, 'b> GeoTraitExtWithTypeTag for &'b Wkb<'a>
 where
     'a: 'b,
 {
-    type Marker = GeometryTag;
+    type Tag = GeometryTag;
 }

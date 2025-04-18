@@ -77,7 +77,7 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Triangle<T> {
-    type Marker = TriangleTag;
+    type Tag = TriangleTag;
 }
 
 impl<'a, T> TriangleTraitExt<T> for &'a Triangle<T>
@@ -88,7 +88,7 @@ where
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Triangle<T> {
-    type Marker = TriangleTag;
+    type Tag = TriangleTag;
 }
 
 impl<T> TriangleTraitExt<T> for UnimplementedTriangle<T>
@@ -99,5 +99,5 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedTriangle<T> {
-    type Marker = TriangleTag;
+    type Tag = TriangleTag;
 }

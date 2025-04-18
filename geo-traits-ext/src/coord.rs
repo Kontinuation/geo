@@ -13,17 +13,17 @@ pub trait CoordTraitExt<T: CoordNum>: CoordTrait<T = T> + GeoTraitExtWithTypeTag
 impl<T> CoordTraitExt<T> for Coord<T> where T: CoordNum {}
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Coord<T> {
-    type Marker = CoordTag;
+    type Tag = CoordTag;
 }
 
 impl<'a, T> CoordTraitExt<T> for &'a Coord<T> where T: CoordNum {}
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Coord<T> {
-    type Marker = CoordTag;
+    type Tag = CoordTag;
 }
 
 impl<T> CoordTraitExt<T> for UnimplementedCoord<T> where T: CoordNum {}
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedCoord<T> {
-    type Marker = CoordTag;
+    type Tag = CoordTag;
 }

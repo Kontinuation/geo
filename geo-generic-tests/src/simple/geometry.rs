@@ -178,7 +178,7 @@ impl<'a, T: CoordNum> GeometryTraitExt<T> for &'a SimpleGeometry<T> {
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a SimpleGeometry<T> {
-    type Marker = GeometryTag;
+    type Tag = GeometryTag;
 }
 
 impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
@@ -186,7 +186,7 @@ impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for SimpleGeometry<T> {
-    type Marker = GeometryTag;
+    type Tag = GeometryTag;
 }
 
 #[cfg(test)]

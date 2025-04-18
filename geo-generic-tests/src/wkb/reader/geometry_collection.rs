@@ -98,5 +98,5 @@ impl<'a> GeometryCollectionTraitExt<f64> for GeometryCollection<'a> {
 }
 
 impl<'a> GeoTraitExtWithTypeTag for GeometryCollection<'a> {
-    type Marker = GeometryCollectionTag;
+    type Tag = GeometryCollectionTag;
 }

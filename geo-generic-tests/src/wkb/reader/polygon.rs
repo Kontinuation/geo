@@ -151,7 +151,7 @@ impl<'a> PolygonTraitExt<f64> for Polygon<'a> {
 }
 
 impl<'a> GeoTraitExtWithTypeTag for Polygon<'a> {
-    type Marker = PolygonTag;
+    type Tag = PolygonTag;
 }
 
 impl<'a, 'b> PolygonTraitExt<f64> for &'b Polygon<'a>
@@ -165,5 +165,5 @@ impl<'a, 'b> GeoTraitExtWithTypeTag for &'b Polygon<'a>
 where
     'a: 'b,
 {
-    type Marker = PolygonTag;
+    type Tag = PolygonTag;
 }

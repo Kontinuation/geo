@@ -60,7 +60,7 @@ impl<T: CoordNum> LineStringTraitExt<T> for SimpleLineString<T> {
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for SimpleLineString<T> {
-    type Marker = LineStringTag;
+    type Tag = LineStringTag;
 }
 
 impl<'a, T: CoordNum> LineStringTraitExt<T> for &'a SimpleLineString<T> {
@@ -68,7 +68,7 @@ impl<'a, T: CoordNum> LineStringTraitExt<T> for &'a SimpleLineString<T> {
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a SimpleLineString<T> {
-    type Marker = LineStringTag;
+    type Tag = LineStringTag;
 }
 
 #[cfg(test)]

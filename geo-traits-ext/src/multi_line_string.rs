@@ -103,7 +103,7 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiLineString<T> {
-    type Marker = MultiLineStringTag;
+    type Tag = MultiLineStringTag;
 }
 
 impl<'a, T> MultiLineStringTraitExt<T> for &'a MultiLineString<T>
@@ -114,7 +114,7 @@ where
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a MultiLineString<T> {
-    type Marker = MultiLineStringTag;
+    type Tag = MultiLineStringTag;
 }
 
 impl<T> MultiLineStringTraitExt<T> for UnimplementedMultiLineString<T>
@@ -125,5 +125,5 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiLineString<T> {
-    type Marker = MultiLineStringTag;
+    type Tag = MultiLineStringTag;
 }

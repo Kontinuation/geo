@@ -29,5 +29,5 @@ impl GeoTypeTag for RectTag {}
 impl GeoTypeTag for TriangleTag {}
 
 pub trait GeoTraitExtWithTypeTag {
-    type Marker: GeoTypeTag;
+    type Tag: GeoTypeTag;
 }

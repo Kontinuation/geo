@@ -127,7 +127,7 @@ impl<'a> MultiPolygonTraitExt<f64> for MultiPolygon<'a> {
 }
 
 impl<'a> GeoTraitExtWithTypeTag for MultiPolygon<'a> {
-    type Marker = MultiPolygonTag;
+    type Tag = MultiPolygonTag;
 }
 
 impl<'a, 'b> MultiPolygonTraitExt<f64> for &'b MultiPolygon<'a>
@@ -141,5 +141,5 @@ impl<'a, 'b> GeoTraitExtWithTypeTag for &'b MultiPolygon<'a>
 where
     'a: 'b,
 {
-    type Marker = MultiPolygonTag;
+    type Tag = MultiPolygonTag;
 }

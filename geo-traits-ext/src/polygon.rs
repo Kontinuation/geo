@@ -66,7 +66,7 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Polygon<T> {
-    type Marker = PolygonTag;
+    type Tag = PolygonTag;
 }
 
 impl<'a, T> PolygonTraitExt<T> for &'a Polygon<T>
@@ -77,7 +77,7 @@ where
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Polygon<T> {
-    type Marker = PolygonTag;
+    type Tag = PolygonTag;
 }
 
 impl<T> PolygonTraitExt<T> for UnimplementedPolygon<T>
@@ -88,5 +88,5 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedPolygon<T> {
-    type Marker = PolygonTag;
+    type Tag = PolygonTag;
 }

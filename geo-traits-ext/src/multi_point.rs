@@ -49,7 +49,7 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiPoint<T> {
-    type Marker = MultiPointTag;
+    type Tag = MultiPointTag;
 }
 
 impl<'a, T> MultiPointTraitExt<T> for &'a MultiPoint<T>
@@ -60,7 +60,7 @@ where
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a MultiPoint<T> {
-    type Marker = MultiPointTag;
+    type Tag = MultiPointTag;
 }
 
 impl<T> MultiPointTraitExt<T> for UnimplementedMultiPoint<T>
@@ -71,5 +71,5 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiPoint<T> {
-    type Marker = MultiPointTag;
+    type Tag = MultiPointTag;
 }

@@ -189,7 +189,7 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Rect<T> {
-    type Marker = RectTag;
+    type Tag = RectTag;
 }
 
 impl<'a, T> RectTraitExt<T> for &'a Rect<T>
@@ -200,7 +200,7 @@ where
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Rect<T> {
-    type Marker = RectTag;
+    type Tag = RectTag;
 }
 
 impl<T> RectTraitExt<T> for UnimplementedRect<T>
@@ -211,5 +211,5 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedRect<T> {
-    type Marker = RectTag;
+    type Tag = RectTag;
 }

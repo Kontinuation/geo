@@ -35,7 +35,7 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Point<T> {
-    type Marker = PointTag;
+    type Tag = PointTag;
 }
 
 impl<'a, T> PointTraitExt<T> for &'a Point<T>
@@ -46,7 +46,7 @@ where
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Point<T> {
-    type Marker = PointTag;
+    type Tag = PointTag;
 }
 
 impl<T> PointTraitExt<T> for UnimplementedPoint<T>
@@ -57,5 +57,5 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedPoint<T> {
-    type Marker = PointTag;
+    type Tag = PointTag;
 }

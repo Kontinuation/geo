@@ -47,7 +47,7 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiPolygon<T> {
-    type Marker = MultiPolygonTag;
+    type Tag = MultiPolygonTag;
 }
 
 impl<'a, T> MultiPolygonTraitExt<T> for &'a MultiPolygon<T>
@@ -58,7 +58,7 @@ where
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a MultiPolygon<T> {
-    type Marker = MultiPolygonTag;
+    type Tag = MultiPolygonTag;
 }
 
 impl<T> MultiPolygonTraitExt<T> for UnimplementedMultiPolygon<T>
@@ -69,5 +69,5 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiPolygon<T> {
-    type Marker = MultiPolygonTag;
+    type Tag = MultiPolygonTag;
 }

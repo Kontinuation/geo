@@ -134,7 +134,7 @@ impl<'a> LineStringTraitExt<f64> for LineString<'a> {
 }
 
 impl<'a> GeoTraitExtWithTypeTag for LineString<'a> {
-    type Marker = LineStringTag;
+    type Tag = LineStringTag;
 }
 
 impl<'a, 'b> LineStringTraitExt<f64> for &'b LineString<'a>
@@ -148,5 +148,5 @@ impl<'a, 'b> GeoTraitExtWithTypeTag for &'b LineString<'a>
 where
     'a: 'b,
 {
-    type Marker = LineStringTag;
+    type Tag = LineStringTag;
 }

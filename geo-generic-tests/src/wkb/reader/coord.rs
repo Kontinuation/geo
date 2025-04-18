@@ -111,5 +111,5 @@ impl CoordTrait for Coord<'_> {
 impl CoordTraitExt<f64> for Coord<'_> {}
 
 impl GeoTraitExtWithTypeTag for Coord<'_> {
-    type Marker = CoordTag;
+    type Tag = CoordTag;
 }

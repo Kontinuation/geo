@@ -45,7 +45,7 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Line<T> {
-    type Marker = LineTag;
+    type Tag = LineTag;
 }
 
 impl<'a, T> LineTraitExt<T> for &'a Line<T>
@@ -56,7 +56,7 @@ where
 }
 
 impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Line<T> {
-    type Marker = LineTag;
+    type Tag = LineTag;
 }
 
 impl<T> LineTraitExt<T> for UnimplementedLine<T>
@@ -67,5 +67,5 @@ where
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedLine<T> {
-    type Marker = LineTag;
+    type Tag = LineTag;
 }

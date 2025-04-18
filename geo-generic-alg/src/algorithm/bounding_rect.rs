@@ -1,4 +1,3 @@
-use crate::geo_trait_marker::*;
 use crate::utils::{partial_max, partial_min};
 use crate::{coord, geometry::*, CoordNum, GeometryCow};
 use geo_traits_ext::*;
@@ -33,16 +32,28 @@ pub trait BoundingRect<T: CoordNum> {
     fn bounding_rect(&self) -> Self::Output;
 }
 
-pub trait BoundingRectTrait<M: GeoTraitTypeMarker>
+impl<T, G> BoundingRect<T> for G
 where
-    M::T: CoordNum,
+    T: CoordNum,
+    G: GeoTraitExtWithTypeTag + BoundingRectTrait<T, G::Tag>,
 {
-    type Output: Into<Option<Rect<M::T>>>;
+    type Output = G::Output;
+
+    fn bounding_rect(&self) -> Self::Output {
+        self.bounding_rect_trait()
+    }
+}
+
+pub trait BoundingRectTrait<T, GT: GeoTypeTag>
+where
+    T: CoordNum,
+{
+    type Output: Into<Option<Rect<T>>>;
 
     fn bounding_rect_trait(&self) -> Self::Output;
 }
 
-impl<T, C: CoordTraitExt<T>> BoundingRectTrait<CoordTraitMarker<T>> for C
+impl<T, C: CoordTraitExt<T>> BoundingRectTrait<T, CoordTag> for C
 where
     T: CoordNum,
 {
@@ -55,7 +66,7 @@ where
     }
 }
 
-impl<T, P: PointTraitExt<T>> BoundingRectTrait<PointTraitMarker<T>> for P
+impl<T, P: PointTraitExt<T>> BoundingRectTrait<T, PointTag> for P
 where
     T: CoordNum,
 {
@@ -74,7 +85,7 @@ where
     }
 }
 
-impl<T, MP: MultiPointTraitExt<T>> BoundingRectTrait<MultiPointTraitMarker<T>> for MP
+impl<T, MP: MultiPointTraitExt<T>> BoundingRectTrait<T, MultiPointTag> for MP
 where
     T: CoordNum,
 {
@@ -87,7 +98,7 @@ where
     }
 }
 
-impl<T, L: LineTraitExt<T>> BoundingRectTrait<LineTraitMarker<T>> for L
+impl<T, L: LineTraitExt<T>> BoundingRectTrait<T, LineTag> for L
 where
     T: CoordNum,
 {
@@ -98,7 +109,7 @@ where
     }
 }
 
-impl<T, LS: LineStringTraitExt<T>> BoundingRectTrait<LineStringTraitMarker<T>> for LS
+impl<T, LS: LineStringTraitExt<T>> BoundingRectTrait<T, LineStringTag> for LS
 where
     T: CoordNum,
 {
@@ -111,7 +122,7 @@ where
     }
 }
 
-impl<T, MLS: MultiLineStringTraitExt<T>> BoundingRectTrait<MultiLineStringTraitMarker<T>> for MLS
+impl<T, MLS: MultiLineStringTraitExt<T>> BoundingRectTrait<T, MultiLineStringTag> for MLS
 where
     T: CoordNum,
 {
@@ -124,7 +135,7 @@ where
     }
 }
 
-impl<T, P: PolygonTraitExt<T>> BoundingRectTrait<PolygonTraitMarker<T>> for P
+impl<T, P: PolygonTraitExt<T>> BoundingRectTrait<T, PolygonTag> for P
 where
     T: CoordNum,
 {
@@ -141,7 +152,7 @@ where
     }
 }
 
-impl<T, MP: MultiPolygonTraitExt<T>> BoundingRectTrait<MultiPolygonTraitMarker<T>> for MP
+impl<T, MP: MultiPolygonTraitExt<T>> BoundingRectTrait<T, MultiPolygonTag> for MP
 where
     T: CoordNum,
 {
@@ -155,7 +166,7 @@ where
     }
 }
 
-impl<T: CoordNum, TT: TriangleTraitExt<T>> BoundingRectTrait<TriangleTraitMarker<T>> for TT
+impl<T: CoordNum, TT: TriangleTraitExt<T>> BoundingRectTrait<T, TriangleTag> for TT
 where
     T: CoordNum,
 {
@@ -166,7 +177,7 @@ where
     }
 }
 
-impl<T, R: RectTraitExt<T>> BoundingRectTrait<RectTraitMarker<T>> for R
+impl<T, R: RectTraitExt<T>> BoundingRectTrait<T, RectTag> for R
 where
     T: CoordNum,
 {
@@ -177,7 +188,7 @@ where
     }
 }
 
-impl<T, G: GeometryTraitExt<T>> BoundingRectTrait<GeometryTraitMarker<T>> for G
+impl<T, G: GeometryTraitExt<T>> BoundingRectTrait<T, GeometryTag> for G
 where
     T: CoordNum,
 {
@@ -188,8 +199,7 @@ where
     }
 }
 
-impl<T, GC: GeometryCollectionTraitExt<T>> BoundingRectTrait<GeometryCollectionTraitMarker<T>>
-    for GC
+impl<T, GC: GeometryCollectionTraitExt<T>> BoundingRectTrait<T, GeometryCollectionTag> for GC
 where
     T: CoordNum,
 {
@@ -218,47 +228,6 @@ where
        fn bounding_rect(&self) -> Self::Output;
     }
 }
-
-#[macro_export]
-macro_rules! impl_bounding_rect {
-    // For generic types - (<T>, LineString<T>, LineStringTraitMarker)
-    (<$t:ident>, $geo_type:ty, $marker:ident) => {
-        impl<$t> BoundingRect<$t> for $geo_type
-        where
-            $t: CoordNum,
-        {
-            type Output = <Self as BoundingRectTrait<$marker<$t>>>::Output;
-
-            fn bounding_rect(&self) -> Self::Output {
-                self.bounding_rect_trait()
-            }
-        }
-    };
-
-    // For concrete types - (f64, LineStringF64, LineStringTraitMarker)
-    ($t:ty, $geo_type:ty, $marker:ident) => {
-        impl BoundingRect<$t> for $geo_type {
-            type Output = <Self as BoundingRectTrait<$marker<$t>>>::Output;
-
-            fn bounding_rect(&self) -> Self::Output {
-                self.bounding_rect_trait()
-            }
-        }
-    };
-}
-
-impl_bounding_rect!(<T>, Coord<T>, CoordTraitMarker);
-impl_bounding_rect!(<T>, Point<T>, PointTraitMarker);
-impl_bounding_rect!(<T>, Line<T>, LineTraitMarker);
-impl_bounding_rect!(<T>, LineString<T>, LineStringTraitMarker);
-impl_bounding_rect!(<T>, MultiLineString<T>, MultiLineStringTraitMarker);
-impl_bounding_rect!(<T>, MultiPoint<T>, MultiPointTraitMarker);
-impl_bounding_rect!(<T>, Polygon<T>, PolygonTraitMarker);
-impl_bounding_rect!(<T>, MultiPolygon<T>, MultiPolygonTraitMarker);
-impl_bounding_rect!(<T>, Triangle<T>, TriangleTraitMarker);
-impl_bounding_rect!(<T>, Rect<T>, RectTraitMarker);
-impl_bounding_rect!(<T>, GeometryCollection<T>, GeometryCollectionTraitMarker);
-impl_bounding_rect!(<T>, Geometry<T>, GeometryTraitMarker);
 
 // Return a new rectangle that encompasses the provided rectangles
 fn bounding_rect_merge<T: CoordNum>(a: Rect<T>, b: Rect<T>) -> Rect<T> {

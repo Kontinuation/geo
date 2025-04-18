@@ -1,8 +1,6 @@
 use geo_traits_ext::*;
 use geo_types::to_geo::ToGeoCoord;
-use geo_types::*;
 
-use crate::geo_trait_marker::*;
 use crate::{CoordFloat, CoordNum};
 
 pub(crate) fn twice_signed_ring_area<T: CoordNum, LS: LineStringTraitExt<T>>(linestring: &LS) -> T {
@@ -80,13 +78,27 @@ where
     fn unsigned_area(&self) -> T;
 }
 
-pub trait AreaTrait<M: GeoTraitTypeMarker>
+impl<T, G> Area<T> for G
 where
-    M::T: CoordNum,
+    T: CoordNum,
+    G: GeoTraitExtWithTypeTag + AreaTrait<T, G::Tag>,
 {
-    fn signed_area_trait(&self) -> M::T;
+    fn signed_area(&self) -> T {
+        self.signed_area_trait()
+    }
 
-    fn unsigned_area_trait(&self) -> M::T;
+    fn unsigned_area(&self) -> T {
+        self.unsigned_area_trait()
+    }
+}
+
+pub trait AreaTrait<T, GT: GeoTypeTag>
+where
+    T: CoordNum,
+{
+    fn signed_area_trait(&self) -> T;
+
+    fn unsigned_area_trait(&self) -> T;
 }
 
 // Calculation of simple (no interior holes) Polygon area
@@ -97,7 +109,7 @@ where
     twice_signed_ring_area(linestring) / (T::one() + T::one())
 }
 
-impl<T, P: PointTraitExt<T>> AreaTrait<PointTraitMarker<T>> for P
+impl<T, P: PointTraitExt<T>> AreaTrait<T, PointTag> for P
 where
     T: CoordNum,
 {
@@ -110,7 +122,7 @@ where
     }
 }
 
-impl<T, LS: LineStringTraitExt<T>> AreaTrait<LineStringTraitMarker<T>> for LS
+impl<T, LS: LineStringTraitExt<T>> AreaTrait<T, LineStringTag> for LS
 where
     T: CoordNum,
 {
@@ -123,7 +135,7 @@ where
     }
 }
 
-impl<T, L: LineTraitExt<T>> AreaTrait<LineTraitMarker<T>> for L
+impl<T, L: LineTraitExt<T>> AreaTrait<T, LineTag> for L
 where
     T: CoordNum,
 {
@@ -139,7 +151,7 @@ where
 /// **Note.** The implementation handles polygons whose
 /// holes do not all have the same orientation. The sign of
 /// the output is the same as that of the exterior shell.
-impl<T, P: PolygonTraitExt<T>> AreaTrait<PolygonTraitMarker<T>> for P
+impl<T, P: PolygonTraitExt<T>> AreaTrait<T, PolygonTag> for P
 where
     T: CoordFloat,
 {
@@ -174,7 +186,7 @@ where
     }
 }
 
-impl<T, MP: MultiPointTraitExt<T>> AreaTrait<MultiPointTraitMarker<T>> for MP
+impl<T, MP: MultiPointTraitExt<T>> AreaTrait<T, MultiPointTag> for MP
 where
     T: CoordNum,
 {
@@ -187,7 +199,7 @@ where
     }
 }
 
-impl<T, MLS: MultiLineStringTraitExt<T>> AreaTrait<MultiLineStringTraitMarker<T>> for MLS
+impl<T, MLS: MultiLineStringTraitExt<T>> AreaTrait<T, MultiLineStringTag> for MLS
 where
     T: CoordNum,
 {
@@ -206,7 +218,7 @@ where
 /// necessarily the sum of the `unsigned_area` of the
 /// constituent polygons unless they are all oriented the
 /// same.
-impl<T, MP: MultiPolygonTraitExt<T>> AreaTrait<MultiPolygonTraitMarker<T>> for MP
+impl<T, MP: MultiPolygonTraitExt<T>> AreaTrait<T, MultiPolygonTag> for MP
 where
     T: CoordFloat,
 {
@@ -226,7 +238,7 @@ where
 }
 
 /// Because a `Rect` has no winding order, the area will always be positive.
-impl<T, R: RectTraitExt<T>> AreaTrait<RectTraitMarker<T>> for R
+impl<T, R: RectTraitExt<T>> AreaTrait<T, RectTag> for R
 where
     T: CoordNum,
 {
@@ -239,7 +251,7 @@ where
     }
 }
 
-impl<T: CoordFloat, TT: TriangleTraitExt<T>> AreaTrait<TriangleTraitMarker<T>> for TT
+impl<T: CoordFloat, TT: TriangleTraitExt<T>> AreaTrait<T, TriangleTag> for TT
 where
     T: CoordFloat,
 {
@@ -255,7 +267,7 @@ where
     }
 }
 
-impl<T, G: GeometryTraitExt<T>> AreaTrait<GeometryTraitMarker<T>> for G
+impl<T, G: GeometryTraitExt<T>> AreaTrait<T, GeometryTag> for G
 where
     T: CoordFloat,
 {
@@ -265,7 +277,7 @@ where
     }
 }
 
-impl<T, GC: GeometryCollectionTraitExt<T>> AreaTrait<GeometryCollectionTraitMarker<T>> for GC
+impl<T, GC: GeometryCollectionTraitExt<T>> AreaTrait<T, GeometryCollectionTag> for GC
 where
     T: CoordFloat,
 {
@@ -283,75 +295,6 @@ where
             .fold(T::zero(), |acc, next| acc + next)
     }
 }
-
-#[macro_export]
-macro_rules! impl_area {
-    (<$t:ident>, $geo_type:ty, $marker:ident) => {
-        impl<T> Area<$t> for $geo_type
-        where
-            T: CoordNum,
-        {
-            fn signed_area(&self) -> T {
-                self.signed_area_trait()
-            }
-
-            fn unsigned_area(&self) -> T {
-                self.unsigned_area_trait()
-            }
-        }
-    };
-    ($t:ty, $geo_type:ty, $marker:ident) => {
-        impl Area<$t> for $geo_type {
-            fn signed_area(&self) -> T {
-                self.signed_area_trait()
-            }
-
-            fn unsigned_area(&self) -> T {
-                self.unsigned_area_trait()
-            }
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! impl_area_float {
-    (<$t:ident>, $geo_type:ty, $marker:ident) => {
-        impl<T> Area<$t> for $geo_type
-        where
-            T: CoordFloat,
-        {
-            fn signed_area(&self) -> T {
-                self.signed_area_trait()
-            }
-
-            fn unsigned_area(&self) -> T {
-                self.unsigned_area_trait()
-            }
-        }
-    };
-    ($t:ty, $geo_type:ty, $marker:ident) => {
-        impl Area<$t> for $geo_type {
-            fn signed_area(&self) -> T {
-                self.signed_area_trait()
-            }
-
-            fn unsigned_area(&self) -> T {
-                self.unsigned_area_trait()
-            }
-        }
-    };
-}
-
-impl_area!(<T>, Point<T>, PointTraitMarker);
-impl_area!(<T>, LineString<T>, LineStringTraitMarker);
-impl_area!(<T>, Line<T>, LineTraitMarker);
-impl_area!(<T>, MultiPoint<T>, MultiPointTraitMarker);
-impl_area!(<T>, MultiLineString<T>, MultiLineStringTraitMarker);
-impl_area_float!(<T>, Polygon<T>, PolygonTraitMarker);
-impl_area_float!(<T>, MultiPolygon<T>, MultiPolygonTraitMarker);
-impl_area!(<T>, Rect<T>, RectTraitMarker);
-impl_area_float!(<T>, Triangle<T>, TriangleTraitMarker);
-impl_area_float!(<T>, GeometryCollection<T>, GeometryCollectionTraitMarker);
 
 #[cfg(test)]
 mod test {

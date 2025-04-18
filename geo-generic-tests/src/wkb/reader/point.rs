@@ -123,7 +123,7 @@ impl<'a> PointTraitExt<f64> for Point<'a> {
 }
 
 impl<'a> GeoTraitExtWithTypeTag for Point<'a> {
-    type Marker = PointTag;
+    type Tag = PointTag;
 }
 
 impl<'a> PointTraitExt<f64> for &Point<'a> {
@@ -134,5 +134,5 @@ impl<'a, 'b> GeoTraitExtWithTypeTag for &'b Point<'a>
 where
     'a: 'b,
 {
-    type Marker = PointTag;
+    type Tag = PointTag;
 }
