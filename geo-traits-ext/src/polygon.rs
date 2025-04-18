@@ -16,18 +16,6 @@ pub trait PolygonTraitExt<T: CoordNum>: PolygonTrait<T = T> + GeoTraitExtWithTyp
     ) -> impl DoubleEndedIterator + ExactSizeIterator<Item = Self::RingTypeExt<'_>>;
     fn interior_ext(&self, i: usize) -> Option<Self::RingTypeExt<'_>>;
     unsafe fn interior_unchecked_ext(&self, i: usize) -> Self::RingTypeExt<'_>;
-
-    // fn exterior_coord_iter(&'_ self) -> impl Iterator<Item = Coord<T>> + '_ {
-    //     // match self.exterior() {
-    //     //     None => todo!(),
-    //     //     Some(exterior) => {
-    //     //         exterior.coord_iter()
-    //     //     }
-    //     // }
-    //     // let exterior = self.exterior().unwrap();
-    //     // exterior.coord_iter()
-    //     self.exterior().unwrap().coord_iter()
-    // }
 }
 
 #[macro_export]

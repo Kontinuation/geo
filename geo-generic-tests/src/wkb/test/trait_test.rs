@@ -161,13 +161,13 @@ mod tests {
         assert_eq!(wkb.dim(), geo_traits::Dimensions::Xy);
 
         let area = wkb.signed_area_trait();
-        println!("area: {}", area);
+        assert_eq!(area, 0.0);
 
         match wkb.as_type() {
             geo_traits::GeometryType::LineString(ls) => {
                 assert_eq!(ls.num_coords(), orig.0.len());
                 let area = ls.signed_area_trait();
-                println!("area: {}", area);
+                assert_eq!(area, 0.0);
             }
             _ => panic!("Expected a LineString"),
         }
@@ -181,13 +181,13 @@ mod tests {
         assert_eq!(wkb.dim(), geo_traits::Dimensions::Xy);
 
         let area = wkb.signed_area_trait();
-        println!("area: {}", area);
+        assert_eq!(area, 28.0);
 
         match wkb.as_type() {
             geo_traits::GeometryType::Polygon(p) => {
                 assert_eq!(p.exterior().unwrap().num_coords(), orig.exterior().0.len());
                 let area = p.signed_area_trait();
-                println!("area: {}", area);
+                assert_eq!(area, 28.0);
             }
             _ => panic!("Expected a Polygon"),
         }

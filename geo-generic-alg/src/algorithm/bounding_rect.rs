@@ -148,7 +148,8 @@ where
         // // get_bounding_rect(&line.0)
         // let coords = line.coords_iter().map(|c| c.to_coord());
         // get_bounding_rect(coords)
-        todo!()
+        let exterior = self.exterior_ext();
+        exterior.map_or(None, |e| get_bounding_rect(e.coord_iter()))
     }
 }
 
@@ -161,8 +162,16 @@ where
     ///
     /// Return the BoundingRect for a MultiPolygon
     fn bounding_rect_trait(&self) -> Self::Output {
-        // get_bounding_rect(self.iter().flat_map(|poly| &poly.exterior().0))
-        todo!()
+        self.polygons_ext().fold(None, |acc, p| {
+            let rect = p
+                .exterior_ext()
+                .map_or(None, |e| get_bounding_rect(e.coord_iter()));
+            match (acc, rect) {
+                (None, None) => None,
+                (Some(r), None) | (None, Some(r)) => Some(r),
+                (Some(r1), Some(r2)) => Some(bounding_rect_merge(r1, r2)),
+            }
+        })
     }
 }
 
