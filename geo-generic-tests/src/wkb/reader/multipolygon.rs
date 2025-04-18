@@ -6,7 +6,10 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::MultiPolygonTrait;
-use geo_traits_ext::{forward_multi_polygon_trait_ext_funcs, MultiPolygonTraitExt};
+use geo_traits_ext::{
+    forward_multi_polygon_trait_ext_funcs, GeoTraitExtWithTypeMarker, MultiPolygonTraitExt,
+    MultiPolygonTraitExtMarker,
+};
 
 /// skip endianness and wkb type
 const HEADER_BYTES: u64 = 5;
@@ -128,6 +131,10 @@ impl<'a> MultiPolygonTraitExt<f64> for MultiPolygon<'a> {
     forward_multi_polygon_trait_ext_funcs!();
 }
 
+impl<'a> GeoTraitExtWithTypeMarker for MultiPolygon<'a> {
+    type Marker = MultiPolygonTraitExtMarker;
+}
+
 impl<'a, 'b> MultiPolygonTraitExt<f64> for &'b MultiPolygon<'a>
 where
     'a: 'b,
@@ -138,4 +145,11 @@ where
         Self: 'c;
 
     forward_multi_polygon_trait_ext_funcs!();
+}
+
+impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b MultiPolygon<'a>
+where
+    'a: 'b,
+{
+    type Marker = MultiPolygonTraitExtMarker;
 }

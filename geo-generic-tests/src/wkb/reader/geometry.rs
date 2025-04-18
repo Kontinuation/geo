@@ -1,7 +1,10 @@
 use std::io::Cursor;
 
 use byteorder::ReadBytesExt;
-use geo_traits_ext::{forward_geometry_trait_ext_funcs, GeometryTraitExt, GeometryTypeExt};
+use geo_traits_ext::{
+    forward_geometry_trait_ext_funcs, GeoTraitExtWithTypeMarker, GeometryTraitExt,
+    GeometryTraitExtMarker, GeometryTypeExt,
+};
 
 use crate::wkb::common::{WKBDimension, WKBType};
 use crate::wkb::error::WKBResult;
@@ -354,4 +357,15 @@ where
         Self: 'c;
 
     forward_geometry_trait_ext_funcs!(f64);
+}
+
+impl<'a> GeoTraitExtWithTypeMarker for Wkb<'a> {
+    type Marker = GeometryTraitExtMarker;
+}
+
+impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b Wkb<'a>
+where
+    'a: 'b,
+{
+    type Marker = GeometryTraitExtMarker;
 }

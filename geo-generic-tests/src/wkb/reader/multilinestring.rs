@@ -6,7 +6,10 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::MultiLineStringTrait;
-use geo_traits_ext::{forward_multi_line_string_trait_ext_funcs, MultiLineStringTraitExt};
+use geo_traits_ext::{
+    forward_multi_line_string_trait_ext_funcs, GeoTraitExtWithTypeMarker, MultiLineStringTraitExt,
+    MultiLineStringTraitExtMarker,
+};
 
 const HEADER_BYTES: u64 = 5;
 
@@ -129,6 +132,10 @@ impl<'a> MultiLineStringTraitExt<f64> for MultiLineString<'a> {
     forward_multi_line_string_trait_ext_funcs!();
 }
 
+impl<'a> GeoTraitExtWithTypeMarker for MultiLineString<'a> {
+    type Marker = MultiLineStringTraitExtMarker;
+}
+
 impl<'a, 'b> MultiLineStringTraitExt<f64> for &'b MultiLineString<'a>
 where
     'a: 'b,
@@ -139,4 +146,11 @@ where
         Self: 'c;
 
     forward_multi_line_string_trait_ext_funcs!();
+}
+
+impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b MultiLineString<'a>
+where
+    'a: 'b,
+{
+    type Marker = MultiLineStringTraitExtMarker;
 }

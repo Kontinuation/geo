@@ -6,7 +6,10 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::reader::Wkb;
 use crate::wkb::Endianness;
 use geo_traits::{Dimensions, GeometryCollectionTrait};
-use geo_traits_ext::{forward_geometry_collection_trait_ext_funcs, GeometryCollectionTraitExt};
+use geo_traits_ext::{
+    forward_geometry_collection_trait_ext_funcs, GeoTraitExtWithTypeMarker,
+    GeometryCollectionTraitExt, GeometryCollectionTraitExtMarker,
+};
 
 /// skip endianness and wkb type
 const HEADER_BYTES: u64 = 5;
@@ -97,4 +100,8 @@ impl<'a> GeometryCollectionTraitExt<f64> for GeometryCollection<'a> {
         Self: 'b;
 
     forward_geometry_collection_trait_ext_funcs!();
+}
+
+impl<'a> GeoTraitExtWithTypeMarker for GeometryCollection<'a> {
+    type Marker = GeometryCollectionTraitExtMarker;
 }

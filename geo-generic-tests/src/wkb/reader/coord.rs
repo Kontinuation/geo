@@ -4,7 +4,7 @@ use crate::wkb::common::WKBDimension;
 use crate::wkb::reader::util::ReadBytesExt;
 use crate::wkb::Endianness;
 use geo_traits::{CoordTrait, Dimensions};
-use geo_traits_ext::CoordTraitExt;
+use geo_traits_ext::{CoordTraitExt, CoordTraitExtMarker, GeoTraitExtWithTypeMarker};
 
 const F64_WIDTH: u64 = 8;
 
@@ -109,3 +109,7 @@ impl CoordTrait for Coord<'_> {
 }
 
 impl CoordTraitExt<f64> for Coord<'_> {}
+
+impl GeoTraitExtWithTypeMarker for Coord<'_> {
+    type Marker = CoordTraitExtMarker;
+}

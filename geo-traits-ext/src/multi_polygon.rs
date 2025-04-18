@@ -3,9 +3,11 @@
 use geo_traits::{MultiPolygonTrait, UnimplementedMultiPolygon, UnimplementedPolygon};
 use geo_types::{CoordNum, MultiPolygon, Polygon};
 
-use crate::PolygonTraitExt;
+use crate::{GeoTraitExtWithTypeMarker, MultiPolygonTraitExtMarker, PolygonTraitExt};
 
-pub trait MultiPolygonTraitExt<T: CoordNum>: MultiPolygonTrait<T = T> {
+pub trait MultiPolygonTraitExt<T: CoordNum>:
+    MultiPolygonTrait<T = T> + GeoTraitExtWithTypeMarker
+{
     type PolygonTypeExt<'a>: 'a + PolygonTraitExt<T>
     where
         Self: 'a;
@@ -44,6 +46,10 @@ where
     forward_multi_polygon_trait_ext_funcs!();
 }
 
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for MultiPolygon<T> {
+    type Marker = MultiPolygonTraitExtMarker;
+}
+
 impl<'a, T> MultiPolygonTraitExt<T> for &'a MultiPolygon<T>
 where
     T: CoordNum,
@@ -56,6 +62,10 @@ where
     forward_multi_polygon_trait_ext_funcs!();
 }
 
+impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a MultiPolygon<T> {
+    type Marker = MultiPolygonTraitExtMarker;
+}
+
 impl<T> MultiPolygonTraitExt<T> for UnimplementedMultiPolygon<T>
 where
     T: CoordNum,
@@ -66,4 +76,8 @@ where
         Self: 'a;
 
     forward_multi_polygon_trait_ext_funcs!();
+}
+
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedMultiPolygon<T> {
+    type Marker = MultiPolygonTraitExtMarker;
 }

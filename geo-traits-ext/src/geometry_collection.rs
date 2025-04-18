@@ -3,9 +3,11 @@
 use geo_traits::{GeometryCollectionTrait, UnimplementedGeometry, UnimplementedGeometryCollection};
 use geo_types::{CoordNum, Geometry, GeometryCollection};
 
-use crate::GeometryTraitExt;
+use crate::{GeoTraitExtWithTypeMarker, GeometryCollectionTraitExtMarker, GeometryTraitExt};
 
-pub trait GeometryCollectionTraitExt<T: CoordNum>: GeometryCollectionTrait<T = T> {
+pub trait GeometryCollectionTraitExt<T: CoordNum>:
+    GeometryCollectionTrait<T = T> + GeoTraitExtWithTypeMarker
+{
     type GeometryTypeExt<'a>: 'a + GeometryTraitExt<T>
     where
         Self: 'a;
@@ -44,6 +46,10 @@ where
     forward_geometry_collection_trait_ext_funcs!();
 }
 
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for GeometryCollection<T> {
+    type Marker = GeometryCollectionTraitExtMarker;
+}
+
 impl<'a, T> GeometryCollectionTraitExt<T> for &'a GeometryCollection<T>
 where
     T: CoordNum,
@@ -56,6 +62,10 @@ where
     forward_geometry_collection_trait_ext_funcs!();
 }
 
+impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a GeometryCollection<T> {
+    type Marker = GeometryCollectionTraitExtMarker;
+}
+
 impl<T> GeometryCollectionTraitExt<T> for UnimplementedGeometryCollection<T>
 where
     T: CoordNum,
@@ -66,4 +76,8 @@ where
         Self: 'a;
 
     forward_geometry_collection_trait_ext_funcs!();
+}
+
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedGeometryCollection<T> {
+    type Marker = GeometryCollectionTraitExtMarker;
 }

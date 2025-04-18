@@ -6,6 +6,146 @@ use crate::wkb::reader::read_wkb;
 
 use super::data::*;
 
+trait IntersectsGeo<Rhs = Self> {
+    fn intersects_geo(&self, rhs: &Rhs) -> bool;
+}
+
+trait IntersectsTrait<LM, RM, Rhs = Self> {
+    fn intersects_trait(&self, rhs: &Rhs) -> bool;
+}
+
+impl<T, P, Rhs> IntersectsTrait<PointTraitMarker<T>, PointTraitMarker<T>, Rhs> for P
+where
+    P: PointTrait<T = T>,
+    T: CoordNum,
+    Rhs: PointTrait<T = T>,
+{
+    fn intersects_trait(&self, _rhs: &Rhs) -> bool {
+        false
+    }
+}
+
+impl<T, P, Rhs> IntersectsTrait<PointTraitMarker<T>, LineStringTraitMarker<T>, Rhs> for P
+where
+    P: PointTrait<T = T>,
+    T: CoordNum,
+    Rhs: LineStringTrait<T = T>,
+{
+    fn intersects_trait(&self, _rhs: &Rhs) -> bool {
+        false
+    }
+}
+
+impl<T, LS, Rhs> IntersectsTrait<LineStringTraitMarker<T>, PointTraitMarker<T>, Rhs> for LS
+where
+    LS: LineStringTrait<T = T>,
+    T: CoordNum,
+    Rhs: PointTrait<T = T>,
+{
+    fn intersects_trait(&self, _rhs: &Rhs) -> bool {
+        false
+    }
+}
+
+impl<T, LS, Rhs> IntersectsTrait<LineStringTraitMarker<T>, LineStringTraitMarker<T>, Rhs> for LS
+where
+    LS: LineStringTrait<T = T>,
+    T: CoordNum,
+    Rhs: LineStringTrait<T = T>,
+{
+    fn intersects_trait(&self, _rhs: &Rhs) -> bool {
+        false
+    }
+}
+
+trait GeoTraitWithMarker {
+    type Marker;
+}
+
+impl<LHS, RHS> IntersectsGeo<RHS> for LHS
+where
+    LHS: GeoTraitWithMarker,
+    RHS: GeoTraitWithMarker,
+    LHS: IntersectsTrait<LHS::Marker, RHS::Marker, RHS>,
+{
+    fn intersects_geo(&self, rhs: &RHS) -> bool {
+        self.intersects_trait(rhs)
+    }
+}
+
+// impl<Rhs> IntersectsGeo<Rhs> for crate::wkb::reader::Point<'_> {
+//     fn intersects_geo(&self, rhs: &Rhs) -> bool {
+//         self.intersects_trait(rhs)
+//     }
+// }
+
+impl IntersectsGeo<crate::wkb::reader::Point<'_>> for crate::wkb::reader::Point<'_> {
+    fn intersects_geo(&self, rhs: &crate::wkb::reader::Point<'_>) -> bool {
+        self.intersects_trait(rhs)
+    }
+}
+
+impl IntersectsGeo<crate::wkb::reader::LineString<'_>> for crate::wkb::reader::Point<'_> {
+    fn intersects_geo(&self, rhs: &crate::wkb::reader::LineString<'_>) -> bool {
+        self.intersects_trait(rhs)
+    }
+}
+
+trait AreaTestTrait<M, T> {
+    fn area_test_trait(&self) -> T;
+}
+
+impl<T, P> AreaTestTrait<PointTraitMarker<T>, T> for P
+where
+    P: PointTrait<T = T>,
+    T: CoordNum,
+{
+    fn area_test_trait(&self) -> T {
+        T::zero()
+    }
+}
+
+impl<T, LS> AreaTestTrait<LineStringTraitMarker<T>, T> for LS
+where
+    LS: LineStringTrait<T = T>,
+    T: CoordNum,
+{
+    fn area_test_trait(&self) -> T {
+        T::one()
+    }
+}
+
+trait AreaTest<T> {
+    fn area_test(&self) -> T;
+}
+
+impl AreaTest<f64> for crate::wkb::reader::Point<'_> {
+    fn area_test(&self) -> f64 {
+        self.area_test_trait()
+    }
+}
+
+impl<T, G> AreaTest<T> for G
+where
+    G: GeoTraitWithMarker,
+    G: AreaTestTrait<G::Marker, T>,
+    T: CoordNum,
+{
+    fn area_test(&self) -> T {
+        self.area_test_trait()
+    }
+}
+
+// impl<M, G> AreaTest<M::T> for G
+// where
+//     G: AreaTestTrait<M, M::T>,
+//     M: GeoTraitTypeMarker,
+// {
+//     fn area_test(&self) -> M::T {
+//         self.area_test_trait()
+//     }
+// }
+
 #[cfg(test)]
 mod tests {
     use geo_generic_alg::area::AreaTrait;
@@ -13,6 +153,46 @@ mod tests {
     use super::*;
 
     // impl_geo_traits_for_point!(f64, crate::wkb::reader::Point);
+
+    #[test]
+    fn test_intersects_trait() {
+        let orig = point_2d();
+        let buf = geo_to_wkb_geom(orig);
+        let wkb = read_wkb(&buf).unwrap();
+
+        let orig2 = linestring_2d();
+        let buf2 = geo_to_wkb_geom(orig2);
+        let wkb2 = read_wkb(&buf2).unwrap();
+
+        match (wkb.as_type(), wkb2.as_type()) {
+            (geo_traits::GeometryType::Point(pt), geo_traits::GeometryType::Point(pt2)) => {
+                let area = pt.area_test();
+                println!("area: {}", area);
+
+                let intersects = pt.intersects_trait(pt2);
+                assert_eq!(intersects, false);
+            }
+            (geo_traits::GeometryType::Point(pt), geo_traits::GeometryType::LineString(ls)) => {
+                let area = ls.area_test_trait();
+                println!("area: {}", area);
+
+                let intersects = pt.intersects_trait(ls);
+                assert_eq!(intersects, false);
+            }
+            (geo_traits::GeometryType::LineString(ls), geo_traits::GeometryType::Point(pt)) => {
+                let intersects = ls.intersects_trait(pt);
+                assert_eq!(intersects, false);
+            }
+            (
+                geo_traits::GeometryType::LineString(ls),
+                geo_traits::GeometryType::LineString(ls2),
+            ) => {
+                let intersects = ls.intersects_trait(ls2);
+                assert_eq!(intersects, false);
+            }
+            _ => panic!("Expected a Point"),
+        }
+    }
 
     #[test]
     fn test_point_trait() {
@@ -148,3 +328,14 @@ mod tests {
         wkb_writer.write_wkb(&geos_geom).unwrap().into()
     }
 }
+
+// impl<T, P, Rhs> IntersectsTrait<PointTraitMarker<T>, Rhs> for P
+// where
+//     P: PointTrait<T = T>,
+//     T: CoordNum,
+//     Rhs: PolygonTrait<T = T>,
+// {
+//     fn intersects_trait(&self, _rhs: &Rhs) -> bool {
+//         false
+//     }
+// }

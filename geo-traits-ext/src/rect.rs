@@ -3,11 +3,11 @@
 use geo_traits::{CoordTrait, RectTrait, UnimplementedCoord, UnimplementedRect};
 use geo_types::{coord, Coord, CoordNum, Line, LineString, Polygon, Rect};
 
-use crate::CoordTraitExt;
+use crate::{CoordTraitExt, GeoTraitExtWithTypeMarker, RectTraitExtMarker};
 
 static RECT_INVALID_BOUNDS_ERROR: &str = "Failed to create Rect: 'min' coordinate's x/y value must be smaller or equal to the 'max' x/y value";
 
-pub trait RectTraitExt<T: CoordNum>: RectTrait<T = T> {
+pub trait RectTraitExt<T: CoordNum>: RectTrait<T = T> + GeoTraitExtWithTypeMarker {
     type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
     where
         Self: 'a;
@@ -188,6 +188,10 @@ where
     forward_rect_trait_ext_funcs!();
 }
 
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for Rect<T> {
+    type Marker = RectTraitExtMarker;
+}
+
 impl<'a, T> RectTraitExt<T> for &'a Rect<T>
 where
     T: CoordNum,
@@ -200,6 +204,10 @@ where
     forward_rect_trait_ext_funcs!();
 }
 
+impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a Rect<T> {
+    type Marker = RectTraitExtMarker;
+}
+
 impl<T> RectTraitExt<T> for UnimplementedRect<T>
 where
     T: CoordNum,
@@ -210,4 +218,8 @@ where
         Self: 'a;
 
     forward_rect_trait_ext_funcs!();
+}
+
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedRect<T> {
+    type Marker = RectTraitExtMarker;
 }

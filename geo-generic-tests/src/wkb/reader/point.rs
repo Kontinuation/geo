@@ -4,7 +4,9 @@ use crate::wkb::reader::util::has_srid;
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::{CoordTrait, PointTrait};
-use geo_traits_ext::{forward_point_trait_ext_funcs, PointTraitExt};
+use geo_traits_ext::{
+    forward_point_trait_ext_funcs, GeoTraitExtWithTypeMarker, PointTraitExt, PointTraitExtMarker,
+};
 
 /// A WKB Point.
 ///
@@ -93,12 +95,15 @@ impl<'a> PointTrait for Point<'a> {
     }
 }
 
-impl<'a> PointTrait for &Point<'a> {
+impl<'a, 'b> PointTrait for &'b Point<'a>
+where
+    'a: 'b,
+{
     type T = f64;
-    type CoordType<'b>
+    type CoordType<'c>
         = Coord<'a>
     where
-        Self: 'b;
+        Self: 'c;
 
     fn dim(&self) -> Dimensions {
         self.dim.into()
@@ -122,6 +127,10 @@ impl<'a> PointTraitExt<f64> for Point<'a> {
     forward_point_trait_ext_funcs!();
 }
 
+impl<'a> GeoTraitExtWithTypeMarker for Point<'a> {
+    type Marker = PointTraitExtMarker;
+}
+
 impl<'a> PointTraitExt<f64> for &Point<'a> {
     type CoordTypeExt<'b>
         = Coord<'a>
@@ -129,4 +138,11 @@ impl<'a> PointTraitExt<f64> for &Point<'a> {
         Self: 'b;
 
     forward_point_trait_ext_funcs!();
+}
+
+impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b Point<'a>
+where
+    'a: 'b,
+{
+    type Marker = PointTraitExtMarker;
 }

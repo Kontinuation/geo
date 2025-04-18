@@ -1,5 +1,8 @@
 use geo_traits::*;
-use geo_traits_ext::{forward_geometry_trait_ext_funcs, GeometryTraitExt, GeometryTypeExt};
+use geo_traits_ext::{
+    forward_geometry_trait_ext_funcs, GeoTraitExtWithTypeMarker, GeometryTraitExt,
+    GeometryTraitExtMarker, GeometryTypeExt,
+};
 use geo_types::CoordNum;
 
 use super::{line_string::SimpleLineString, point::SimplePoint, polygon::SimplePolygon};
@@ -224,6 +227,10 @@ impl<'a, T: CoordNum> GeometryTraitExt<T> for &'a SimpleGeometry<T> {
     forward_geometry_trait_ext_funcs!(T);
 }
 
+impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a SimpleGeometry<T> {
+    type Marker = GeometryTraitExtMarker;
+}
+
 impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
     type PointTypeExt<'b>
         = SimplePoint<T>
@@ -276,6 +283,10 @@ impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
         Self: 'b;
 
     forward_geometry_trait_ext_funcs!(T);
+}
+
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for SimpleGeometry<T> {
+    type Marker = GeometryTraitExtMarker;
 }
 
 #[cfg(test)]

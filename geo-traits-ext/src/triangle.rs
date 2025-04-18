@@ -3,9 +3,9 @@
 use geo_traits::{TriangleTrait, UnimplementedCoord, UnimplementedTriangle};
 use geo_types::{polygon, to_geo::ToGeoCoord, Coord, CoordNum, Line, Polygon, Triangle};
 
-use crate::CoordTraitExt;
+use crate::{CoordTraitExt, GeoTraitExtWithTypeMarker, TriangleTraitExtMarker};
 
-pub trait TriangleTraitExt<T: CoordNum>: TriangleTrait<T = T> {
+pub trait TriangleTraitExt<T: CoordNum>: TriangleTrait<T = T> + GeoTraitExtWithTypeMarker {
     type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
     where
         Self: 'a;
@@ -76,6 +76,10 @@ where
     forward_triangle_trait_ext_funcs!();
 }
 
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for Triangle<T> {
+    type Marker = TriangleTraitExtMarker;
+}
+
 impl<'a, T> TriangleTraitExt<T> for &'a Triangle<T>
 where
     T: CoordNum,
@@ -88,6 +92,10 @@ where
     forward_triangle_trait_ext_funcs!();
 }
 
+impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a Triangle<T> {
+    type Marker = TriangleTraitExtMarker;
+}
+
 impl<T> TriangleTraitExt<T> for UnimplementedTriangle<T>
 where
     T: CoordNum,
@@ -98,4 +106,8 @@ where
         Self: 'a;
 
     forward_triangle_trait_ext_funcs!();
+}
+
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedTriangle<T> {
+    type Marker = TriangleTraitExtMarker;
 }

@@ -6,7 +6,10 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::PolygonTrait;
-use geo_traits_ext::{forward_polygon_trait_ext_funcs, PolygonTraitExt};
+use geo_traits_ext::{
+    forward_polygon_trait_ext_funcs, GeoTraitExtWithTypeMarker, PolygonTraitExt,
+    PolygonTraitExtMarker,
+};
 
 /// skip endianness and wkb type
 const HEADER_BYTES: u64 = 5;
@@ -153,6 +156,10 @@ impl<'a> PolygonTraitExt<f64> for Polygon<'a> {
     forward_polygon_trait_ext_funcs!();
 }
 
+impl<'a> GeoTraitExtWithTypeMarker for Polygon<'a> {
+    type Marker = PolygonTraitExtMarker;
+}
+
 impl<'a, 'b> PolygonTraitExt<f64> for &'b Polygon<'a>
 where
     'a: 'b,
@@ -163,4 +170,11 @@ where
         Self: 'c;
 
     forward_polygon_trait_ext_funcs!();
+}
+
+impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b Polygon<'a>
+where
+    'a: 'b,
+{
+    type Marker = PolygonTraitExtMarker;
 }

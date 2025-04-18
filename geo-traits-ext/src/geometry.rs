@@ -7,7 +7,7 @@ use geo_types::*;
 
 use crate::*;
 
-pub trait GeometryTraitExt<T: CoordNum>: GeometryTrait<T = T> {
+pub trait GeometryTraitExt<T: CoordNum>: GeometryTrait<T = T> + GeoTraitExtWithTypeMarker {
     type PointTypeExt<'a>: 'a + PointTraitExt<T>
     where
         Self: 'a;
@@ -177,6 +177,10 @@ where
     forward_geometry_trait_ext_funcs!(T);
 }
 
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for Geometry<T> {
+    type Marker = GeometryTraitExtMarker;
+}
+
 impl<'a, T> GeometryTraitExt<T> for &'a Geometry<T>
 where
     T: CoordNum,
@@ -225,6 +229,10 @@ where
     forward_geometry_trait_ext_funcs!(T);
 }
 
+impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a Geometry<T> {
+    type Marker = GeometryTraitExtMarker;
+}
+
 impl<T> GeometryTraitExt<T> for UnimplementedGeometry<T>
 where
     T: CoordNum,
@@ -271,4 +279,8 @@ where
         Self: 'a;
 
     forward_geometry_trait_ext_funcs!(T);
+}
+
+impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedGeometry<T> {
+    type Marker = GeometryTraitExtMarker;
 }
