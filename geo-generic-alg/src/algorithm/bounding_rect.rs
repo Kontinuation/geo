@@ -1,7 +1,6 @@
 use crate::geo_trait_marker::*;
 use crate::utils::{partial_max, partial_min};
 use crate::{coord, geometry::*, CoordNum, GeometryCow};
-use geo_traits::*;
 use geo_traits_ext::*;
 use geo_types::private_utils::get_bounding_rect;
 use geo_types::to_geo::{ToGeoCoord, ToGeoRect};

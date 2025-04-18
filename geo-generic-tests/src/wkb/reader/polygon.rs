@@ -107,35 +107,35 @@ impl<'a> PolygonTrait for Polygon<'a> {
     }
 }
 
-impl<'a> PolygonTrait for &'a Polygon<'a> {
-    type T = f64;
-    type RingType<'b>
-        = WKBLinearRing<'a>
-    where
-        Self: 'b;
+// impl<'a> PolygonTrait for &'a Polygon<'a> {
+//     type T = f64;
+//     type RingType<'b>
+//         = WKBLinearRing<'a>
+//     where
+//         Self: 'b;
 
-    fn dim(&self) -> Dimensions {
-        self.dim.into()
-    }
+//     fn dim(&self) -> Dimensions {
+//         self.dim.into()
+//     }
 
-    fn num_interiors(&self) -> usize {
-        // Support an empty polygon with no rings
-        if self.wkb_linear_rings.is_empty() {
-            0
-        } else {
-            self.wkb_linear_rings.len() - 1
-        }
-    }
+//     fn num_interiors(&self) -> usize {
+//         // Support an empty polygon with no rings
+//         if self.wkb_linear_rings.is_empty() {
+//             0
+//         } else {
+//             self.wkb_linear_rings.len() - 1
+//         }
+//     }
 
-    fn exterior(&self) -> Option<Self::RingType<'_>> {
-        if self.wkb_linear_rings.is_empty() {
-            None
-        } else {
-            Some(self.wkb_linear_rings[0])
-        }
-    }
+//     fn exterior(&self) -> Option<Self::RingType<'_>> {
+//         if self.wkb_linear_rings.is_empty() {
+//             None
+//         } else {
+//             Some(self.wkb_linear_rings[0])
+//         }
+//     }
 
-    unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_> {
-        *self.wkb_linear_rings.get_unchecked(i + 1)
-    }
-}
+//     unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_> {
+//         *self.wkb_linear_rings.get_unchecked(i + 1)
+//     }
+// }

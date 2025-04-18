@@ -15,13 +15,13 @@ impl<T: CoordNum> SimplePolygon<T> {
     }
 }
 
-impl<'a, T: CoordNum> PolygonTrait for &'a SimplePolygon<T> {
+impl<T: CoordNum> PolygonTrait for SimplePolygon<T> {
     type T = T;
 
-    type RingType<'b>
+    type RingType<'a>
         = &'a SimpleLineString<T>
     where
-        Self: 'b;
+        Self: 'a;
 
     fn dim(&self) -> geo_traits::Dimensions {
         geo_traits::Dimensions::Xy
@@ -40,16 +40,16 @@ impl<'a, T: CoordNum> PolygonTrait for &'a SimplePolygon<T> {
     }
 }
 
-impl<T: CoordNum> PolygonTrait for SimplePolygon<T> {
+impl<'a, T: CoordNum> PolygonTrait for &'a SimplePolygon<T> {
     type T = T;
 
-    type RingType<'a>
+    type RingType<'b>
         = &'a SimpleLineString<T>
     where
-        Self: 'a;
+        Self: 'b;
 
     delegate! {
-        to(&self) {
+        to(*self) {
             fn dim(&self) -> geo_traits::Dimensions;
             fn exterior(&self) -> Option<Self::RingType<'_>>;
             fn num_interiors(&self) -> usize;

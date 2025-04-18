@@ -98,27 +98,27 @@ impl<'a> LineStringTrait for LineString<'a> {
     }
 }
 
-impl<'a> LineStringTrait for &'a LineString<'a> {
-    type T = f64;
-    type CoordType<'b>
-        = Coord<'a>
-    where
-        Self: 'b;
+// impl<'a> LineStringTrait for &'a LineString<'a> {
+//     type T = f64;
+//     type CoordType<'b>
+//         = Coord<'a>
+//     where
+//         Self: 'b;
 
-    fn dim(&self) -> Dimensions {
-        self.dim.into()
-    }
+//     fn dim(&self) -> Dimensions {
+//         self.dim.into()
+//     }
 
-    fn num_coords(&self) -> usize {
-        self.num_points
-    }
+//     fn num_coords(&self) -> usize {
+//         self.num_points
+//     }
 
-    unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
-        Coord::new(
-            self.buf,
-            self.byte_order,
-            self.coord_offset(i.try_into().unwrap()),
-            self.dim,
-        )
-    }
-}
+//     unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
+//         Coord::new(
+//             self.buf,
+//             self.byte_order,
+//             self.coord_offset(i.try_into().unwrap()),
+//             self.dim,
+//         )
+//     }
+// }

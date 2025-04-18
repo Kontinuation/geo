@@ -1,5 +1,4 @@
 use crate::{GeoFloat, Point};
-use geo_traits_ext::GeometryTypeExt;
 
 /// The result of trying to find the closest spot on an object to a point.
 #[cfg_attr(feature = "use-serde", derive(Serialize, Deserialize))]

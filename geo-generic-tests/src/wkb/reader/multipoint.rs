@@ -100,27 +100,27 @@ impl<'a> MultiPointTrait for MultiPoint<'a> {
     }
 }
 
-impl<'a> MultiPointTrait for &'a MultiPoint<'a> {
-    type T = f64;
-    type PointType<'b>
-        = Point<'a>
-    where
-        Self: 'b;
+// impl<'a> MultiPointTrait for &'a MultiPoint<'a> {
+//     type T = f64;
+//     type PointType<'b>
+//         = Point<'a>
+//     where
+//         Self: 'b;
 
-    fn dim(&self) -> Dimensions {
-        self.dim.into()
-    }
+//     fn dim(&self) -> Dimensions {
+//         self.dim.into()
+//     }
 
-    fn num_points(&self) -> usize {
-        self.num_points
-    }
+//     fn num_points(&self) -> usize {
+//         self.num_points
+//     }
 
-    unsafe fn point_unchecked(&self, i: usize) -> Self::PointType<'_> {
-        Point::new(
-            self.buf,
-            self.byte_order,
-            self.point_offset(i.try_into().unwrap()),
-            self.dim,
-        )
-    }
-}
+//     unsafe fn point_unchecked(&self, i: usize) -> Self::PointType<'_> {
+//         Point::new(
+//             self.buf,
+//             self.byte_order,
+//             self.point_offset(i.try_into().unwrap()),
+//             self.dim,
+//         )
+//     }
+// }

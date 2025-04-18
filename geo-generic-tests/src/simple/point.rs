@@ -62,7 +62,7 @@ impl<T: CoordNum> PointTraitExt<T> for SimplePoint<T> {
 
 impl<'a, T: CoordNum> PointTraitExt<T> for &'a SimplePoint<T> {
     type CoordTypeExt<'b>
-        = &'b SimpleCoord<T>
+        = &'a SimpleCoord<T>
     where
         Self: 'b;
 

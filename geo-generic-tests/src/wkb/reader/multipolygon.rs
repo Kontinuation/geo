@@ -95,22 +95,22 @@ impl<'a> MultiPolygonTrait for MultiPolygon<'a> {
     }
 }
 
-impl<'a> MultiPolygonTrait for &'a MultiPolygon<'a> {
-    type T = f64;
-    type PolygonType<'b>
-        = Polygon<'a>
-    where
-        Self: 'b;
+// impl<'a> MultiPolygonTrait for &'a MultiPolygon<'a> {
+//     type T = f64;
+//     type PolygonType<'b>
+//         = Polygon<'a>
+//     where
+//         Self: 'b;
 
-    fn dim(&self) -> Dimensions {
-        self.dim.into()
-    }
+//     fn dim(&self) -> Dimensions {
+//         self.dim.into()
+//     }
 
-    fn num_polygons(&self) -> usize {
-        self.wkb_polygons.len()
-    }
+//     fn num_polygons(&self) -> usize {
+//         self.wkb_polygons.len()
+//     }
 
-    unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
-        self.wkb_polygons.get_unchecked(i).clone()
-    }
-}
+//     unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
+//         self.wkb_polygons.get_unchecked(i).clone()
+//     }
+// }

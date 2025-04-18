@@ -1,7 +1,7 @@
 // Extend RectTrait traits for the `geo-traits` crate
 
 use geo_traits::{CoordTrait, RectTrait, UnimplementedCoord, UnimplementedRect};
-use geo_types::{coord, polygon, Coord, CoordNum, Line, LineString, Polygon, Rect};
+use geo_types::{coord, Coord, CoordNum, Line, LineString, Polygon, Rect};
 
 use crate::CoordTraitExt;
 

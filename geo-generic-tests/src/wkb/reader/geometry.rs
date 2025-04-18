@@ -180,48 +180,51 @@ impl<'a> GeometryTrait for Wkb<'a> {
     }
 }
 
-impl<'a> GeometryTrait for &'a Wkb<'a> {
+impl<'a, 'b> GeometryTrait for &'b Wkb<'a>
+where
+    'a: 'b,
+{
     type T = f64;
-    type PointType<'b>
+    type PointType<'c>
         = Point<'a>
     where
-        Self: 'b;
-    type LineStringType<'b>
+        Self: 'c;
+    type LineStringType<'c>
         = LineString<'a>
     where
-        Self: 'b;
-    type PolygonType<'b>
+        Self: 'c;
+    type PolygonType<'c>
         = Polygon<'a>
     where
-        Self: 'b;
-    type MultiPointType<'b>
+        Self: 'c;
+    type MultiPointType<'c>
         = MultiPoint<'a>
     where
-        Self: 'b;
-    type MultiLineStringType<'b>
+        Self: 'c;
+    type MultiLineStringType<'c>
         = MultiLineString<'a>
     where
-        Self: 'b;
-    type MultiPolygonType<'b>
+        Self: 'c;
+    type MultiPolygonType<'c>
         = MultiPolygon<'a>
     where
-        Self: 'b;
-    type GeometryCollectionType<'b>
+        Self: 'c;
+    type GeometryCollectionType<'c>
         = GeometryCollection<'a>
     where
-        Self: 'b;
-    type RectType<'b>
+        Self: 'c;
+    type RectType<'c>
         = UnimplementedRect<f64>
     where
-        Self: 'b;
-    type TriangleType<'b>
+        Self: 'c;
+    type TriangleType<'c>
         = UnimplementedTriangle<f64>
     where
-        Self: 'b;
-    type LineType<'b>
+        Self: 'c;
+    type LineType<'c>
         = UnimplementedLine<f64>
     where
-        Self: 'b;
+        Self: 'c;
 
     fn dim(&self) -> Dimensions {
         self.dimension().into()

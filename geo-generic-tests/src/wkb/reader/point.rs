@@ -4,6 +4,7 @@ use crate::wkb::reader::util::has_srid;
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::{CoordTrait, PointTrait};
+use geo_traits_ext::{forward_point_trait_ext_funcs, PointTraitExt};
 
 /// A WKB Point.
 ///
@@ -92,22 +93,40 @@ impl<'a> PointTrait for Point<'a> {
     }
 }
 
-impl<'a> PointTrait for &Point<'a> {
-    type T = f64;
-    type CoordType<'b>
+// impl<'a> PointTrait for &Point<'a> {
+//     type T = f64;
+//     type CoordType<'b>
+//         = Coord<'a>
+//     where
+//         Self: 'b;
+
+//     fn dim(&self) -> Dimensions {
+//         self.dim.into()
+//     }
+
+//     fn coord(&self) -> Option<Self::CoordType<'_>> {
+//         if self.is_empty {
+//             None
+//         } else {
+//             Some(self.coord)
+//         }
+//     }
+// }
+
+impl<'a> PointTraitExt<f64> for Point<'a> {
+    type CoordTypeExt<'b>
         = Coord<'a>
     where
         Self: 'b;
 
-    fn dim(&self) -> Dimensions {
-        self.dim.into()
-    }
-
-    fn coord(&self) -> Option<Self::CoordType<'_>> {
-        if self.is_empty {
-            None
-        } else {
-            Some(self.coord)
-        }
-    }
+    forward_point_trait_ext_funcs!();
 }
+
+// impl<'a> PointTraitExt<f64> for &Point<'a> {
+//     type CoordTypeExt<'b>
+//         = Coord<'a>
+//     where
+//         Self: 'b;
+
+//     forward_point_trait_ext_funcs!();
+// }

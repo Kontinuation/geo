@@ -1,4 +1,5 @@
-use geo_traits::{CoordTrait, LineStringTrait, PointTrait};
+use geo_generic_alg::*;
+use geo_traits::*;
 use geos::WKBWriter;
 
 use crate::wkb::reader::read_wkb;
@@ -7,8 +8,6 @@ use super::data::*;
 
 #[cfg(test)]
 mod tests {
-    use geo_traits::{GeometryTrait, PolygonTrait};
-
     use super::*;
 
     #[test]
@@ -24,6 +23,8 @@ mod tests {
                 let coord = pt.coord().unwrap();
                 assert_eq!(coord.x(), orig.0.x);
                 assert_eq!(coord.y(), orig.0.y);
+
+                // coord.bounding_rect();
             }
             _ => panic!("Expected a Point"),
         }
@@ -56,6 +57,67 @@ mod tests {
                 assert_eq!(p.exterior().unwrap().num_coords(), orig.exterior().0.len());
             }
             _ => panic!("Expected a Polygon"),
+        }
+    }
+
+    #[test]
+    fn test_geometry_collection_trait() {
+        let orig = geometry_collection_2d();
+        let buf = geo_to_wkb_geom(orig.clone());
+        let wkb = read_wkb(&buf).unwrap();
+        assert_eq!(wkb.dim(), geo_traits::Dimensions::Xy);
+
+        match wkb.as_type() {
+            geo_traits::GeometryType::GeometryCollection(gc) => {
+                assert_eq!(gc.num_geometries(), orig.0.len());
+
+                gc.geometries().into_iter().zip(orig.0.iter()).for_each(
+                    |(geom, orig_geom)| match (geom.as_type(), orig_geom) {
+                        (geo_traits::GeometryType::Point(pt), Geometry::Point(orig_pt)) => {
+                            assert_eq!(pt.coord().unwrap().x(), orig_pt.0.x);
+                            assert_eq!(pt.coord().unwrap().y(), orig_pt.0.y);
+                        }
+                        (
+                            geo_traits::GeometryType::LineString(ls),
+                            Geometry::LineString(orig_ls),
+                        ) => {
+                            assert_eq!(ls.num_coords(), orig_ls.0.len());
+                        }
+                        (geo_traits::GeometryType::Polygon(p), Geometry::Polygon(orig_p)) => {
+                            assert_eq!(
+                                p.exterior().unwrap().num_coords(),
+                                orig_p.exterior().0.len()
+                            );
+                        }
+                        (
+                            geo_traits::GeometryType::MultiPoint(mp),
+                            Geometry::MultiPoint(orig_mp),
+                        ) => {
+                            assert_eq!(mp.num_points(), orig_mp.0.len());
+                        }
+                        (
+                            geo_traits::GeometryType::MultiLineString(mls),
+                            Geometry::MultiLineString(orig_mls),
+                        ) => {
+                            assert_eq!(mls.num_line_strings(), orig_mls.0.len());
+                        }
+                        (
+                            geo_traits::GeometryType::MultiPolygon(mp),
+                            Geometry::MultiPolygon(orig_mp),
+                        ) => {
+                            assert_eq!(mp.num_polygons(), orig_mp.0.len());
+                        }
+                        (
+                            geo_traits::GeometryType::GeometryCollection(gc),
+                            Geometry::GeometryCollection(orig_gc),
+                        ) => {
+                            assert_eq!(gc.num_geometries(), orig_gc.0.len());
+                        }
+                        _ => panic!("Expected a Point"),
+                    },
+                );
+            }
+            _ => panic!("Expected a GeometryCollection"),
         }
     }
 
