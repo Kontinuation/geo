@@ -8,7 +8,11 @@ use super::data::*;
 
 #[cfg(test)]
 mod tests {
+    use geo_generic_alg::area::AreaTrait;
+
     use super::*;
+
+    // impl_geo_traits_for_point!(f64, crate::wkb::reader::Point);
 
     #[test]
     fn test_point_trait() {
@@ -37,9 +41,14 @@ mod tests {
         let wkb = read_wkb(&buf).unwrap();
         assert_eq!(wkb.dim(), geo_traits::Dimensions::Xy);
 
+        let area = wkb.signed_area_trait();
+        println!("area: {}", area);
+
         match wkb.as_type() {
             geo_traits::GeometryType::LineString(ls) => {
                 assert_eq!(ls.num_coords(), orig.0.len());
+                let area = ls.signed_area_trait();
+                println!("area: {}", area);
             }
             _ => panic!("Expected a LineString"),
         }
@@ -52,9 +61,14 @@ mod tests {
         let wkb = read_wkb(&buf).unwrap();
         assert_eq!(wkb.dim(), geo_traits::Dimensions::Xy);
 
+        let area = wkb.signed_area_trait();
+        println!("area: {}", area);
+
         match wkb.as_type() {
             geo_traits::GeometryType::Polygon(p) => {
                 assert_eq!(p.exterior().unwrap().num_coords(), orig.exterior().0.len());
+                let area = p.signed_area_trait();
+                println!("area: {}", area);
             }
             _ => panic!("Expected a Polygon"),
         }

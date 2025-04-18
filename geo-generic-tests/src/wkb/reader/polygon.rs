@@ -6,6 +6,7 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::PolygonTrait;
+use geo_traits_ext::{forward_polygon_trait_ext_funcs, PolygonTraitExt};
 
 /// skip endianness and wkb type
 const HEADER_BYTES: u64 = 5;
@@ -107,35 +108,59 @@ impl<'a> PolygonTrait for Polygon<'a> {
     }
 }
 
-// impl<'a> PolygonTrait for &'a Polygon<'a> {
-//     type T = f64;
-//     type RingType<'b>
-//         = WKBLinearRing<'a>
-//     where
-//         Self: 'b;
+impl<'a, 'b> PolygonTrait for &'b Polygon<'a>
+where
+    'a: 'b,
+{
+    type T = f64;
+    type RingType<'c>
+        = WKBLinearRing<'a>
+    where
+        Self: 'c;
 
-//     fn dim(&self) -> Dimensions {
-//         self.dim.into()
-//     }
+    fn dim(&self) -> Dimensions {
+        self.dim.into()
+    }
 
-//     fn num_interiors(&self) -> usize {
-//         // Support an empty polygon with no rings
-//         if self.wkb_linear_rings.is_empty() {
-//             0
-//         } else {
-//             self.wkb_linear_rings.len() - 1
-//         }
-//     }
+    fn num_interiors(&self) -> usize {
+        // Support an empty polygon with no rings
+        if self.wkb_linear_rings.is_empty() {
+            0
+        } else {
+            self.wkb_linear_rings.len() - 1
+        }
+    }
 
-//     fn exterior(&self) -> Option<Self::RingType<'_>> {
-//         if self.wkb_linear_rings.is_empty() {
-//             None
-//         } else {
-//             Some(self.wkb_linear_rings[0])
-//         }
-//     }
+    fn exterior(&self) -> Option<Self::RingType<'_>> {
+        if self.wkb_linear_rings.is_empty() {
+            None
+        } else {
+            Some(self.wkb_linear_rings[0])
+        }
+    }
 
-//     unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_> {
-//         *self.wkb_linear_rings.get_unchecked(i + 1)
-//     }
-// }
+    unsafe fn interior_unchecked(&self, i: usize) -> Self::RingType<'_> {
+        *self.wkb_linear_rings.get_unchecked(i + 1)
+    }
+}
+
+impl<'a> PolygonTraitExt<f64> for Polygon<'a> {
+    type RingTypeExt<'b>
+        = WKBLinearRing<'a>
+    where
+        Self: 'b;
+
+    forward_polygon_trait_ext_funcs!();
+}
+
+impl<'a, 'b> PolygonTraitExt<f64> for &'b Polygon<'a>
+where
+    'a: 'b,
+{
+    type RingTypeExt<'c>
+        = WKBLinearRing<'a>
+    where
+        Self: 'c;
+
+    forward_polygon_trait_ext_funcs!();
+}

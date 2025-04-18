@@ -6,6 +6,7 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::LineStringTrait;
+use geo_traits_ext::{forward_line_string_trait_ext_funcs, LineStringTraitExt};
 
 const HEADER_BYTES: u64 = 5;
 
@@ -98,27 +99,51 @@ impl<'a> LineStringTrait for LineString<'a> {
     }
 }
 
-// impl<'a> LineStringTrait for &'a LineString<'a> {
-//     type T = f64;
-//     type CoordType<'b>
-//         = Coord<'a>
-//     where
-//         Self: 'b;
+impl<'a, 'b> LineStringTrait for &'b LineString<'a>
+where
+    'a: 'b,
+{
+    type T = f64;
+    type CoordType<'c>
+        = Coord<'a>
+    where
+        Self: 'c;
 
-//     fn dim(&self) -> Dimensions {
-//         self.dim.into()
-//     }
+    fn dim(&self) -> Dimensions {
+        self.dim.into()
+    }
 
-//     fn num_coords(&self) -> usize {
-//         self.num_points
-//     }
+    fn num_coords(&self) -> usize {
+        self.num_points
+    }
 
-//     unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
-//         Coord::new(
-//             self.buf,
-//             self.byte_order,
-//             self.coord_offset(i.try_into().unwrap()),
-//             self.dim,
-//         )
-//     }
-// }
+    unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
+        Coord::new(
+            self.buf,
+            self.byte_order,
+            self.coord_offset(i.try_into().unwrap()),
+            self.dim,
+        )
+    }
+}
+
+impl<'a> LineStringTraitExt<f64> for LineString<'a> {
+    type CoordTypeExt<'b>
+        = Coord<'a>
+    where
+        Self: 'b;
+
+    forward_line_string_trait_ext_funcs!();
+}
+
+impl<'a, 'b> LineStringTraitExt<f64> for &'b LineString<'a>
+where
+    'a: 'b,
+{
+    type CoordTypeExt<'c>
+        = Coord<'a>
+    where
+        Self: 'c;
+
+    forward_line_string_trait_ext_funcs!();
+}

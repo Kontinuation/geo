@@ -6,6 +6,7 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::MultiLineStringTrait;
+use geo_traits_ext::{forward_multi_line_string_trait_ext_funcs, MultiLineStringTraitExt};
 
 const HEADER_BYTES: u64 = 5;
 
@@ -96,22 +97,46 @@ impl<'a> MultiLineStringTrait for MultiLineString<'a> {
     }
 }
 
-// impl<'a> MultiLineStringTrait for &'a MultiLineString<'a> {
-//     type T = f64;
-//     type LineStringType<'b>
-//         = LineString<'a>
-//     where
-//         Self: 'b;
+impl<'a, 'b> MultiLineStringTrait for &'b MultiLineString<'a>
+where
+    'a: 'b,
+{
+    type T = f64;
+    type LineStringType<'c>
+        = LineString<'a>
+    where
+        Self: 'c;
 
-//     fn dim(&self) -> Dimensions {
-//         self.dim.into()
-//     }
+    fn dim(&self) -> Dimensions {
+        self.dim.into()
+    }
 
-//     fn num_line_strings(&self) -> usize {
-//         self.wkb_line_strings.len()
-//     }
+    fn num_line_strings(&self) -> usize {
+        self.wkb_line_strings.len()
+    }
 
-//     unsafe fn line_string_unchecked(&self, i: usize) -> Self::LineStringType<'_> {
-//         *self.wkb_line_strings.get_unchecked(i)
-//     }
-// }
+    unsafe fn line_string_unchecked(&self, i: usize) -> Self::LineStringType<'_> {
+        *self.wkb_line_strings.get_unchecked(i)
+    }
+}
+
+impl<'a> MultiLineStringTraitExt<f64> for MultiLineString<'a> {
+    type LineStringTypeExt<'b>
+        = LineString<'a>
+    where
+        Self: 'b;
+
+    forward_multi_line_string_trait_ext_funcs!();
+}
+
+impl<'a, 'b> MultiLineStringTraitExt<f64> for &'b MultiLineString<'a>
+where
+    'a: 'b,
+{
+    type LineStringTypeExt<'c>
+        = LineString<'a>
+    where
+        Self: 'c;
+
+    forward_multi_line_string_trait_ext_funcs!();
+}

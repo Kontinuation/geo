@@ -6,6 +6,7 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::reader::Wkb;
 use crate::wkb::Endianness;
 use geo_traits::{Dimensions, GeometryCollectionTrait};
+use geo_traits_ext::{forward_geometry_collection_trait_ext_funcs, GeometryCollectionTraitExt};
 
 /// skip endianness and wkb type
 const HEADER_BYTES: u64 = 5;
@@ -87,4 +88,13 @@ impl<'a> GeometryCollectionTrait for GeometryCollection<'a> {
     unsafe fn geometry_unchecked(&self, i: usize) -> Self::GeometryType<'_> {
         self.geometries.get_unchecked(i)
     }
+}
+
+impl<'a> GeometryCollectionTraitExt<f64> for GeometryCollection<'a> {
+    type GeometryTypeExt<'b>
+        = &'b Wkb<'a>
+    where
+        Self: 'b;
+
+    forward_geometry_collection_trait_ext_funcs!();
 }

@@ -221,7 +221,7 @@ impl<'a, T: CoordNum> GeometryTraitExt<T> for &'a SimpleGeometry<T> {
     where
         Self: 'b;
 
-    forward_geometry_trait_ext_funcs!();
+    forward_geometry_trait_ext_funcs!(T);
 }
 
 impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
@@ -275,7 +275,7 @@ impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
     where
         Self: 'b;
 
-    forward_geometry_trait_ext_funcs!();
+    forward_geometry_trait_ext_funcs!(T);
 }
 
 #[cfg(test)]

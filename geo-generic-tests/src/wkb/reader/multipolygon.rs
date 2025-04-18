@@ -6,6 +6,7 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::MultiPolygonTrait;
+use geo_traits_ext::{forward_multi_polygon_trait_ext_funcs, MultiPolygonTraitExt};
 
 /// skip endianness and wkb type
 const HEADER_BYTES: u64 = 5;
@@ -95,22 +96,46 @@ impl<'a> MultiPolygonTrait for MultiPolygon<'a> {
     }
 }
 
-// impl<'a> MultiPolygonTrait for &'a MultiPolygon<'a> {
-//     type T = f64;
-//     type PolygonType<'b>
-//         = Polygon<'a>
-//     where
-//         Self: 'b;
+impl<'a, 'b> MultiPolygonTrait for &'b MultiPolygon<'a>
+where
+    'a: 'b,
+{
+    type T = f64;
+    type PolygonType<'c>
+        = Polygon<'a>
+    where
+        Self: 'c;
 
-//     fn dim(&self) -> Dimensions {
-//         self.dim.into()
-//     }
+    fn dim(&self) -> Dimensions {
+        self.dim.into()
+    }
 
-//     fn num_polygons(&self) -> usize {
-//         self.wkb_polygons.len()
-//     }
+    fn num_polygons(&self) -> usize {
+        self.wkb_polygons.len()
+    }
 
-//     unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
-//         self.wkb_polygons.get_unchecked(i).clone()
-//     }
-// }
+    unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
+        self.wkb_polygons.get_unchecked(i).clone()
+    }
+}
+
+impl<'a> MultiPolygonTraitExt<f64> for MultiPolygon<'a> {
+    type PolygonTypeExt<'b>
+        = Polygon<'a>
+    where
+        Self: 'b;
+
+    forward_multi_polygon_trait_ext_funcs!();
+}
+
+impl<'a, 'b> MultiPolygonTraitExt<f64> for &'b MultiPolygon<'a>
+where
+    'a: 'b,
+{
+    type PolygonTypeExt<'c>
+        = Polygon<'a>
+    where
+        Self: 'c;
+
+    forward_multi_polygon_trait_ext_funcs!();
+}

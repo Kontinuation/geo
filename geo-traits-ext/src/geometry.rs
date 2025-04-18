@@ -96,12 +96,12 @@ where
 
 #[macro_export]
 macro_rules! forward_geometry_trait_ext_funcs {
-    () => {
+    ($t:ty) => {
         fn as_type_ext(
             &self,
         ) -> GeometryTypeExt<
             '_,
-            T,
+            $t,
             Self::PointTypeExt<'_>,
             Self::LineStringTypeExt<'_>,
             Self::PolygonTypeExt<'_>,
@@ -174,7 +174,7 @@ where
     where
         Self: 'b;
 
-    forward_geometry_trait_ext_funcs!();
+    forward_geometry_trait_ext_funcs!(T);
 }
 
 impl<'a, T> GeometryTraitExt<T> for &'a Geometry<T>
@@ -222,7 +222,7 @@ where
     where
         Self: 'b;
 
-    forward_geometry_trait_ext_funcs!();
+    forward_geometry_trait_ext_funcs!(T);
 }
 
 impl<T> GeometryTraitExt<T> for UnimplementedGeometry<T>
@@ -270,5 +270,5 @@ where
     where
         Self: 'a;
 
-    forward_geometry_trait_ext_funcs!();
+    forward_geometry_trait_ext_funcs!(T);
 }

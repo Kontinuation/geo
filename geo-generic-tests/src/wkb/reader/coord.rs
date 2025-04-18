@@ -79,6 +79,10 @@ impl<'a> Coord<'a> {
         // A 2D Coord is just two f64s
         self.dim.size() as u64 * 8
     }
+
+    pub fn slice(&self) -> &'a [u8] {
+        &self.buf[self.offset as usize..self.offset as usize + self.size() as usize]
+    }
 }
 
 impl CoordTrait for Coord<'_> {

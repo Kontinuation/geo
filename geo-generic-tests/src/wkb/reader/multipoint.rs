@@ -6,6 +6,7 @@ use crate::wkb::reader::util::{has_srid, ReadBytesExt};
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::MultiPointTrait;
+use geo_traits_ext::{forward_multi_point_trait_ext_funcs, MultiPointTraitExt};
 
 /// A WKB MultiPoint
 ///
@@ -100,27 +101,51 @@ impl<'a> MultiPointTrait for MultiPoint<'a> {
     }
 }
 
-// impl<'a> MultiPointTrait for &'a MultiPoint<'a> {
-//     type T = f64;
-//     type PointType<'b>
-//         = Point<'a>
-//     where
-//         Self: 'b;
+impl<'a, 'b> MultiPointTrait for &'b MultiPoint<'a>
+where
+    'a: 'b,
+{
+    type T = f64;
+    type PointType<'c>
+        = Point<'a>
+    where
+        Self: 'c;
 
-//     fn dim(&self) -> Dimensions {
-//         self.dim.into()
-//     }
+    fn dim(&self) -> Dimensions {
+        self.dim.into()
+    }
 
-//     fn num_points(&self) -> usize {
-//         self.num_points
-//     }
+    fn num_points(&self) -> usize {
+        self.num_points
+    }
 
-//     unsafe fn point_unchecked(&self, i: usize) -> Self::PointType<'_> {
-//         Point::new(
-//             self.buf,
-//             self.byte_order,
-//             self.point_offset(i.try_into().unwrap()),
-//             self.dim,
-//         )
-//     }
-// }
+    unsafe fn point_unchecked(&self, i: usize) -> Self::PointType<'_> {
+        Point::new(
+            self.buf,
+            self.byte_order,
+            self.point_offset(i.try_into().unwrap()),
+            self.dim,
+        )
+    }
+}
+
+impl<'a> MultiPointTraitExt<f64> for MultiPoint<'a> {
+    type PointTypeExt<'b>
+        = Point<'a>
+    where
+        Self: 'b;
+
+    forward_multi_point_trait_ext_funcs!();
+}
+
+impl<'a, 'b> MultiPointTraitExt<f64> for &'b MultiPoint<'a>
+where
+    'a: 'b,
+{
+    type PointTypeExt<'c>
+        = Point<'a>
+    where
+        Self: 'c;
+
+    forward_multi_point_trait_ext_funcs!();
+}

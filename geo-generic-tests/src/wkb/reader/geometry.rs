@@ -1,6 +1,7 @@
 use std::io::Cursor;
 
 use byteorder::ReadBytesExt;
+use geo_traits_ext::{forward_geometry_trait_ext_funcs, GeometryTraitExt, GeometryTypeExt};
 
 use crate::wkb::common::{WKBDimension, WKBType};
 use crate::wkb::error::WKBResult;
@@ -9,7 +10,8 @@ use crate::wkb::reader::{
 };
 use crate::wkb::Endianness;
 use geo_traits::{
-    Dimensions, GeometryTrait, UnimplementedLine, UnimplementedRect, UnimplementedTriangle,
+    Dimensions, GeometryTrait, GeometryType, UnimplementedLine, UnimplementedRect,
+    UnimplementedTriangle,
 };
 
 /// Parse a WKB byte slice into a geometry.
@@ -257,4 +259,99 @@ where
             A::GeometryCollection(gc) => B::GeometryCollection(gc),
         }
     }
+}
+
+impl<'a> GeometryTraitExt<f64> for Wkb<'a> {
+    type PointTypeExt<'b>
+        = Point<'a>
+    where
+        Self: 'b;
+    type LineStringTypeExt<'b>
+        = LineString<'a>
+    where
+        Self: 'b;
+    type PolygonTypeExt<'b>
+        = Polygon<'a>
+    where
+        Self: 'b;
+    type MultiPointTypeExt<'b>
+        = MultiPoint<'a>
+    where
+        Self: 'b;
+    type MultiLineStringTypeExt<'b>
+        = MultiLineString<'a>
+    where
+        Self: 'b;
+    type MultiPolygonTypeExt<'b>
+        = MultiPolygon<'a>
+    where
+        Self: 'b;
+    type GeometryCollectionTypeExt<'b>
+        = GeometryCollection<'a>
+    where
+        Self: 'b;
+
+    type RectTypeExt<'b>
+        = UnimplementedRect<f64>
+    where
+        Self: 'b;
+    type TriangleTypeExt<'b>
+        = UnimplementedTriangle<f64>
+    where
+        Self: 'b;
+    type LineTypeExt<'b>
+        = UnimplementedLine<f64>
+    where
+        Self: 'b;
+
+    forward_geometry_trait_ext_funcs!(f64);
+}
+
+impl<'a, 'b> GeometryTraitExt<f64> for &'b Wkb<'a>
+where
+    'a: 'b,
+{
+    type PointTypeExt<'c>
+        = Point<'a>
+    where
+        Self: 'c;
+    type LineStringTypeExt<'c>
+        = LineString<'a>
+    where
+        Self: 'c;
+    type PolygonTypeExt<'c>
+        = Polygon<'a>
+    where
+        Self: 'c;
+    type MultiPointTypeExt<'c>
+        = MultiPoint<'a>
+    where
+        Self: 'c;
+    type MultiLineStringTypeExt<'c>
+        = MultiLineString<'a>
+    where
+        Self: 'c;
+    type MultiPolygonTypeExt<'c>
+        = MultiPolygon<'a>
+    where
+        Self: 'c;
+    type GeometryCollectionTypeExt<'c>
+        = GeometryCollection<'a>
+    where
+        Self: 'c;
+
+    type RectTypeExt<'c>
+        = UnimplementedRect<f64>
+    where
+        Self: 'c;
+    type TriangleTypeExt<'c>
+        = UnimplementedTriangle<f64>
+    where
+        Self: 'c;
+    type LineTypeExt<'c>
+        = UnimplementedLine<f64>
+    where
+        Self: 'c;
+
+    forward_geometry_trait_ext_funcs!(f64);
 }

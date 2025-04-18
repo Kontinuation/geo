@@ -6,6 +6,8 @@ use crate::wkb::reader::util::ReadBytesExt;
 use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::LineStringTrait;
+use geo_traits_ext::forward_line_string_trait_ext_funcs;
+use geo_traits_ext::LineStringTraitExt;
 
 /// A linear ring in a WKB buffer.
 ///
@@ -90,4 +92,13 @@ impl<'a> LineStringTrait for WKBLinearRing<'a> {
             self.dim,
         )
     }
+}
+
+impl<'a> LineStringTraitExt<f64> for WKBLinearRing<'a> {
+    type CoordTypeExt<'b>
+        = Coord<'a>
+    where
+        Self: 'b;
+
+    forward_line_string_trait_ext_funcs!();
 }

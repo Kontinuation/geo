@@ -93,25 +93,25 @@ impl<'a> PointTrait for Point<'a> {
     }
 }
 
-// impl<'a> PointTrait for &Point<'a> {
-//     type T = f64;
-//     type CoordType<'b>
-//         = Coord<'a>
-//     where
-//         Self: 'b;
+impl<'a> PointTrait for &Point<'a> {
+    type T = f64;
+    type CoordType<'b>
+        = Coord<'a>
+    where
+        Self: 'b;
 
-//     fn dim(&self) -> Dimensions {
-//         self.dim.into()
-//     }
+    fn dim(&self) -> Dimensions {
+        self.dim.into()
+    }
 
-//     fn coord(&self) -> Option<Self::CoordType<'_>> {
-//         if self.is_empty {
-//             None
-//         } else {
-//             Some(self.coord)
-//         }
-//     }
-// }
+    fn coord(&self) -> Option<Self::CoordType<'_>> {
+        if self.is_empty {
+            None
+        } else {
+            Some(self.coord)
+        }
+    }
+}
 
 impl<'a> PointTraitExt<f64> for Point<'a> {
     type CoordTypeExt<'b>
@@ -122,11 +122,11 @@ impl<'a> PointTraitExt<f64> for Point<'a> {
     forward_point_trait_ext_funcs!();
 }
 
-// impl<'a> PointTraitExt<f64> for &Point<'a> {
-//     type CoordTypeExt<'b>
-//         = Coord<'a>
-//     where
-//         Self: 'b;
+impl<'a> PointTraitExt<f64> for &Point<'a> {
+    type CoordTypeExt<'b>
+        = Coord<'a>
+    where
+        Self: 'b;
 
-//     forward_point_trait_ext_funcs!();
-// }
+    forward_point_trait_ext_funcs!();
+}
