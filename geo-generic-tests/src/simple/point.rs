@@ -2,7 +2,7 @@ use delegate::delegate;
 
 use geo_traits::PointTrait;
 use geo_traits_ext::{
-    forward_point_trait_ext_funcs, GeoTraitExtWithTypeMarker, PointTraitExt, PointTraitExtMarker,
+    forward_point_trait_ext_funcs, GeoTraitExtWithTypeTag, PointTag, PointTraitExt,
 };
 use geo_types::CoordNum;
 
@@ -62,8 +62,8 @@ impl<T: CoordNum> PointTraitExt<T> for SimplePoint<T> {
     forward_point_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for SimplePoint<T> {
-    type Marker = PointTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for SimplePoint<T> {
+    type Marker = PointTag;
 }
 
 impl<'a, T: CoordNum> PointTraitExt<T> for &'a SimplePoint<T> {
@@ -75,8 +75,8 @@ impl<'a, T: CoordNum> PointTraitExt<T> for &'a SimplePoint<T> {
     forward_point_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a SimplePoint<T> {
-    type Marker = PointTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a SimplePoint<T> {
+    type Marker = PointTag;
 }
 
 #[cfg(test)]

@@ -4,11 +4,9 @@ use geo_traits::{LineStringTrait, UnimplementedCoord, UnimplementedLineString};
 use geo_types::to_geo::ToGeoCoord;
 use geo_types::{Coord, CoordNum, Line, LineString, Triangle};
 
-use crate::{CoordTraitExt, GeoTraitExtWithTypeMarker, LineStringTraitExtMarker};
+use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, LineStringTag};
 
-pub trait LineStringTraitExt<T: CoordNum>:
-    LineStringTrait<T = T> + GeoTraitExtWithTypeMarker
-{
+pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> + GeoTraitExtWithTypeTag {
     type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
     where
         Self: 'a;
@@ -133,8 +131,8 @@ where
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for LineString<T> {
-    type Marker = LineStringTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for LineString<T> {
+    type Marker = LineStringTag;
 }
 
 impl<'a, T> LineStringTraitExt<T> for &'a LineString<T>
@@ -149,8 +147,8 @@ where
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a LineString<T> {
-    type Marker = LineStringTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a LineString<T> {
+    type Marker = LineStringTag;
 }
 
 impl<T> LineStringTraitExt<T> for UnimplementedLineString<T>
@@ -165,6 +163,6 @@ where
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedLineString<T> {
-    type Marker = LineStringTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedLineString<T> {
+    type Marker = LineStringTag;
 }

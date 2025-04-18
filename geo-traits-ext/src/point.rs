@@ -3,9 +3,9 @@
 use geo_traits::{PointTrait, UnimplementedCoord, UnimplementedPoint};
 use geo_types::{Coord, CoordNum, Point};
 
-use crate::{CoordTraitExt, GeoTraitExtWithTypeMarker, PointTraitExtMarker};
+use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, PointTag};
 
-pub trait PointTraitExt<T: CoordNum>: PointTrait<T = T> + GeoTraitExtWithTypeMarker {
+pub trait PointTraitExt<T: CoordNum>: PointTrait<T = T> + GeoTraitExtWithTypeTag {
     type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
     where
         Self: 'a;
@@ -34,8 +34,8 @@ where
     forward_point_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for Point<T> {
-    type Marker = PointTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for Point<T> {
+    type Marker = PointTag;
 }
 
 impl<'a, T> PointTraitExt<T> for &'a Point<T>
@@ -50,8 +50,8 @@ where
     forward_point_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a Point<T> {
-    type Marker = PointTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Point<T> {
+    type Marker = PointTag;
 }
 
 impl<T> PointTraitExt<T> for UnimplementedPoint<T>
@@ -66,6 +66,6 @@ where
     forward_point_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedPoint<T> {
-    type Marker = PointTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedPoint<T> {
+    type Marker = PointTag;
 }

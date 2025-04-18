@@ -6,10 +6,10 @@ use geo_traits::{
 use geo_types::to_geo::ToGeoCoord;
 use geo_types::{Coord, CoordNum, LineString, MultiLineString};
 
-use crate::{GeoTraitExtWithTypeMarker, LineStringTraitExt, MultiLineStringTraitExtMarker};
+use crate::{GeoTraitExtWithTypeTag, LineStringTraitExt, MultiLineStringTag};
 
 pub trait MultiLineStringTraitExt<T: CoordNum>:
-    MultiLineStringTrait<T = T> + GeoTraitExtWithTypeMarker
+    MultiLineStringTrait<T = T> + GeoTraitExtWithTypeTag
 {
     type LineStringTypeExt<'a>: 'a + LineStringTraitExt<T>
     where
@@ -104,8 +104,8 @@ where
     forward_multi_line_string_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for MultiLineString<T> {
-    type Marker = MultiLineStringTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiLineString<T> {
+    type Marker = MultiLineStringTag;
 }
 
 impl<'a, T> MultiLineStringTraitExt<T> for &'a MultiLineString<T>
@@ -120,8 +120,8 @@ where
     forward_multi_line_string_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a MultiLineString<T> {
-    type Marker = MultiLineStringTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a MultiLineString<T> {
+    type Marker = MultiLineStringTag;
 }
 
 impl<T> MultiLineStringTraitExt<T> for UnimplementedMultiLineString<T>
@@ -136,6 +136,6 @@ where
     forward_multi_line_string_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedMultiLineString<T> {
-    type Marker = MultiLineStringTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiLineString<T> {
+    type Marker = MultiLineStringTag;
 }

@@ -8,7 +8,7 @@ use geo_traits::Dimensions;
 use geo_traits::LineStringTrait;
 use geo_traits_ext::forward_line_string_trait_ext_funcs;
 use geo_traits_ext::LineStringTraitExt;
-use geo_traits_ext::{GeoTraitExtWithTypeMarker, LineStringTraitExtMarker};
+use geo_traits_ext::{GeoTraitExtWithTypeTag, LineStringTag};
 
 /// A linear ring in a WKB buffer.
 ///
@@ -104,6 +104,6 @@ impl<'a> LineStringTraitExt<f64> for WKBLinearRing<'a> {
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeMarker for WKBLinearRing<'a> {
-    type Marker = LineStringTraitExtMarker;
+impl<'a> GeoTraitExtWithTypeTag for WKBLinearRing<'a> {
+    type Marker = LineStringTag;
 }

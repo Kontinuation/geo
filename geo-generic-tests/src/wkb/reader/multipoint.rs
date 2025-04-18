@@ -7,8 +7,7 @@ use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::MultiPointTrait;
 use geo_traits_ext::{
-    forward_multi_point_trait_ext_funcs, GeoTraitExtWithTypeMarker, MultiPointTraitExt,
-    MultiPointTraitExtMarker,
+    forward_multi_point_trait_ext_funcs, GeoTraitExtWithTypeTag, MultiPointTag, MultiPointTraitExt,
 };
 
 /// A WKB MultiPoint
@@ -141,8 +140,8 @@ impl<'a> MultiPointTraitExt<f64> for MultiPoint<'a> {
     forward_multi_point_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeMarker for MultiPoint<'a> {
-    type Marker = MultiPointTraitExtMarker;
+impl<'a> GeoTraitExtWithTypeTag for MultiPoint<'a> {
+    type Marker = MultiPointTag;
 }
 
 impl<'a, 'b> MultiPointTraitExt<f64> for &'b MultiPoint<'a>
@@ -157,9 +156,9 @@ where
     forward_multi_point_trait_ext_funcs!();
 }
 
-impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b MultiPoint<'a>
+impl<'a, 'b> GeoTraitExtWithTypeTag for &'b MultiPoint<'a>
 where
     'a: 'b,
 {
-    type Marker = MultiPointTraitExtMarker;
+    type Marker = MultiPointTag;
 }

@@ -44,5 +44,5 @@ mod polygon;
 mod rect;
 mod triangle;
 
-pub use marker::*;
-mod marker;
+pub use type_tag::*;
+mod type_tag;

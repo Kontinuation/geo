@@ -3,11 +3,9 @@
 use geo_traits::{MultiPointTrait, PointTrait, UnimplementedMultiPoint, UnimplementedPoint};
 use geo_types::{to_geo::ToGeoCoord, Coord, CoordNum, MultiPoint, Point};
 
-use crate::{GeoTraitExtWithTypeMarker, MultiPointTraitExtMarker, PointTraitExt};
+use crate::{GeoTraitExtWithTypeTag, MultiPointTag, PointTraitExt};
 
-pub trait MultiPointTraitExt<T: CoordNum>:
-    MultiPointTrait<T = T> + GeoTraitExtWithTypeMarker
-{
+pub trait MultiPointTraitExt<T: CoordNum>: MultiPointTrait<T = T> + GeoTraitExtWithTypeTag {
     type PointTypeExt<'a>: 'a + PointTraitExt<T>
     where
         Self: 'a;
@@ -50,8 +48,8 @@ where
     forward_multi_point_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for MultiPoint<T> {
-    type Marker = MultiPointTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiPoint<T> {
+    type Marker = MultiPointTag;
 }
 
 impl<'a, T> MultiPointTraitExt<T> for &'a MultiPoint<T>
@@ -66,8 +64,8 @@ where
     forward_multi_point_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a MultiPoint<T> {
-    type Marker = MultiPointTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a MultiPoint<T> {
+    type Marker = MultiPointTag;
 }
 
 impl<T> MultiPointTraitExt<T> for UnimplementedMultiPoint<T>
@@ -82,6 +80,6 @@ where
     forward_multi_point_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedMultiPoint<T> {
-    type Marker = MultiPointTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiPoint<T> {
+    type Marker = MultiPointTag;
 }

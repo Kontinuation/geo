@@ -7,7 +7,7 @@ use geo_types::*;
 
 use crate::*;
 
-pub trait GeometryTraitExt<T: CoordNum>: GeometryTrait<T = T> + GeoTraitExtWithTypeMarker {
+pub trait GeometryTraitExt<T: CoordNum>: GeometryTrait<T = T> + GeoTraitExtWithTypeTag {
     type PointTypeExt<'a>: 'a + PointTraitExt<T>
     where
         Self: 'a;
@@ -177,8 +177,8 @@ where
     forward_geometry_trait_ext_funcs!(T);
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for Geometry<T> {
-    type Marker = GeometryTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for Geometry<T> {
+    type Marker = GeometryTag;
 }
 
 impl<'a, T> GeometryTraitExt<T> for &'a Geometry<T>
@@ -229,8 +229,8 @@ where
     forward_geometry_trait_ext_funcs!(T);
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a Geometry<T> {
-    type Marker = GeometryTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Geometry<T> {
+    type Marker = GeometryTag;
 }
 
 impl<T> GeometryTraitExt<T> for UnimplementedGeometry<T>
@@ -281,6 +281,6 @@ where
     forward_geometry_trait_ext_funcs!(T);
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedGeometry<T> {
-    type Marker = GeometryTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedGeometry<T> {
+    type Marker = GeometryTag;
 }

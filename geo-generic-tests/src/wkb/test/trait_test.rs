@@ -1,6 +1,6 @@
 use geo_generic_alg::*;
 use geo_traits::*;
-use geo_traits_ext::{GeoTraitExtWithTypeMarker, LineStringTraitExtMarker, PointTraitExtMarker};
+use geo_traits_ext::{GeoTraitExtWithTypeTag, LineStringTag, PointTag};
 use geos::WKBWriter;
 
 use crate::wkb::reader::read_wkb;
@@ -15,7 +15,7 @@ trait IntersectsTrait<LM, RM, Rhs = Self> {
     fn intersects_trait(&self, rhs: &Rhs) -> bool;
 }
 
-impl<T, P, Rhs> IntersectsTrait<PointTraitExtMarker, PointTraitExtMarker, Rhs> for P
+impl<T, P, Rhs> IntersectsTrait<PointTag, PointTag, Rhs> for P
 where
     P: PointTrait<T = T>,
     T: CoordNum,
@@ -26,7 +26,7 @@ where
     }
 }
 
-impl<T, P, Rhs> IntersectsTrait<PointTraitExtMarker, LineStringTraitExtMarker, Rhs> for P
+impl<T, P, Rhs> IntersectsTrait<PointTag, LineStringTag, Rhs> for P
 where
     P: PointTrait<T = T>,
     T: CoordNum,
@@ -37,7 +37,7 @@ where
     }
 }
 
-impl<T, LS, Rhs> IntersectsTrait<LineStringTraitExtMarker, PointTraitExtMarker, Rhs> for LS
+impl<T, LS, Rhs> IntersectsTrait<LineStringTag, PointTag, Rhs> for LS
 where
     LS: LineStringTrait<T = T>,
     T: CoordNum,
@@ -48,7 +48,7 @@ where
     }
 }
 
-impl<T, LS, Rhs> IntersectsTrait<LineStringTraitExtMarker, LineStringTraitExtMarker, Rhs> for LS
+impl<T, LS, Rhs> IntersectsTrait<LineStringTag, LineStringTag, Rhs> for LS
 where
     LS: LineStringTrait<T = T>,
     T: CoordNum,
@@ -61,8 +61,8 @@ where
 
 impl<LHS, RHS> IntersectsGeo<RHS> for LHS
 where
-    LHS: GeoTraitExtWithTypeMarker,
-    RHS: GeoTraitExtWithTypeMarker,
+    LHS: GeoTraitExtWithTypeTag,
+    RHS: GeoTraitExtWithTypeTag,
     LHS: IntersectsTrait<LHS::Marker, RHS::Marker, RHS>,
 {
     fn intersects_geo(&self, rhs: &RHS) -> bool {
@@ -74,7 +74,7 @@ trait AreaTestTrait<M, T> {
     fn area_test_trait(&self) -> T;
 }
 
-impl<T, P> AreaTestTrait<PointTraitExtMarker, T> for P
+impl<T, P> AreaTestTrait<PointTag, T> for P
 where
     P: PointTrait<T = T>,
     T: CoordNum,
@@ -84,7 +84,7 @@ where
     }
 }
 
-impl<T, LS> AreaTestTrait<LineStringTraitExtMarker, T> for LS
+impl<T, LS> AreaTestTrait<LineStringTag, T> for LS
 where
     LS: LineStringTrait<T = T>,
     T: CoordNum,
@@ -100,7 +100,7 @@ trait AreaTest<T> {
 
 impl<T, G> AreaTest<T> for G
 where
-    G: GeoTraitExtWithTypeMarker,
+    G: GeoTraitExtWithTypeTag,
     G: AreaTestTrait<G::Marker, T>,
     T: CoordNum,
 {

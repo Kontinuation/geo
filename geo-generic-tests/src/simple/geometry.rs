@@ -1,7 +1,7 @@
 use geo_traits::*;
 use geo_traits_ext::{
-    forward_geometry_trait_ext_funcs, GeoTraitExtWithTypeMarker, GeometryTraitExt,
-    GeometryTraitExtMarker, GeometryTypeExt,
+    forward_geometry_trait_ext_funcs, GeoTraitExtWithTypeTag, GeometryTag, GeometryTraitExt,
+    GeometryTypeExt,
 };
 use geo_types::CoordNum;
 
@@ -227,8 +227,8 @@ impl<'a, T: CoordNum> GeometryTraitExt<T> for &'a SimpleGeometry<T> {
     forward_geometry_trait_ext_funcs!(T);
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a SimpleGeometry<T> {
-    type Marker = GeometryTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a SimpleGeometry<T> {
+    type Marker = GeometryTag;
 }
 
 impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
@@ -285,8 +285,8 @@ impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
     forward_geometry_trait_ext_funcs!(T);
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for SimpleGeometry<T> {
-    type Marker = GeometryTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for SimpleGeometry<T> {
+    type Marker = GeometryTag;
 }
 
 #[cfg(test)]

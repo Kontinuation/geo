@@ -5,7 +5,7 @@ use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::{CoordTrait, PointTrait};
 use geo_traits_ext::{
-    forward_point_trait_ext_funcs, GeoTraitExtWithTypeMarker, PointTraitExt, PointTraitExtMarker,
+    forward_point_trait_ext_funcs, GeoTraitExtWithTypeTag, PointTag, PointTraitExt,
 };
 
 /// A WKB Point.
@@ -127,8 +127,8 @@ impl<'a> PointTraitExt<f64> for Point<'a> {
     forward_point_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeMarker for Point<'a> {
-    type Marker = PointTraitExtMarker;
+impl<'a> GeoTraitExtWithTypeTag for Point<'a> {
+    type Marker = PointTag;
 }
 
 impl<'a> PointTraitExt<f64> for &Point<'a> {
@@ -140,9 +140,9 @@ impl<'a> PointTraitExt<f64> for &Point<'a> {
     forward_point_trait_ext_funcs!();
 }
 
-impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b Point<'a>
+impl<'a, 'b> GeoTraitExtWithTypeTag for &'b Point<'a>
 where
     'a: 'b,
 {
-    type Marker = PointTraitExtMarker;
+    type Marker = PointTag;
 }

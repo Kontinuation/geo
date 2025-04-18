@@ -7,8 +7,8 @@ use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::MultiLineStringTrait;
 use geo_traits_ext::{
-    forward_multi_line_string_trait_ext_funcs, GeoTraitExtWithTypeMarker, MultiLineStringTraitExt,
-    MultiLineStringTraitExtMarker,
+    forward_multi_line_string_trait_ext_funcs, GeoTraitExtWithTypeTag, MultiLineStringTag,
+    MultiLineStringTraitExt,
 };
 
 const HEADER_BYTES: u64 = 5;
@@ -132,8 +132,8 @@ impl<'a> MultiLineStringTraitExt<f64> for MultiLineString<'a> {
     forward_multi_line_string_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeMarker for MultiLineString<'a> {
-    type Marker = MultiLineStringTraitExtMarker;
+impl<'a> GeoTraitExtWithTypeTag for MultiLineString<'a> {
+    type Marker = MultiLineStringTag;
 }
 
 impl<'a, 'b> MultiLineStringTraitExt<f64> for &'b MultiLineString<'a>
@@ -148,9 +148,9 @@ where
     forward_multi_line_string_trait_ext_funcs!();
 }
 
-impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b MultiLineString<'a>
+impl<'a, 'b> GeoTraitExtWithTypeTag for &'b MultiLineString<'a>
 where
     'a: 'b,
 {
-    type Marker = MultiLineStringTraitExtMarker;
+    type Marker = MultiLineStringTag;
 }

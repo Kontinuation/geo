@@ -3,9 +3,9 @@
 use geo_traits::{LineTrait, UnimplementedCoord, UnimplementedLine};
 use geo_types::{Coord, CoordNum, Line};
 
-use crate::{CoordTraitExt, GeoTraitExtWithTypeMarker, LineTraitExtMarker};
+use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, LineTag};
 
-pub trait LineTraitExt<T: CoordNum>: LineTrait<T = T> + GeoTraitExtWithTypeMarker {
+pub trait LineTraitExt<T: CoordNum>: LineTrait<T = T> + GeoTraitExtWithTypeTag {
     type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
     where
         Self: 'a;
@@ -43,8 +43,8 @@ where
     forward_line_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for Line<T> {
-    type Marker = LineTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for Line<T> {
+    type Marker = LineTag;
 }
 
 impl<'a, T> LineTraitExt<T> for &'a Line<T>
@@ -58,8 +58,8 @@ where
     forward_line_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a Line<T> {
-    type Marker = LineTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a Line<T> {
+    type Marker = LineTag;
 }
 
 impl<T> LineTraitExt<T> for UnimplementedLine<T>
@@ -73,6 +73,6 @@ where
     forward_line_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for UnimplementedLine<T> {
-    type Marker = LineTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedLine<T> {
+    type Marker = LineTag;
 }

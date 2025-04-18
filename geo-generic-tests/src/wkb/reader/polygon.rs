@@ -7,8 +7,7 @@ use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::PolygonTrait;
 use geo_traits_ext::{
-    forward_polygon_trait_ext_funcs, GeoTraitExtWithTypeMarker, PolygonTraitExt,
-    PolygonTraitExtMarker,
+    forward_polygon_trait_ext_funcs, GeoTraitExtWithTypeTag, PolygonTag, PolygonTraitExt,
 };
 
 /// skip endianness and wkb type
@@ -156,8 +155,8 @@ impl<'a> PolygonTraitExt<f64> for Polygon<'a> {
     forward_polygon_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeMarker for Polygon<'a> {
-    type Marker = PolygonTraitExtMarker;
+impl<'a> GeoTraitExtWithTypeTag for Polygon<'a> {
+    type Marker = PolygonTag;
 }
 
 impl<'a, 'b> PolygonTraitExt<f64> for &'b Polygon<'a>
@@ -172,9 +171,9 @@ where
     forward_polygon_trait_ext_funcs!();
 }
 
-impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b Polygon<'a>
+impl<'a, 'b> GeoTraitExtWithTypeTag for &'b Polygon<'a>
 where
     'a: 'b,
 {
-    type Marker = PolygonTraitExtMarker;
+    type Marker = PolygonTag;
 }

@@ -1,8 +1,7 @@
 use delegate::delegate;
 use geo_traits::PolygonTrait;
 use geo_traits_ext::{
-    forward_polygon_trait_ext_funcs, GeoTraitExtWithTypeMarker, PolygonTraitExt,
-    PolygonTraitExtMarker,
+    forward_polygon_trait_ext_funcs, GeoTraitExtWithTypeTag, PolygonTag, PolygonTraitExt,
 };
 use geo_types::CoordNum;
 
@@ -70,8 +69,8 @@ impl<T: CoordNum> PolygonTraitExt<T> for SimplePolygon<T> {
     forward_polygon_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for SimplePolygon<T> {
-    type Marker = PolygonTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for SimplePolygon<T> {
+    type Marker = PolygonTag;
 }
 
 impl<'a, T: CoordNum> PolygonTraitExt<T> for &'a SimplePolygon<T> {
@@ -83,8 +82,8 @@ impl<'a, T: CoordNum> PolygonTraitExt<T> for &'a SimplePolygon<T> {
     forward_polygon_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a SimplePolygon<T> {
-    type Marker = PolygonTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a SimplePolygon<T> {
+    type Marker = PolygonTag;
 }
 
 #[cfg(test)]

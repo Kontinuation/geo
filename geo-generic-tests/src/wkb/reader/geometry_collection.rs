@@ -7,8 +7,8 @@ use crate::wkb::reader::Wkb;
 use crate::wkb::Endianness;
 use geo_traits::{Dimensions, GeometryCollectionTrait};
 use geo_traits_ext::{
-    forward_geometry_collection_trait_ext_funcs, GeoTraitExtWithTypeMarker,
-    GeometryCollectionTraitExt, GeometryCollectionTraitExtMarker,
+    forward_geometry_collection_trait_ext_funcs, GeoTraitExtWithTypeTag, GeometryCollectionTag,
+    GeometryCollectionTraitExt,
 };
 
 /// skip endianness and wkb type
@@ -102,6 +102,6 @@ impl<'a> GeometryCollectionTraitExt<f64> for GeometryCollection<'a> {
     forward_geometry_collection_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeMarker for GeometryCollection<'a> {
-    type Marker = GeometryCollectionTraitExtMarker;
+impl<'a> GeoTraitExtWithTypeTag for GeometryCollection<'a> {
+    type Marker = GeometryCollectionTag;
 }

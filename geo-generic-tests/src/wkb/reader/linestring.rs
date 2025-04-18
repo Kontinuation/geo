@@ -7,8 +7,7 @@ use crate::wkb::Endianness;
 use geo_traits::Dimensions;
 use geo_traits::LineStringTrait;
 use geo_traits_ext::{
-    forward_line_string_trait_ext_funcs, GeoTraitExtWithTypeMarker, LineStringTraitExt,
-    LineStringTraitExtMarker,
+    forward_line_string_trait_ext_funcs, GeoTraitExtWithTypeTag, LineStringTag, LineStringTraitExt,
 };
 
 const HEADER_BYTES: u64 = 5;
@@ -139,8 +138,8 @@ impl<'a> LineStringTraitExt<f64> for LineString<'a> {
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<'a> GeoTraitExtWithTypeMarker for LineString<'a> {
-    type Marker = LineStringTraitExtMarker;
+impl<'a> GeoTraitExtWithTypeTag for LineString<'a> {
+    type Marker = LineStringTag;
 }
 
 impl<'a, 'b> LineStringTraitExt<f64> for &'b LineString<'a>
@@ -155,9 +154,9 @@ where
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<'a, 'b> GeoTraitExtWithTypeMarker for &'b LineString<'a>
+impl<'a, 'b> GeoTraitExtWithTypeTag for &'b LineString<'a>
 where
     'a: 'b,
 {
-    type Marker = LineStringTraitExtMarker;
+    type Marker = LineStringTag;
 }

@@ -1,8 +1,7 @@
 use delegate::delegate;
 use geo_traits::LineStringTrait;
 use geo_traits_ext::{
-    forward_line_string_trait_ext_funcs, GeoTraitExtWithTypeMarker, LineStringTraitExt,
-    LineStringTraitExtMarker,
+    forward_line_string_trait_ext_funcs, GeoTraitExtWithTypeTag, LineStringTag, LineStringTraitExt,
 };
 use geo_types::CoordNum;
 
@@ -65,8 +64,8 @@ impl<T: CoordNum> LineStringTraitExt<T> for SimpleLineString<T> {
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<T: CoordNum> GeoTraitExtWithTypeMarker for SimpleLineString<T> {
-    type Marker = LineStringTraitExtMarker;
+impl<T: CoordNum> GeoTraitExtWithTypeTag for SimpleLineString<T> {
+    type Marker = LineStringTag;
 }
 
 impl<'a, T: CoordNum> LineStringTraitExt<T> for &'a SimpleLineString<T> {
@@ -78,8 +77,8 @@ impl<'a, T: CoordNum> LineStringTraitExt<T> for &'a SimpleLineString<T> {
     forward_line_string_trait_ext_funcs!();
 }
 
-impl<'a, T: CoordNum> GeoTraitExtWithTypeMarker for &'a SimpleLineString<T> {
-    type Marker = LineStringTraitExtMarker;
+impl<'a, T: CoordNum> GeoTraitExtWithTypeTag for &'a SimpleLineString<T> {
+    type Marker = LineStringTag;
 }
 
 #[cfg(test)]
