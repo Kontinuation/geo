@@ -66,7 +66,6 @@ impl<T: CoordNum> PolygonTraitExt for SimplePolygon<T> {
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for SimplePolygon<T> {
     type Tag = PolygonTag;
-    type OrdinateT = T;
 }
 
 impl<T: CoordNum> PolygonTraitExt for &SimplePolygon<T> {
@@ -75,7 +74,6 @@ impl<T: CoordNum> PolygonTraitExt for &SimplePolygon<T> {
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &SimplePolygon<T> {
     type Tag = PolygonTag;
-    type OrdinateT = T;
 }
 
 #[cfg(test)]

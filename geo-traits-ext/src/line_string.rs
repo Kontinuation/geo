@@ -140,7 +140,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for LineString<T> {
     type Tag = LineStringTag;
-    type OrdinateT = T;
 }
 
 impl<T> LineStringTraitExt for &LineString<T>
@@ -152,7 +151,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &LineString<T> {
     type Tag = LineStringTag;
-    type OrdinateT = T;
 }
 
 impl<T> LineStringTraitExt for UnimplementedLineString<T>
@@ -164,5 +162,4 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedLineString<T> {
     type Tag = LineStringTag;
-    type OrdinateT = T;
 }

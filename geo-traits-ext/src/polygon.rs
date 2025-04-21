@@ -64,7 +64,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Polygon<T> {
     type Tag = PolygonTag;
-    type OrdinateT = T;
 }
 
 impl<T> PolygonTraitExt for &Polygon<T>
@@ -76,7 +75,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Polygon<T> {
     type Tag = PolygonTag;
-    type OrdinateT = T;
 }
 
 impl<T> PolygonTraitExt for UnimplementedPolygon<T>
@@ -88,5 +86,4 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedPolygon<T> {
     type Tag = PolygonTag;
-    type OrdinateT = T;
 }

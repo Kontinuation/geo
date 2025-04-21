@@ -81,7 +81,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Triangle<T> {
     type Tag = TriangleTag;
-    type OrdinateT = T;
 }
 
 impl<T> TriangleTraitExt for &Triangle<T>
@@ -93,7 +92,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Triangle<T> {
     type Tag = TriangleTag;
-    type OrdinateT = T;
 }
 
 impl<T> TriangleTraitExt for UnimplementedTriangle<T>
@@ -105,5 +103,4 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedTriangle<T> {
     type Tag = TriangleTag;
-    type OrdinateT = T;
 }

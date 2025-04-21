@@ -128,7 +128,6 @@ impl MultiPolygonTraitExt for MultiPolygon<'_> {
 
 impl GeoTraitExtWithTypeTag for MultiPolygon<'_> {
     type Tag = MultiPolygonTag;
-    type OrdinateT = f64;
 }
 
 impl<'a, 'b> MultiPolygonTraitExt for &'b MultiPolygon<'a>
@@ -143,5 +142,4 @@ where
     'a: 'b,
 {
     type Tag = MultiPolygonTag;
-    type OrdinateT = f64;
 }

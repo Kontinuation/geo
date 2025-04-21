@@ -129,7 +129,6 @@ impl MultiLineStringTraitExt for MultiLineString<'_> {
 
 impl GeoTraitExtWithTypeTag for MultiLineString<'_> {
     type Tag = MultiLineStringTag;
-    type OrdinateT = f64;
 }
 
 impl<'a, 'b> MultiLineStringTraitExt for &'b MultiLineString<'a>
@@ -144,5 +143,4 @@ where
     'a: 'b,
 {
     type Tag = MultiLineStringTag;
-    type OrdinateT = f64;
 }

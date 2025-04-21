@@ -49,7 +49,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for GeometryCollection<T> {
     type Tag = GeometryCollectionTag;
-    type OrdinateT = T;
 }
 
 impl<T> GeometryCollectionTraitExt for &GeometryCollection<T>
@@ -61,7 +60,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &GeometryCollection<T> {
     type Tag = GeometryCollectionTag;
-    type OrdinateT = T;
 }
 
 impl<T> GeometryCollectionTraitExt for UnimplementedGeometryCollection<T>
@@ -73,5 +71,4 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedGeometryCollection<T> {
     type Tag = GeometryCollectionTag;
-    type OrdinateT = T;
 }

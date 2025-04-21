@@ -101,5 +101,4 @@ impl LineStringTraitExt for WKBLinearRing<'_> {
 
 impl GeoTraitExtWithTypeTag for WKBLinearRing<'_> {
     type Tag = LineStringTag;
-    type OrdinateT = f64;
 }

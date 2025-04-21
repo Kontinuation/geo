@@ -193,7 +193,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Rect<T> {
     type Tag = RectTag;
-    type OrdinateT = T;
 }
 
 impl<T> RectTraitExt for &Rect<T>
@@ -205,7 +204,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Rect<T> {
     type Tag = RectTag;
-    type OrdinateT = T;
 }
 
 impl<T> RectTraitExt for UnimplementedRect<T>
@@ -217,5 +215,4 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedRect<T> {
     type Tag = RectTag;
-    type OrdinateT = T;
 }

@@ -49,7 +49,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiPolygon<T> {
     type Tag = MultiPolygonTag;
-    type OrdinateT = T;
 }
 
 impl<T> MultiPolygonTraitExt for &MultiPolygon<T>
@@ -61,7 +60,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &MultiPolygon<T> {
     type Tag = MultiPolygonTag;
-    type OrdinateT = T;
 }
 
 impl<T> MultiPolygonTraitExt for UnimplementedMultiPolygon<T>
@@ -73,5 +71,4 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiPolygon<T> {
     type Tag = MultiPolygonTag;
-    type OrdinateT = T;
 }

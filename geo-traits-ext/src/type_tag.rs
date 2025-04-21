@@ -30,5 +30,4 @@ impl GeoTypeTag for TriangleTag {}
 
 pub trait GeoTraitExtWithTypeTag {
     type Tag: GeoTypeTag;
-    type OrdinateT;
 }

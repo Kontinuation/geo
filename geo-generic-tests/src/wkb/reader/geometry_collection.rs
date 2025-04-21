@@ -99,5 +99,4 @@ impl GeometryCollectionTraitExt for GeometryCollection<'_> {
 
 impl GeoTraitExtWithTypeTag for GeometryCollection<'_> {
     type Tag = GeometryCollectionTag;
-    type OrdinateT = f64;
 }

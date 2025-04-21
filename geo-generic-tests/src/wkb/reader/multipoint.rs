@@ -137,7 +137,6 @@ impl MultiPointTraitExt for MultiPoint<'_> {
 
 impl GeoTraitExtWithTypeTag for MultiPoint<'_> {
     type Tag = MultiPointTag;
-    type OrdinateT = f64;
 }
 
 impl<'a, 'b> MultiPointTraitExt for &'b MultiPoint<'a>
@@ -152,5 +151,4 @@ where
     'a: 'b,
 {
     type Tag = MultiPointTag;
-    type OrdinateT = f64;
 }

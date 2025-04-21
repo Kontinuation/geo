@@ -124,7 +124,6 @@ impl PointTraitExt for Point<'_> {
 
 impl GeoTraitExtWithTypeTag for Point<'_> {
     type Tag = PointTag;
-    type OrdinateT = f64;
 }
 
 impl PointTraitExt for &Point<'_> {
@@ -136,5 +135,4 @@ where
     'a: 'b,
 {
     type Tag = PointTag;
-    type OrdinateT = f64;
 }

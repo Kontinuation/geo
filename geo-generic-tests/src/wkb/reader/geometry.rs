@@ -277,7 +277,6 @@ where
 
 impl GeoTraitExtWithTypeTag for Wkb<'_> {
     type Tag = GeometryTag;
-    type OrdinateT = f64;
 }
 
 impl<'a, 'b> GeoTraitExtWithTypeTag for &'b Wkb<'a>
@@ -285,5 +284,4 @@ where
     'a: 'b,
 {
     type Tag = GeometryTag;
-    type OrdinateT = f64;
 }

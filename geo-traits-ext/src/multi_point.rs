@@ -53,7 +53,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiPoint<T> {
     type Tag = MultiPointTag;
-    type OrdinateT = T;
 }
 
 impl<T> MultiPointTraitExt for &MultiPoint<T>
@@ -65,7 +64,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &MultiPoint<T> {
     type Tag = MultiPointTag;
-    type OrdinateT = T;
 }
 
 impl<T> MultiPointTraitExt for UnimplementedMultiPoint<T>
@@ -77,5 +75,4 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiPoint<T> {
     type Tag = MultiPointTag;
-    type OrdinateT = T;
 }

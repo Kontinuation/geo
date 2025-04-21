@@ -59,7 +59,6 @@ impl<T: CoordNum> PointTraitExt for SimplePoint<T> {
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for SimplePoint<T> {
     type Tag = PointTag;
-    type OrdinateT = T;
 }
 
 impl<T: CoordNum> PointTraitExt for &SimplePoint<T> {
@@ -68,7 +67,6 @@ impl<T: CoordNum> PointTraitExt for &SimplePoint<T> {
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &SimplePoint<T> {
     type Tag = PointTag;
-    type OrdinateT = T;
 }
 
 #[cfg(test)]

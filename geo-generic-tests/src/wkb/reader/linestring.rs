@@ -135,7 +135,6 @@ impl LineStringTraitExt for LineString<'_> {
 
 impl GeoTraitExtWithTypeTag for LineString<'_> {
     type Tag = LineStringTag;
-    type OrdinateT = f64;
 }
 
 impl<'a, 'b> LineStringTraitExt for &'b LineString<'a>
@@ -150,5 +149,4 @@ where
     'a: 'b,
 {
     type Tag = LineStringTag;
-    type OrdinateT = f64;
 }

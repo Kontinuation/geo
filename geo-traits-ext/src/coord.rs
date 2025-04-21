@@ -17,19 +17,16 @@ impl<T> CoordTraitExt for Coord<T> where T: CoordNum {}
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Coord<T> {
     type Tag = CoordTag;
-    type OrdinateT = T;
 }
 
 impl<T> CoordTraitExt for &Coord<T> where T: CoordNum {}
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Coord<T> {
     type Tag = CoordTag;
-    type OrdinateT = T;
 }
 
 impl<T> CoordTraitExt for UnimplementedCoord<T> where T: CoordNum {}
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedCoord<T> {
     type Tag = CoordTag;
-    type OrdinateT = T;
 }

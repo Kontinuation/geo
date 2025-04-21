@@ -61,7 +61,6 @@ impl<T: CoordNum> LineStringTraitExt for SimpleLineString<T> {
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for SimpleLineString<T> {
     type Tag = LineStringTag;
-    type OrdinateT = T;
 }
 
 impl<T: CoordNum> LineStringTraitExt for &SimpleLineString<T> {
@@ -70,7 +69,6 @@ impl<T: CoordNum> LineStringTraitExt for &SimpleLineString<T> {
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &SimpleLineString<T> {
     type Tag = LineStringTag;
-    type OrdinateT = T;
 }
 
 #[cfg(test)]

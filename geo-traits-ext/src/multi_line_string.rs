@@ -103,7 +103,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiLineString<T> {
     type Tag = MultiLineStringTag;
-    type OrdinateT = T;
 }
 
 impl<T> MultiLineStringTraitExt for &MultiLineString<T>
@@ -115,7 +114,6 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &MultiLineString<T> {
     type Tag = MultiLineStringTag;
-    type OrdinateT = T;
 }
 
 impl<T> MultiLineStringTraitExt for UnimplementedMultiLineString<T>
@@ -127,5 +125,4 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiLineString<T> {
     type Tag = MultiLineStringTag;
-    type OrdinateT = T;
 }

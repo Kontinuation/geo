@@ -112,5 +112,4 @@ impl CoordTraitExt for Coord<'_> {}
 
 impl GeoTraitExtWithTypeTag for Coord<'_> {
     type Tag = CoordTag;
-    type OrdinateT = f64;
 }

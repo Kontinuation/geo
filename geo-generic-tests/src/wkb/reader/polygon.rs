@@ -152,7 +152,6 @@ impl PolygonTraitExt for Polygon<'_> {
 
 impl GeoTraitExtWithTypeTag for Polygon<'_> {
     type Tag = PolygonTag;
-    type OrdinateT = f64;
 }
 
 impl<'a, 'b> PolygonTraitExt for &'b Polygon<'a>
@@ -167,5 +166,4 @@ where
     'a: 'b,
 {
     type Tag = PolygonTag;
-    type OrdinateT = f64;
 }
