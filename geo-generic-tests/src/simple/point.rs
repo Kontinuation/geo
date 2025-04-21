@@ -53,20 +53,22 @@ impl<T: CoordNum> PointTrait for SimplePoint<T> {
     }
 }
 
-impl<T: CoordNum> PointTraitExt<T> for SimplePoint<T> {
+impl<T: CoordNum> PointTraitExt for SimplePoint<T> {
     forward_point_trait_ext_funcs!();
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for SimplePoint<T> {
     type Tag = PointTag;
+    type OrdinateT = T;
 }
 
-impl<T: CoordNum> PointTraitExt<T> for &SimplePoint<T> {
+impl<T: CoordNum> PointTraitExt for &SimplePoint<T> {
     forward_point_trait_ext_funcs!();
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &SimplePoint<T> {
     type Tag = PointTag;
+    type OrdinateT = T;
 }
 
 #[cfg(test)]

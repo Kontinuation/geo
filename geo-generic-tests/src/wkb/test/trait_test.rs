@@ -1,6 +1,6 @@
 use geo_generic_alg::*;
 use geo_traits::*;
-use geo_traits_ext::{GeoTraitExtWithTypeTag, LineStringTag, PointTag};
+use geo_traits_ext::*;
 use geos::WKBWriter;
 
 use crate::wkb::reader::read_wkb;
@@ -28,9 +28,9 @@ trait IntersectsTrait<LM, RM, Rhs = Self> {
 
 impl<T, P, Rhs> IntersectsTrait<PointTag, PointTag, Rhs> for P
 where
-    P: PointTrait<T = T>,
+    P: PointTraitExt<T = T>,
     T: CoordNum,
-    Rhs: PointTrait<T = T>,
+    Rhs: PointTraitExt<T = T>,
 {
     fn intersects_trait(&self, _rhs: &Rhs) -> bool {
         false
@@ -39,9 +39,9 @@ where
 
 impl<T, P, Rhs> IntersectsTrait<PointTag, LineStringTag, Rhs> for P
 where
-    P: PointTrait<T = T>,
+    P: PointTraitExt<T = T>,
     T: CoordNum,
-    Rhs: LineStringTrait<T = T>,
+    Rhs: LineStringTraitExt<T = T>,
 {
     fn intersects_trait(&self, _rhs: &Rhs) -> bool {
         false
@@ -50,9 +50,9 @@ where
 
 impl<T, LS, Rhs> IntersectsTrait<LineStringTag, PointTag, Rhs> for LS
 where
-    LS: LineStringTrait<T = T>,
+    LS: LineStringTraitExt<T = T>,
     T: CoordNum,
-    Rhs: PointTrait<T = T>,
+    Rhs: PointTraitExt<T = T>,
 {
     fn intersects_trait(&self, _rhs: &Rhs) -> bool {
         false
@@ -61,9 +61,9 @@ where
 
 impl<T, LS, Rhs> IntersectsTrait<LineStringTag, LineStringTag, Rhs> for LS
 where
-    LS: LineStringTrait<T = T>,
+    LS: LineStringTraitExt<T = T>,
     T: CoordNum,
-    Rhs: LineStringTrait<T = T>,
+    Rhs: LineStringTraitExt<T = T>,
 {
     fn intersects_trait(&self, _rhs: &Rhs) -> bool {
         false

@@ -5,10 +5,11 @@ use geo_types::{CoordNum, GeometryCollection};
 
 use crate::{GeoTraitExtWithTypeTag, GeometryCollectionTag, GeometryTraitExt};
 
-pub trait GeometryCollectionTraitExt<T: CoordNum>:
-    GeometryCollectionTrait<T = T> + GeoTraitExtWithTypeTag
+pub trait GeometryCollectionTraitExt: GeometryCollectionTrait + GeoTraitExtWithTypeTag
+where
+    <Self as GeometryCollectionTrait>::T: CoordNum,
 {
-    type GeometryTypeExt<'a>: 'a + GeometryTraitExt<T>
+    type GeometryTypeExt<'a>: 'a + GeometryTraitExt<T = <Self as GeometryCollectionTrait>::T>
     where
         Self: 'a;
 
@@ -39,7 +40,7 @@ macro_rules! forward_geometry_collection_trait_ext_funcs {
     };
 }
 
-impl<T> GeometryCollectionTraitExt<T> for GeometryCollection<T>
+impl<T> GeometryCollectionTraitExt for GeometryCollection<T>
 where
     T: CoordNum,
 {
@@ -48,9 +49,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for GeometryCollection<T> {
     type Tag = GeometryCollectionTag;
+    type OrdinateT = T;
 }
 
-impl<T> GeometryCollectionTraitExt<T> for &GeometryCollection<T>
+impl<T> GeometryCollectionTraitExt for &GeometryCollection<T>
 where
     T: CoordNum,
 {
@@ -59,9 +61,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &GeometryCollection<T> {
     type Tag = GeometryCollectionTag;
+    type OrdinateT = T;
 }
 
-impl<T> GeometryCollectionTraitExt<T> for UnimplementedGeometryCollection<T>
+impl<T> GeometryCollectionTraitExt for UnimplementedGeometryCollection<T>
 where
     T: CoordNum,
 {
@@ -70,4 +73,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedGeometryCollection<T> {
     type Tag = GeometryCollectionTag;
+    type OrdinateT = T;
 }

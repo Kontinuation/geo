@@ -5,8 +5,11 @@ use geo_types::{to_geo::ToGeoCoord, Coord, CoordNum, MultiPoint};
 
 use crate::{GeoTraitExtWithTypeTag, MultiPointTag, PointTraitExt};
 
-pub trait MultiPointTraitExt<T: CoordNum>: MultiPointTrait<T = T> + GeoTraitExtWithTypeTag {
-    type PointTypeExt<'a>: 'a + PointTraitExt<T>
+pub trait MultiPointTraitExt: MultiPointTrait + GeoTraitExtWithTypeTag
+where
+    <Self as MultiPointTrait>::T: CoordNum,
+{
+    type PointTypeExt<'a>: 'a + PointTraitExt<T = <Self as MultiPointTrait>::T>
     where
         Self: 'a;
 
@@ -14,7 +17,7 @@ pub trait MultiPointTraitExt<T: CoordNum>: MultiPointTrait<T = T> + GeoTraitExtW
     fn point_unchecked_ext(&self, i: usize) -> Self::PointTypeExt<'_>;
     fn points_ext(&self) -> impl Iterator<Item = Self::PointTypeExt<'_>>;
 
-    fn coord_iter(&self) -> impl DoubleEndedIterator<Item = Coord<T>> {
+    fn coord_iter(&self) -> impl DoubleEndedIterator<Item = Coord<<Self as MultiPointTrait>::T>> {
         self.points().flat_map(|p| p.coord().map(|c| c.to_coord()))
     }
 }
@@ -41,7 +44,7 @@ macro_rules! forward_multi_point_trait_ext_funcs {
     };
 }
 
-impl<T> MultiPointTraitExt<T> for MultiPoint<T>
+impl<T> MultiPointTraitExt for MultiPoint<T>
 where
     T: CoordNum,
 {
@@ -50,9 +53,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiPoint<T> {
     type Tag = MultiPointTag;
+    type OrdinateT = T;
 }
 
-impl<T> MultiPointTraitExt<T> for &MultiPoint<T>
+impl<T> MultiPointTraitExt for &MultiPoint<T>
 where
     T: CoordNum,
 {
@@ -61,9 +65,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &MultiPoint<T> {
     type Tag = MultiPointTag;
+    type OrdinateT = T;
 }
 
-impl<T> MultiPointTraitExt<T> for UnimplementedMultiPoint<T>
+impl<T> MultiPointTraitExt for UnimplementedMultiPoint<T>
 where
     T: CoordNum,
 {
@@ -72,4 +77,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiPoint<T> {
     type Tag = MultiPointTag;
+    type OrdinateT = T;
 }

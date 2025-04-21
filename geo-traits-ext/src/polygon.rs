@@ -5,8 +5,11 @@ use geo_types::{CoordNum, Polygon};
 
 use crate::{GeoTraitExtWithTypeTag, LineStringTraitExt, PolygonTag};
 
-pub trait PolygonTraitExt<T: CoordNum>: PolygonTrait<T = T> + GeoTraitExtWithTypeTag {
-    type RingTypeExt<'a>: 'a + LineStringTraitExt<T>
+pub trait PolygonTraitExt: PolygonTrait + GeoTraitExtWithTypeTag
+where
+    <Self as PolygonTrait>::T: CoordNum,
+{
+    type RingTypeExt<'a>: 'a + LineStringTraitExt<T = <Self as PolygonTrait>::T>
     where
         Self: 'a;
 
@@ -52,7 +55,7 @@ macro_rules! forward_polygon_trait_ext_funcs {
     };
 }
 
-impl<T> PolygonTraitExt<T> for Polygon<T>
+impl<T> PolygonTraitExt for Polygon<T>
 where
     T: CoordNum,
 {
@@ -61,9 +64,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Polygon<T> {
     type Tag = PolygonTag;
+    type OrdinateT = T;
 }
 
-impl<T> PolygonTraitExt<T> for &Polygon<T>
+impl<T> PolygonTraitExt for &Polygon<T>
 where
     T: CoordNum,
 {
@@ -72,9 +76,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Polygon<T> {
     type Tag = PolygonTag;
+    type OrdinateT = T;
 }
 
-impl<T> PolygonTraitExt<T> for UnimplementedPolygon<T>
+impl<T> PolygonTraitExt for UnimplementedPolygon<T>
 where
     T: CoordNum,
 {
@@ -83,4 +88,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedPolygon<T> {
     type Tag = PolygonTag;
+    type OrdinateT = T;
 }

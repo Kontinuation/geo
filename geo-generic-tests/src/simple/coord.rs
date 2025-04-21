@@ -52,16 +52,18 @@ impl<T: CoordNum> CoordTrait for SimpleCoord<T> {
     }
 }
 
-impl<T: CoordNum> CoordTraitExt<T> for SimpleCoord<T> {}
+impl<T: CoordNum> CoordTraitExt for SimpleCoord<T> {}
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for SimpleCoord<T> {
     type Tag = CoordTag;
+    type OrdinateT = T;
 }
 
-impl<T: CoordNum> CoordTraitExt<T> for &SimpleCoord<T> {}
+impl<T: CoordNum> CoordTraitExt for &SimpleCoord<T> {}
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &SimpleCoord<T> {
     type Tag = CoordTag;
+    type OrdinateT = T;
 }
 
 #[cfg(test)]

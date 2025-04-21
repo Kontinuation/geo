@@ -118,15 +118,16 @@ where
     }
 }
 
-impl PointTraitExt<f64> for Point<'_> {
+impl PointTraitExt for Point<'_> {
     forward_point_trait_ext_funcs!();
 }
 
 impl GeoTraitExtWithTypeTag for Point<'_> {
     type Tag = PointTag;
+    type OrdinateT = f64;
 }
 
-impl PointTraitExt<f64> for &Point<'_> {
+impl PointTraitExt for &Point<'_> {
     forward_point_trait_ext_funcs!();
 }
 
@@ -135,4 +136,5 @@ where
     'a: 'b,
 {
     type Tag = PointTag;
+    type OrdinateT = f64;
 }

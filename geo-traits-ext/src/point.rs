@@ -5,8 +5,11 @@ use geo_types::{CoordNum, Point};
 
 use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, PointTag};
 
-pub trait PointTraitExt<T: CoordNum>: PointTrait<T = T> + GeoTraitExtWithTypeTag {
-    type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
+pub trait PointTraitExt: PointTrait + GeoTraitExtWithTypeTag
+where
+    <Self as PointTrait>::T: CoordNum,
+{
+    type CoordTypeExt<'a>: 'a + CoordTraitExt<T = <Self as PointTrait>::T>
     where
         Self: 'a;
 
@@ -27,7 +30,7 @@ macro_rules! forward_point_trait_ext_funcs {
     };
 }
 
-impl<T> PointTraitExt<T> for Point<T>
+impl<T> PointTraitExt for Point<T>
 where
     T: CoordNum,
 {
@@ -36,9 +39,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Point<T> {
     type Tag = PointTag;
+    type OrdinateT = T;
 }
 
-impl<T> PointTraitExt<T> for &Point<T>
+impl<T> PointTraitExt for &Point<T>
 where
     T: CoordNum,
 {
@@ -47,9 +51,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Point<T> {
     type Tag = PointTag;
+    type OrdinateT = T;
 }
 
-impl<T> PointTraitExt<T> for UnimplementedPoint<T>
+impl<T> PointTraitExt for UnimplementedPoint<T>
 where
     T: CoordNum,
 {
@@ -58,4 +63,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedPoint<T> {
     type Tag = PointTag;
+    type OrdinateT = T;
 }

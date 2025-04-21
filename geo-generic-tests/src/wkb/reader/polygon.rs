@@ -146,15 +146,16 @@ where
     }
 }
 
-impl PolygonTraitExt<f64> for Polygon<'_> {
+impl PolygonTraitExt for Polygon<'_> {
     forward_polygon_trait_ext_funcs!();
 }
 
 impl GeoTraitExtWithTypeTag for Polygon<'_> {
     type Tag = PolygonTag;
+    type OrdinateT = f64;
 }
 
-impl<'a, 'b> PolygonTraitExt<f64> for &'b Polygon<'a>
+impl<'a, 'b> PolygonTraitExt for &'b Polygon<'a>
 where
     'a: 'b,
 {
@@ -166,4 +167,5 @@ where
     'a: 'b,
 {
     type Tag = PolygonTag;
+    type OrdinateT = f64;
 }

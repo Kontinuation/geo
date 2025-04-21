@@ -264,11 +264,11 @@ where
     }
 }
 
-impl GeometryTraitExt<f64> for Wkb<'_> {
+impl GeometryTraitExt for Wkb<'_> {
     forward_geometry_trait_ext_funcs!(f64);
 }
 
-impl<'a, 'b> GeometryTraitExt<f64> for &'b Wkb<'a>
+impl<'a, 'b> GeometryTraitExt for &'b Wkb<'a>
 where
     'a: 'b,
 {
@@ -277,6 +277,7 @@ where
 
 impl GeoTraitExtWithTypeTag for Wkb<'_> {
     type Tag = GeometryTag;
+    type OrdinateT = f64;
 }
 
 impl<'a, 'b> GeoTraitExtWithTypeTag for &'b Wkb<'a>
@@ -284,4 +285,5 @@ where
     'a: 'b,
 {
     type Tag = GeometryTag;
+    type OrdinateT = f64;
 }

@@ -5,8 +5,11 @@ use geo_types::{CoordNum, Line};
 
 use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, LineTag};
 
-pub trait LineTraitExt<T: CoordNum>: LineTrait<T = T> + GeoTraitExtWithTypeTag {
-    type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
+pub trait LineTraitExt: LineTrait + GeoTraitExtWithTypeTag
+where
+    <Self as LineTrait>::T: CoordNum,
+{
+    type CoordTypeExt<'a>: 'a + CoordTraitExt<T = <Self as LineTrait>::T>
     where
         Self: 'a;
 
@@ -37,7 +40,7 @@ macro_rules! forward_line_trait_ext_funcs {
     };
 }
 
-impl<T> LineTraitExt<T> for Line<T>
+impl<T> LineTraitExt for Line<T>
 where
     T: CoordNum,
 {
@@ -46,9 +49,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Line<T> {
     type Tag = LineTag;
+    type OrdinateT = T;
 }
 
-impl<T> LineTraitExt<T> for &Line<T>
+impl<T> LineTraitExt for &Line<T>
 where
     T: CoordNum,
 {
@@ -57,9 +61,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Line<T> {
     type Tag = LineTag;
+    type OrdinateT = T;
 }
 
-impl<T> LineTraitExt<T> for UnimplementedLine<T>
+impl<T> LineTraitExt for UnimplementedLine<T>
 where
     T: CoordNum,
 {
@@ -68,4 +73,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedLine<T> {
     type Tag = LineTag;
+    type OrdinateT = T;
 }

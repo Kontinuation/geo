@@ -173,20 +173,22 @@ impl<T: CoordNum> GeometryTrait for SimpleGeometry<T> {
     }
 }
 
-impl<T: CoordNum> GeometryTraitExt<T> for &SimpleGeometry<T> {
+impl<T: CoordNum> GeometryTraitExt for &SimpleGeometry<T> {
     forward_geometry_trait_ext_funcs!(T);
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &SimpleGeometry<T> {
     type Tag = GeometryTag;
+    type OrdinateT = T;
 }
 
-impl<T: CoordNum> GeometryTraitExt<T> for SimpleGeometry<T> {
+impl<T: CoordNum> GeometryTraitExt for SimpleGeometry<T> {
     forward_geometry_trait_ext_funcs!(T);
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for SimpleGeometry<T> {
     type Tag = GeometryTag;
+    type OrdinateT = T;
 }
 
 #[cfg(test)]

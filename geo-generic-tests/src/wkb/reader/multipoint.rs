@@ -131,15 +131,16 @@ where
     }
 }
 
-impl MultiPointTraitExt<f64> for MultiPoint<'_> {
+impl MultiPointTraitExt for MultiPoint<'_> {
     forward_multi_point_trait_ext_funcs!();
 }
 
 impl GeoTraitExtWithTypeTag for MultiPoint<'_> {
     type Tag = MultiPointTag;
+    type OrdinateT = f64;
 }
 
-impl<'a, 'b> MultiPointTraitExt<f64> for &'b MultiPoint<'a>
+impl<'a, 'b> MultiPointTraitExt for &'b MultiPoint<'a>
 where
     'a: 'b,
 {
@@ -151,4 +152,5 @@ where
     'a: 'b,
 {
     type Tag = MultiPointTag;
+    type OrdinateT = f64;
 }

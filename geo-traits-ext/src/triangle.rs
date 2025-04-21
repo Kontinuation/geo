@@ -5,8 +5,11 @@ use geo_types::{polygon, to_geo::ToGeoCoord, Coord, CoordNum, Line, Polygon, Tri
 
 use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, TriangleTag};
 
-pub trait TriangleTraitExt<T: CoordNum>: TriangleTrait<T = T> + GeoTraitExtWithTypeTag {
-    type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
+pub trait TriangleTraitExt: TriangleTrait + GeoTraitExtWithTypeTag
+where
+    <Self as TriangleTrait>::T: CoordNum,
+{
+    type CoordTypeExt<'a>: 'a + CoordTraitExt<T = <Self as TriangleTrait>::T>
     where
         Self: 'a;
 
@@ -19,7 +22,7 @@ pub trait TriangleTraitExt<T: CoordNum>: TriangleTrait<T = T> + GeoTraitExtWithT
         [self.first(), self.second(), self.third()]
     }
 
-    fn to_lines(&self) -> [Line<T>; 3] {
+    fn to_lines(&self) -> [Line<<Self as TriangleTrait>::T>; 3] {
         [
             Line::new(self.first().to_coord(), self.second().to_coord()),
             Line::new(self.second().to_coord(), self.third().to_coord()),
@@ -27,7 +30,7 @@ pub trait TriangleTraitExt<T: CoordNum>: TriangleTrait<T = T> + GeoTraitExtWithT
         ]
     }
 
-    fn to_polygon(&self) -> Polygon<T> {
+    fn to_polygon(&self) -> Polygon<<Self as TriangleTrait>::T> {
         polygon![
             self.first().to_coord(),
             self.second().to_coord(),
@@ -36,7 +39,7 @@ pub trait TriangleTraitExt<T: CoordNum>: TriangleTrait<T = T> + GeoTraitExtWithT
         ]
     }
 
-    fn coord_iter(&self) -> impl Iterator<Item = Coord<T>> {
+    fn coord_iter(&self) -> impl Iterator<Item = Coord<<Self as TriangleTrait>::T>> {
         [self.first(), self.second(), self.third()]
             .into_iter()
             .map(|c| c.to_coord())
@@ -69,7 +72,7 @@ macro_rules! forward_triangle_trait_ext_funcs {
     };
 }
 
-impl<T> TriangleTraitExt<T> for Triangle<T>
+impl<T> TriangleTraitExt for Triangle<T>
 where
     T: CoordNum,
 {
@@ -78,9 +81,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Triangle<T> {
     type Tag = TriangleTag;
+    type OrdinateT = T;
 }
 
-impl<T> TriangleTraitExt<T> for &Triangle<T>
+impl<T> TriangleTraitExt for &Triangle<T>
 where
     T: CoordNum,
 {
@@ -89,9 +93,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Triangle<T> {
     type Tag = TriangleTag;
+    type OrdinateT = T;
 }
 
-impl<T> TriangleTraitExt<T> for UnimplementedTriangle<T>
+impl<T> TriangleTraitExt for UnimplementedTriangle<T>
 where
     T: CoordNum,
 {
@@ -100,4 +105,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedTriangle<T> {
     type Tag = TriangleTag;
+    type OrdinateT = T;
 }

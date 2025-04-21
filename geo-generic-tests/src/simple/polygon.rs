@@ -60,20 +60,22 @@ impl<'a, T: CoordNum> PolygonTrait for &'a SimplePolygon<T> {
     }
 }
 
-impl<T: CoordNum> PolygonTraitExt<T> for SimplePolygon<T> {
+impl<T: CoordNum> PolygonTraitExt for SimplePolygon<T> {
     forward_polygon_trait_ext_funcs!();
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for SimplePolygon<T> {
     type Tag = PolygonTag;
+    type OrdinateT = T;
 }
 
-impl<T: CoordNum> PolygonTraitExt<T> for &SimplePolygon<T> {
+impl<T: CoordNum> PolygonTraitExt for &SimplePolygon<T> {
     forward_polygon_trait_ext_funcs!();
 }
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &SimplePolygon<T> {
     type Tag = PolygonTag;
+    type OrdinateT = T;
 }
 
 #[cfg(test)]

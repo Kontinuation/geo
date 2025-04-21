@@ -6,8 +6,11 @@ use geo_types::{Coord, CoordNum, Line, LineString, Triangle};
 
 use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, LineStringTag};
 
-pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> + GeoTraitExtWithTypeTag {
-    type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
+pub trait LineStringTraitExt: LineStringTrait + GeoTraitExtWithTypeTag
+where
+    <Self as LineStringTrait>::T: CoordNum,
+{
+    type CoordTypeExt<'a>: 'a + CoordTraitExt<T = <Self as LineStringTrait>::T>
     where
         Self: 'a;
 
@@ -36,7 +39,7 @@ pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> + GeoTraitExtW
     /// );
     /// assert!(lines.next().is_none());
     /// ```
-    fn lines(&'_ self) -> impl ExactSizeIterator<Item = Line<T>> + '_ {
+    fn lines(&'_ self) -> impl ExactSizeIterator<Item = Line<<Self as LineStringTrait>::T>> + '_ {
         let num_coords = self.num_coords();
         (0..num_coords - 1).map(|i| unsafe {
             let coord1 = self.coord_unchecked(i);
@@ -69,7 +72,9 @@ pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> + GeoTraitExtW
     /// );
     /// assert!(lines.next().is_none());
     /// ```
-    fn rev_lines(&'_ self) -> impl ExactSizeIterator<Item = Line<T>> + '_ {
+    fn rev_lines(
+        &'_ self,
+    ) -> impl ExactSizeIterator<Item = Line<<Self as LineStringTrait>::T>> + '_ {
         let num_coords = self.num_coords();
         (num_coords - 1..0).map(|i| unsafe {
             let coord1 = self.coord_unchecked(i);
@@ -79,7 +84,9 @@ pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> + GeoTraitExtW
     }
 
     /// An iterator which yields the coordinates of a [`LineString`][`geo_types::LineString`] as [Triangle]s
-    fn triangles(&'_ self) -> impl ExactSizeIterator<Item = Triangle<T>> + '_ {
+    fn triangles(
+        &'_ self,
+    ) -> impl ExactSizeIterator<Item = Triangle<<Self as LineStringTrait>::T>> + '_ {
         let num_coords = self.num_coords();
         (0..num_coords - 2).map(|i| unsafe {
             let coord1 = self.coord_unchecked(i);
@@ -89,7 +96,7 @@ pub trait LineStringTraitExt<T: CoordNum>: LineStringTrait<T = T> + GeoTraitExtW
         })
     }
 
-    fn coord_iter(&self) -> impl Iterator<Item = Coord<T>> {
+    fn coord_iter(&self) -> impl Iterator<Item = Coord<<Self as LineStringTrait>::T>> {
         self.coords().map(|c| c.to_coord())
     }
 
@@ -124,7 +131,7 @@ macro_rules! forward_line_string_trait_ext_funcs {
     };
 }
 
-impl<T> LineStringTraitExt<T> for LineString<T>
+impl<T> LineStringTraitExt for LineString<T>
 where
     T: CoordNum,
 {
@@ -133,9 +140,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for LineString<T> {
     type Tag = LineStringTag;
+    type OrdinateT = T;
 }
 
-impl<T> LineStringTraitExt<T> for &LineString<T>
+impl<T> LineStringTraitExt for &LineString<T>
 where
     T: CoordNum,
 {
@@ -144,9 +152,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &LineString<T> {
     type Tag = LineStringTag;
+    type OrdinateT = T;
 }
 
-impl<T> LineStringTraitExt<T> for UnimplementedLineString<T>
+impl<T> LineStringTraitExt for UnimplementedLineString<T>
 where
     T: CoordNum,
 {
@@ -155,4 +164,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedLineString<T> {
     type Tag = LineStringTag;
+    type OrdinateT = T;
 }

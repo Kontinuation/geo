@@ -7,25 +7,28 @@ use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, RectTag};
 
 static RECT_INVALID_BOUNDS_ERROR: &str = "Failed to create Rect: 'min' coordinate's x/y value must be smaller or equal to the 'max' x/y value";
 
-pub trait RectTraitExt<T: CoordNum>: RectTrait<T = T> + GeoTraitExtWithTypeTag {
-    type CoordTypeExt<'a>: 'a + CoordTraitExt<T>
+pub trait RectTraitExt: RectTrait + GeoTraitExtWithTypeTag
+where
+    <Self as RectTrait>::T: CoordNum,
+{
+    type CoordTypeExt<'a>: 'a + CoordTraitExt<T = <Self as RectTrait>::T>
     where
         Self: 'a;
 
     fn min_ext(&self) -> Self::CoordTypeExt<'_>;
     fn max_ext(&self) -> Self::CoordTypeExt<'_>;
 
-    fn width(&self) -> T {
+    fn width(&self) -> <Self as RectTrait>::T {
         self.max().x() - self.min().x()
     }
 
-    fn height(&self) -> T {
+    fn height(&self) -> <Self as RectTrait>::T {
         self.max().y() - self.min().y()
     }
 
-    fn to_polygon(&self) -> Polygon<T>
+    fn to_polygon(&self) -> Polygon<<Self as RectTrait>::T>
     where
-        T: Clone,
+        <Self as RectTrait>::T: Clone,
     {
         let min_coord = self.min();
         let max_coord = self.max();
@@ -46,7 +49,7 @@ pub trait RectTraitExt<T: CoordNum>: RectTrait<T = T> + GeoTraitExtWithTypeTag {
         Polygon::new(line_string, vec![])
     }
 
-    fn to_lines(&self) -> [Line<T>; 4] {
+    fn to_lines(&self) -> [Line<<Self as RectTrait>::T>; 4] {
         [
             Line::new(
                 coord! {
@@ -91,9 +94,9 @@ pub trait RectTraitExt<T: CoordNum>: RectTrait<T = T> + GeoTraitExtWithTypeTag {
         ]
     }
 
-    fn to_line_string(&self) -> LineString<T>
+    fn to_line_string(&self) -> LineString<<Self as RectTrait>::T>
     where
-        T: Clone,
+        <Self as RectTrait>::T: Clone,
     {
         let min_coord = self.min();
         let max_coord = self.max();
@@ -124,9 +127,9 @@ pub trait RectTraitExt<T: CoordNum>: RectTrait<T = T> + GeoTraitExtWithTypeTag {
         }
     }
 
-    fn contains_point(&self, coord: &Coord<T>) -> bool
+    fn contains_point(&self, coord: &Coord<<Self as RectTrait>::T>) -> bool
     where
-        T: PartialOrd,
+        <Self as RectTrait>::T: PartialOrd,
     {
         let min_coord = self.min();
         let max_coord = self.max();
@@ -141,7 +144,7 @@ pub trait RectTraitExt<T: CoordNum>: RectTrait<T = T> + GeoTraitExtWithTypeTag {
 
     fn contains_rect(&self, rect: &Self) -> bool
     where
-        T: PartialOrd,
+        <Self as RectTrait>::T: PartialOrd,
     {
         let self_min = self.min();
         let self_max = self.max();
@@ -181,7 +184,7 @@ macro_rules! forward_rect_trait_ext_funcs {
     };
 }
 
-impl<T> RectTraitExt<T> for Rect<T>
+impl<T> RectTraitExt for Rect<T>
 where
     T: CoordNum,
 {
@@ -190,9 +193,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Rect<T> {
     type Tag = RectTag;
+    type OrdinateT = T;
 }
 
-impl<T> RectTraitExt<T> for &Rect<T>
+impl<T> RectTraitExt for &Rect<T>
 where
     T: CoordNum,
 {
@@ -201,9 +205,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Rect<T> {
     type Tag = RectTag;
+    type OrdinateT = T;
 }
 
-impl<T> RectTraitExt<T> for UnimplementedRect<T>
+impl<T> RectTraitExt for UnimplementedRect<T>
 where
     T: CoordNum,
 {
@@ -212,4 +217,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedRect<T> {
     type Tag = RectTag;
+    type OrdinateT = T;
 }

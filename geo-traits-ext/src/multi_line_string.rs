@@ -6,10 +6,11 @@ use geo_types::{Coord, CoordNum, MultiLineString};
 
 use crate::{GeoTraitExtWithTypeTag, LineStringTraitExt, MultiLineStringTag};
 
-pub trait MultiLineStringTraitExt<T: CoordNum>:
-    MultiLineStringTrait<T = T> + GeoTraitExtWithTypeTag
+pub trait MultiLineStringTraitExt: MultiLineStringTrait + GeoTraitExtWithTypeTag
+where
+    <Self as MultiLineStringTrait>::T: CoordNum,
 {
-    type LineStringTypeExt<'a>: 'a + LineStringTraitExt<T>
+    type LineStringTypeExt<'a>: 'a + LineStringTraitExt<T = <Self as MultiLineStringTrait>::T>
     where
         Self: 'a;
 
@@ -17,7 +18,7 @@ pub trait MultiLineStringTraitExt<T: CoordNum>:
     fn line_string_unchecked_ext(&self, i: usize) -> Self::LineStringTypeExt<'_>;
     fn line_strings_ext(&self) -> impl Iterator<Item = Self::LineStringTypeExt<'_>>;
 
-    fn coord_iter(&self) -> impl Iterator<Item = Coord<T>> {
+    fn coord_iter(&self) -> impl Iterator<Item = Coord<<Self as MultiLineStringTrait>::T>> {
         CoordIter::new(self)
     }
 }
@@ -93,7 +94,7 @@ impl<T: CoordNum, MLS: MultiLineStringTrait<T = T>> Iterator for CoordIter<'_, T
     }
 }
 
-impl<T> MultiLineStringTraitExt<T> for MultiLineString<T>
+impl<T> MultiLineStringTraitExt for MultiLineString<T>
 where
     T: CoordNum,
 {
@@ -102,9 +103,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for MultiLineString<T> {
     type Tag = MultiLineStringTag;
+    type OrdinateT = T;
 }
 
-impl<T> MultiLineStringTraitExt<T> for &MultiLineString<T>
+impl<T> MultiLineStringTraitExt for &MultiLineString<T>
 where
     T: CoordNum,
 {
@@ -113,9 +115,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &MultiLineString<T> {
     type Tag = MultiLineStringTag;
+    type OrdinateT = T;
 }
 
-impl<T> MultiLineStringTraitExt<T> for UnimplementedMultiLineString<T>
+impl<T> MultiLineStringTraitExt for UnimplementedMultiLineString<T>
 where
     T: CoordNum,
 {
@@ -124,4 +127,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedMultiLineString<T> {
     type Tag = MultiLineStringTag;
+    type OrdinateT = T;
 }

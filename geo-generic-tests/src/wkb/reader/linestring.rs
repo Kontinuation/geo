@@ -129,15 +129,16 @@ where
     }
 }
 
-impl LineStringTraitExt<f64> for LineString<'_> {
+impl LineStringTraitExt for LineString<'_> {
     forward_line_string_trait_ext_funcs!();
 }
 
 impl GeoTraitExtWithTypeTag for LineString<'_> {
     type Tag = LineStringTag;
+    type OrdinateT = f64;
 }
 
-impl<'a, 'b> LineStringTraitExt<f64> for &'b LineString<'a>
+impl<'a, 'b> LineStringTraitExt for &'b LineString<'a>
 where
     'a: 'b,
 {
@@ -149,4 +150,5 @@ where
     'a: 'b,
 {
     type Tag = LineStringTag;
+    type OrdinateT = f64;
 }

@@ -1,50 +1,52 @@
 // Extend GeometryTrait traits for the `geo-traits` crate
 
-use core::marker::PhantomData;
-
 use geo_traits::*;
 use geo_types::*;
 
 use crate::*;
 
-pub trait GeometryTraitExt<T: CoordNum>: GeometryTrait<T = T> + GeoTraitExtWithTypeTag {
-    type PointTypeExt<'a>: 'a + PointTraitExt<T>
+pub trait GeometryTraitExt: GeometryTrait + GeoTraitExtWithTypeTag
+where
+    <Self as GeometryTrait>::T: CoordNum,
+{
+    type PointTypeExt<'a>: 'a + PointTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
-    type LineStringTypeExt<'a>: 'a + LineStringTraitExt<T>
+    type LineStringTypeExt<'a>: 'a + LineStringTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
-    type PolygonTypeExt<'a>: 'a + PolygonTraitExt<T>
+    type PolygonTypeExt<'a>: 'a + PolygonTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
-    type MultiPointTypeExt<'a>: 'a + MultiPointTraitExt<T>
+    type MultiPointTypeExt<'a>: 'a + MultiPointTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
-    type MultiLineStringTypeExt<'a>: 'a + MultiLineStringTraitExt<T>
+    type MultiLineStringTypeExt<'a>: 'a + MultiLineStringTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
-    type MultiPolygonTypeExt<'a>: 'a + MultiPolygonTraitExt<T>
+    type MultiPolygonTypeExt<'a>: 'a + MultiPolygonTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
-    type TriangleTypeExt<'a>: 'a + TriangleTraitExt<T>
+    type TriangleTypeExt<'a>: 'a + TriangleTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
-    type RectTypeExt<'a>: 'a + RectTraitExt<T>
+    type RectTypeExt<'a>: 'a + RectTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
-    type LineTypeExt<'a>: 'a + LineTraitExt<T>
+    type LineTypeExt<'a>: 'a + LineTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
-    type GeometryCollectionTypeExt<'a>: 'a + GeometryCollectionTraitExt<T>
+    type GeometryCollectionTypeExt<'a>: 'a
+        + GeometryCollectionTraitExt<T = <Self as GeometryTrait>::T>
     where
         Self: 'a;
 
@@ -52,7 +54,6 @@ pub trait GeometryTraitExt<T: CoordNum>: GeometryTrait<T = T> + GeoTraitExtWithT
         &self,
     ) -> GeometryTypeExt<
         '_,
-        T,
         Self::PointTypeExt<'_>,
         Self::LineStringTypeExt<'_>,
         Self::PolygonTypeExt<'_>,
@@ -67,19 +68,28 @@ pub trait GeometryTraitExt<T: CoordNum>: GeometryTrait<T = T> + GeoTraitExtWithT
 }
 
 #[derive(Debug)]
-pub enum GeometryTypeExt<'a, T, P, LS, Y, MP, ML, MY, GC, R, TT, L>
+pub enum GeometryTypeExt<'a, P, LS, Y, MP, ML, MY, GC, R, TT, L>
 where
-    T: CoordNum,
-    P: PointTraitExt<T>,
-    LS: LineStringTraitExt<T>,
-    Y: PolygonTraitExt<T>,
-    MP: MultiPointTraitExt<T>,
-    ML: MultiLineStringTraitExt<T>,
-    MY: MultiPolygonTraitExt<T>,
-    GC: GeometryCollectionTraitExt<T>,
-    R: RectTraitExt<T>,
-    TT: TriangleTraitExt<T>,
-    L: LineTraitExt<T>,
+    P: PointTraitExt,
+    LS: LineStringTraitExt,
+    Y: PolygonTraitExt,
+    MP: MultiPointTraitExt,
+    ML: MultiLineStringTraitExt,
+    MY: MultiPolygonTraitExt,
+    GC: GeometryCollectionTraitExt,
+    R: RectTraitExt,
+    TT: TriangleTraitExt,
+    L: LineTraitExt,
+    <P as PointTrait>::T: CoordNum,
+    <LS as LineStringTrait>::T: CoordNum,
+    <Y as PolygonTrait>::T: CoordNum,
+    <MP as MultiPointTrait>::T: CoordNum,
+    <ML as MultiLineStringTrait>::T: CoordNum,
+    <MY as MultiPolygonTrait>::T: CoordNum,
+    <GC as GeometryCollectionTrait>::T: CoordNum,
+    <R as RectTrait>::T: CoordNum,
+    <TT as TriangleTrait>::T: CoordNum,
+    <L as LineTrait>::T: CoordNum,
 {
     Point(&'a P),
     LineString(&'a LS),
@@ -91,7 +101,6 @@ where
     Rect(&'a R),
     Triangle(&'a TT),
     Line(&'a L),
-    _Unused(&'a PhantomData<T>),
 }
 
 #[macro_export]
@@ -151,7 +160,6 @@ macro_rules! forward_geometry_trait_ext_funcs {
             &self,
         ) -> GeometryTypeExt<
             '_,
-            $t,
             Self::PointTypeExt<'_>,
             Self::LineStringTypeExt<'_>,
             Self::PolygonTypeExt<'_>,
@@ -179,7 +187,7 @@ macro_rules! forward_geometry_trait_ext_funcs {
     };
 }
 
-impl<T> GeometryTraitExt<T> for Geometry<T>
+impl<T> GeometryTraitExt for Geometry<T>
 where
     T: CoordNum,
 {
@@ -188,9 +196,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for Geometry<T> {
     type Tag = GeometryTag;
+    type OrdinateT = T;
 }
 
-impl<T> GeometryTraitExt<T> for &Geometry<T>
+impl<T> GeometryTraitExt for &Geometry<T>
 where
     T: CoordNum,
 {
@@ -199,9 +208,10 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for &Geometry<T> {
     type Tag = GeometryTag;
+    type OrdinateT = T;
 }
 
-impl<T> GeometryTraitExt<T> for UnimplementedGeometry<T>
+impl<T> GeometryTraitExt for UnimplementedGeometry<T>
 where
     T: CoordNum,
 {
@@ -210,4 +220,5 @@ where
 
 impl<T: CoordNum> GeoTraitExtWithTypeTag for UnimplementedGeometry<T> {
     type Tag = GeometryTag;
+    type OrdinateT = T;
 }

@@ -1,5 +1,8 @@
 use std::cmp::Ordering;
 
+use geo_traits_ext::*;
+use geo_types::to_geo::ToGeoCoord;
+
 use crate::area::{get_linestring_area, Area};
 use crate::dimensions::{Dimensions, Dimensions::*, HasDimensions};
 use crate::geometry::*;
@@ -57,10 +60,24 @@ pub trait Centroid {
     fn centroid(&self) -> Self::Output;
 }
 
-impl<T> Centroid for Line<T>
+impl<G> Centroid for G
 where
-    T: GeoFloat,
+    G: GeoTraitExtWithTypeTag + CentroidTrait<G::Tag>,
 {
+    type Output = G::Output;
+
+    fn centroid(&self) -> Self::Output {
+        self.centroid_trait()
+    }
+}
+
+pub trait CentroidTrait<GT: GeoTypeTag> {
+    type Output;
+
+    fn centroid_trait(&self) -> Self::Output;
+}
+
+impl<T: GeoFloat, L: LineTraitExt<T = T>> CentroidTrait<LineTag> for L {
     type Output = Point<T>;
 
     /// The Centroid of a [`Line`] is its middle point
@@ -81,13 +98,16 @@ where
     ///     line.centroid(),
     /// );
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         let two = T::one() + T::one();
-        (self.start_point() + self.end_point()) / two
+        let start = self.start_ext().to_coord();
+        let end = self.end_ext().to_coord();
+        let center = (start + end) / two;
+        center.into()
     }
 }
 
-impl<T> Centroid for LineString<T>
+impl<T> CentroidTrait<LineStringTag> for LineString<T>
 where
     T: GeoFloat,
 {
@@ -114,14 +134,14 @@ where
     ///     line_string.centroid(),
     /// );
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         let mut operation = CentroidOperation::new();
         operation.add_line_string(self);
         operation.centroid()
     }
 }
 
-impl<T> Centroid for MultiLineString<T>
+impl<T> CentroidTrait<MultiLineStringTag> for MultiLineString<T>
 where
     T: GeoFloat,
 {
@@ -149,14 +169,14 @@ where
     ///     multi_line_string.centroid(),
     /// );
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         let mut operation = CentroidOperation::new();
         operation.add_multi_line_string(self);
         operation.centroid()
     }
 }
 
-impl<T> Centroid for Polygon<T>
+impl<T> CentroidTrait<PolygonTag> for Polygon<T>
 where
     T: GeoFloat,
 {
@@ -182,14 +202,14 @@ where
     ///     polygon.centroid(),
     /// );
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         let mut operation = CentroidOperation::new();
         operation.add_polygon(self);
         operation.centroid()
     }
 }
 
-impl<T> Centroid for MultiPolygon<T>
+impl<T> CentroidTrait<MultiPolygonTag> for MultiPolygon<T>
 where
     T: GeoFloat,
 {
@@ -227,14 +247,14 @@ where
     ///     multi_polygon.centroid(),
     /// );
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         let mut operation = CentroidOperation::new();
         operation.add_multi_polygon(self);
         operation.centroid()
     }
 }
 
-impl<T> Centroid for Rect<T>
+impl<T> CentroidTrait<RectTag> for Rect<T>
 where
     T: GeoFloat,
 {
@@ -258,12 +278,12 @@ where
     ///     rect.centroid(),
     /// );
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         self.center().into()
     }
 }
 
-impl<T> Centroid for Triangle<T>
+impl<T> CentroidTrait<TriangleTag> for Triangle<T>
 where
     T: GeoFloat,
 {
@@ -288,7 +308,7 @@ where
     ///     triangle.centroid(),
     /// );
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         let mut operation = CentroidOperation::new();
         operation.add_triangle(self);
         operation
@@ -297,7 +317,7 @@ where
     }
 }
 
-impl<T> Centroid for Point<T>
+impl<T> CentroidTrait<PointTag> for Point<T>
 where
     T: GeoFloat,
 {
@@ -318,12 +338,12 @@ where
     ///     point.centroid(),
     /// );
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         *self
     }
 }
 
-impl<T> Centroid for MultiPoint<T>
+impl<T> CentroidTrait<MultiPointTag> for MultiPoint<T>
 where
     T: GeoFloat,
 {
@@ -344,14 +364,14 @@ where
     /// let points: MultiPoint<_> = vec![(5., 1.), (1., 3.), (3., 2.)].into();
     /// assert_eq!(points.centroid(), Some(Point::new(3., 2.)));
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         let mut operation = CentroidOperation::new();
         operation.add_multi_point(self);
         operation.centroid()
     }
 }
 
-impl<T> Centroid for Geometry<T>
+impl<T> CentroidTrait<GeometryTag> for Geometry<T>
 where
     T: GeoFloat,
 {
@@ -382,11 +402,11 @@ where
         ///     geometry.centroid(),
         /// );
         /// ```
-        fn centroid(&self) -> Self::Output;
+        fn centroid_trait(&self) -> Self::Output;
     }
 }
 
-impl<T> Centroid for GeometryCollection<T>
+impl<T> CentroidTrait<GeometryCollectionTag> for GeometryCollection<T>
 where
     T: GeoFloat,
 {
@@ -432,7 +452,7 @@ where
     ///     geometry_collection.centroid(),
     /// );
     /// ```
-    fn centroid(&self) -> Self::Output {
+    fn centroid_trait(&self) -> Self::Output {
         let mut operation = CentroidOperation::new();
         operation.add_geometry_collection(self);
         operation.centroid()

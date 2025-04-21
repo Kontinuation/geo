@@ -3,7 +3,9 @@ use geo_types::to_geo::ToGeoCoord;
 
 use crate::{CoordFloat, CoordNum};
 
-pub(crate) fn twice_signed_ring_area<T: CoordNum, LS: LineStringTraitExt<T>>(linestring: &LS) -> T {
+pub(crate) fn twice_signed_ring_area<T: CoordNum, LS: LineStringTraitExt<T = T>>(
+    linestring: &LS,
+) -> T {
     // LineString with less than 3 points is empty, or a
     // single point, or is not closed.
     let num_coords = linestring.num_coords();
@@ -102,14 +104,14 @@ where
 }
 
 // Calculation of simple (no interior holes) Polygon area
-pub(crate) fn get_linestring_area<T, LS: LineStringTraitExt<T>>(linestring: &LS) -> T
+pub(crate) fn get_linestring_area<T, LS: LineStringTraitExt<T = T>>(linestring: &LS) -> T
 where
     T: CoordFloat,
 {
     twice_signed_ring_area(linestring) / (T::one() + T::one())
 }
 
-impl<T, P: PointTraitExt<T>> AreaTrait<T, PointTag> for P
+impl<T, P: PointTraitExt<T = T>> AreaTrait<T, PointTag> for P
 where
     T: CoordNum,
 {
@@ -122,7 +124,7 @@ where
     }
 }
 
-impl<T, LS: LineStringTraitExt<T>> AreaTrait<T, LineStringTag> for LS
+impl<T, LS: LineStringTraitExt<T = T>> AreaTrait<T, LineStringTag> for LS
 where
     T: CoordNum,
 {
@@ -135,7 +137,7 @@ where
     }
 }
 
-impl<T, L: LineTraitExt<T>> AreaTrait<T, LineTag> for L
+impl<T, L: LineTraitExt<T = T>> AreaTrait<T, LineTag> for L
 where
     T: CoordNum,
 {
@@ -151,7 +153,7 @@ where
 /// **Note.** The implementation handles polygons whose
 /// holes do not all have the same orientation. The sign of
 /// the output is the same as that of the exterior shell.
-impl<T, P: PolygonTraitExt<T>> AreaTrait<T, PolygonTag> for P
+impl<T, P: PolygonTraitExt<T = T>> AreaTrait<T, PolygonTag> for P
 where
     T: CoordFloat,
 {
@@ -183,7 +185,7 @@ where
     }
 }
 
-impl<T, MP: MultiPointTraitExt<T>> AreaTrait<T, MultiPointTag> for MP
+impl<T, MP: MultiPointTraitExt<T = T>> AreaTrait<T, MultiPointTag> for MP
 where
     T: CoordNum,
 {
@@ -196,7 +198,7 @@ where
     }
 }
 
-impl<T, MLS: MultiLineStringTraitExt<T>> AreaTrait<T, MultiLineStringTag> for MLS
+impl<T, MLS: MultiLineStringTraitExt<T = T>> AreaTrait<T, MultiLineStringTag> for MLS
 where
     T: CoordNum,
 {
@@ -215,7 +217,7 @@ where
 /// necessarily the sum of the `unsigned_area` of the
 /// constituent polygons unless they are all oriented the
 /// same.
-impl<T, MP: MultiPolygonTraitExt<T>> AreaTrait<T, MultiPolygonTag> for MP
+impl<T, MP: MultiPolygonTraitExt<T = T>> AreaTrait<T, MultiPolygonTag> for MP
 where
     T: CoordFloat,
 {
@@ -232,7 +234,7 @@ where
 }
 
 /// Because a `Rect` has no winding order, the area will always be positive.
-impl<T, R: RectTraitExt<T>> AreaTrait<T, RectTag> for R
+impl<T, R: RectTraitExt<T = T>> AreaTrait<T, RectTag> for R
 where
     T: CoordNum,
 {
@@ -245,7 +247,7 @@ where
     }
 }
 
-impl<T: CoordFloat, TT: TriangleTraitExt<T>> AreaTrait<T, TriangleTag> for TT
+impl<T: CoordFloat, TT: TriangleTraitExt<T = T>> AreaTrait<T, TriangleTag> for TT
 where
     T: CoordFloat,
 {
@@ -261,7 +263,7 @@ where
     }
 }
 
-impl<T, G: GeometryTraitExt<T>> AreaTrait<T, GeometryTag> for G
+impl<T, G: GeometryTraitExt<T = T>> AreaTrait<T, GeometryTag> for G
 where
     T: CoordFloat,
 {
@@ -271,7 +273,7 @@ where
     }
 }
 
-impl<T, GC: GeometryCollectionTraitExt<T>> AreaTrait<T, GeometryCollectionTag> for GC
+impl<T, GC: GeometryCollectionTraitExt<T = T>> AreaTrait<T, GeometryCollectionTag> for GC
 where
     T: CoordFloat,
 {

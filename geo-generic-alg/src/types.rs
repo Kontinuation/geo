@@ -186,7 +186,6 @@ macro_rules! __geometry_trait_ext_delegate_impl_helper {
                         $enum::GeometryCollection(g) => g.$func_name($($arg_name),*).into(),
                         $enum::Rect(g) => g.$func_name($($arg_name),*).into(),
                         $enum::Triangle(g) => g.$func_name($($arg_name),*).into(),
-                        $enum::_Unused(_) => unimplemented!("GeometryTypeExt::as_type_ext() returned _Unused"),
                     }
                 }
             )+

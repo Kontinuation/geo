@@ -53,7 +53,7 @@ where
     fn bounding_rect_trait(&self) -> Self::Output;
 }
 
-impl<T, C: CoordTraitExt<T>> BoundingRectTrait<T, CoordTag> for C
+impl<T, C: CoordTraitExt<T = T>> BoundingRectTrait<T, CoordTag> for C
 where
     T: CoordNum,
 {
@@ -66,7 +66,7 @@ where
     }
 }
 
-impl<T, P: PointTraitExt<T>> BoundingRectTrait<T, PointTag> for P
+impl<T, P: PointTraitExt<T = T>> BoundingRectTrait<T, PointTag> for P
 where
     T: CoordNum,
 {
@@ -85,7 +85,7 @@ where
     }
 }
 
-impl<T, MP: MultiPointTraitExt<T>> BoundingRectTrait<T, MultiPointTag> for MP
+impl<T, MP: MultiPointTraitExt<T = T>> BoundingRectTrait<T, MultiPointTag> for MP
 where
     T: CoordNum,
 {
@@ -98,7 +98,7 @@ where
     }
 }
 
-impl<T, L: LineTraitExt<T>> BoundingRectTrait<T, LineTag> for L
+impl<T, L: LineTraitExt<T = T>> BoundingRectTrait<T, LineTag> for L
 where
     T: CoordNum,
 {
@@ -109,7 +109,7 @@ where
     }
 }
 
-impl<T, LS: LineStringTraitExt<T>> BoundingRectTrait<T, LineStringTag> for LS
+impl<T, LS: LineStringTraitExt<T = T>> BoundingRectTrait<T, LineStringTag> for LS
 where
     T: CoordNum,
 {
@@ -122,7 +122,7 @@ where
     }
 }
 
-impl<T, MLS: MultiLineStringTraitExt<T>> BoundingRectTrait<T, MultiLineStringTag> for MLS
+impl<T, MLS: MultiLineStringTraitExt<T = T>> BoundingRectTrait<T, MultiLineStringTag> for MLS
 where
     T: CoordNum,
 {
@@ -135,7 +135,7 @@ where
     }
 }
 
-impl<T, P: PolygonTraitExt<T>> BoundingRectTrait<T, PolygonTag> for P
+impl<T, P: PolygonTraitExt<T = T>> BoundingRectTrait<T, PolygonTag> for P
 where
     T: CoordNum,
 {
@@ -153,7 +153,7 @@ where
     }
 }
 
-impl<T, MP: MultiPolygonTraitExt<T>> BoundingRectTrait<T, MultiPolygonTag> for MP
+impl<T, MP: MultiPolygonTraitExt<T = T>> BoundingRectTrait<T, MultiPolygonTag> for MP
 where
     T: CoordNum,
 {
@@ -175,7 +175,7 @@ where
     }
 }
 
-impl<T: CoordNum, TT: TriangleTraitExt<T>> BoundingRectTrait<T, TriangleTag> for TT
+impl<T: CoordNum, TT: TriangleTraitExt<T = T>> BoundingRectTrait<T, TriangleTag> for TT
 where
     T: CoordNum,
 {
@@ -186,7 +186,7 @@ where
     }
 }
 
-impl<T, R: RectTraitExt<T>> BoundingRectTrait<T, RectTag> for R
+impl<T, R: RectTraitExt<T = T>> BoundingRectTrait<T, RectTag> for R
 where
     T: CoordNum,
 {
@@ -197,7 +197,7 @@ where
     }
 }
 
-impl<T, G: GeometryTraitExt<T>> BoundingRectTrait<T, GeometryTag> for G
+impl<T, G: GeometryTraitExt<T = T>> BoundingRectTrait<T, GeometryTag> for G
 where
     T: CoordNum,
 {
@@ -208,7 +208,7 @@ where
     }
 }
 
-impl<T, GC: GeometryCollectionTraitExt<T>> BoundingRectTrait<T, GeometryCollectionTag> for GC
+impl<T, GC: GeometryCollectionTraitExt<T = T>> BoundingRectTrait<T, GeometryCollectionTag> for GC
 where
     T: CoordNum,
 {
