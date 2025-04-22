@@ -1,13 +1,14 @@
 use std::cmp::Ordering;
 
 use geo_traits_ext::*;
-use geo_types::to_geo::ToGeoCoord;
+use geo_types::to_geo::{ToGeoCoord, ToGeoLineString};
+use geo_types::CoordNum;
 
 use crate::area::{get_linestring_area, Area};
-use crate::dimensions::{Dimensions, Dimensions::*, HasDimensions};
-use crate::geometry::*;
+use crate::dimensions::{Dimensions, Dimensions::*, HasDimensions, HasDimensionsTrait};
 use crate::line_measures::{Euclidean, Length};
 use crate::GeoFloat;
+use crate::{geometry::*, GeoNum};
 
 /// Calculation of the centroid.
 /// The centroid is the arithmetic mean position of all points in the shape.
@@ -77,7 +78,11 @@ pub trait CentroidTrait<GT: GeoTypeTag> {
     fn centroid_trait(&self) -> Self::Output;
 }
 
-impl<T: GeoFloat, L: LineTraitExt<T = T>> CentroidTrait<LineTag> for L {
+impl<T, L> CentroidTrait<LineTag> for L
+where
+    L: LineTraitExt<T = T>,
+    T: GeoFloat,
+{
     type Output = Point<T>;
 
     /// The Centroid of a [`Line`] is its middle point
@@ -107,8 +112,9 @@ impl<T: GeoFloat, L: LineTraitExt<T = T>> CentroidTrait<LineTag> for L {
     }
 }
 
-impl<T> CentroidTrait<LineStringTag> for LineString<T>
+impl<T, LS> CentroidTrait<LineStringTag> for LS
 where
+    LS: LineStringTraitExt<T = T>,
     T: GeoFloat,
 {
     type Output = Option<Point<T>>;
@@ -141,8 +147,9 @@ where
     }
 }
 
-impl<T> CentroidTrait<MultiLineStringTag> for MultiLineString<T>
+impl<T, MLS> CentroidTrait<MultiLineStringTag> for MLS
 where
+    MLS: MultiLineStringTraitExt<T = T>,
     T: GeoFloat,
 {
     type Output = Option<Point<T>>;
@@ -176,8 +183,9 @@ where
     }
 }
 
-impl<T> CentroidTrait<PolygonTag> for Polygon<T>
+impl<T, P> CentroidTrait<PolygonTag> for P
 where
+    P: PolygonTraitExt<T = T>,
     T: GeoFloat,
 {
     type Output = Option<Point<T>>;
@@ -492,13 +500,16 @@ impl<T: GeoFloat> CentroidOperation<T> {
         }
     }
 
-    fn add_line_string(&mut self, line_string: &LineString<T>) {
+    fn add_line_string<LS>(&mut self, line_string: &LS)
+    where
+        LS: LineStringTraitExt<T = T>,
+    {
         if self.centroid_dimensions() > OneDimensional {
             return;
         }
 
-        if line_string.0.len() == 1 {
-            self.add_coord(line_string.0[0]);
+        if line_string.num_coords() == 1 {
+            unsafe { self.add_coord(line_string.coord_unchecked(0).to_coord()) };
             return;
         }
 
@@ -507,28 +518,36 @@ impl<T: GeoFloat> CentroidOperation<T> {
         }
     }
 
-    fn add_multi_line_string(&mut self, multi_line_string: &MultiLineString<T>) {
+    fn add_multi_line_string<MLS>(&mut self, multi_line_string: &MLS)
+    where
+        MLS: MultiLineStringTraitExt<T = T>,
+    {
         if self.centroid_dimensions() > OneDimensional {
             return;
         }
 
-        for element in &multi_line_string.0 {
-            self.add_line_string(element);
+        for element in multi_line_string.line_strings_ext() {
+            self.add_line_string(&element);
         }
     }
 
-    fn add_polygon(&mut self, polygon: &Polygon<T>) {
+    fn add_polygon<P>(&mut self, polygon: &P)
+    where
+        P: PolygonTraitExt<T = T>,
+    {
         // Polygons which are completely covered by their interior rings have zero area, and
         // represent a unique degeneracy into a line_string which cannot be handled by accumulating
         // directly into `self`. Instead, we perform a sub-operation, inspect the result, and only
         // then incorporate the result into `self.
 
         let mut exterior_operation = CentroidOperation::new();
-        exterior_operation.add_ring(polygon.exterior());
+        if let Some(exterior) = polygon.exterior_ext() {
+            exterior_operation.add_ring(&exterior);
+        }
 
         let mut interior_operation = CentroidOperation::new();
-        for interior in polygon.interiors() {
-            interior_operation.add_ring(interior);
+        for interior in polygon.interiors_ext() {
+            interior_operation.add_ring(&interior);
         }
 
         if let Some(exterior_weighted_centroid) = exterior_operation.0 {
@@ -537,7 +556,9 @@ impl<T: GeoFloat> CentroidOperation<T> {
                 poly_weighted_centroid.sub_assign(interior_weighted_centroid);
                 if poly_weighted_centroid.weight.is_zero() {
                     // A polygon with no area `interiors` completely covers `exterior`, degenerating to a linestring
-                    self.add_line_string(polygon.exterior());
+                    polygon.exterior_ext().iter().for_each(|exterior| {
+                        self.add_line_string(exterior);
+                    });
                     return;
                 }
             }
@@ -620,16 +641,19 @@ impl<T: GeoFloat> CentroidOperation<T> {
         }
     }
 
-    fn add_ring(&mut self, ring: &LineString<T>) {
+    fn add_ring<LS>(&mut self, ring: &LS)
+    where
+        LS: LineStringTraitExt<T = T>,
+    {
         debug_assert!(ring.is_closed());
 
         let area = get_linestring_area(ring);
         if area == T::zero() {
-            match ring.dimensions() {
+            match ring.dimensions_trait() {
                 // empty ring doesn't contribute to centroid
                 Empty => {}
                 // degenerate ring is a point
-                ZeroDimensional => self.add_coord(ring[0]),
+                ZeroDimensional => unsafe { self.add_coord(ring.coord_unchecked(0).to_coord()) },
                 // zero-area ring is a line string
                 _ => self.add_line_string(ring),
             }
@@ -637,7 +661,7 @@ impl<T: GeoFloat> CentroidOperation<T> {
         }
 
         // Since area is non-zero, we know the ring has at least one point
-        let shift = ring.0[0];
+        let shift = ring.coord_unchecked_ext(0).to_coord();
 
         let accumulated_coord = ring.lines().fold(Coord::zero(), |accum, line| {
             use crate::MapCoords;

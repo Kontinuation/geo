@@ -20,28 +20,9 @@ where
 
     /// Return an iterator yielding one [`Line`] for each line segment
     /// in the [`LineString`][`geo_types::LineString`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use geo_types::{wkt, Line, LineString};
-    ///
-    /// let line_string = wkt!(LINESTRING(0 0,5 0,7 9));
-    /// let mut lines = line_string.lines();
-    ///
-    /// assert_eq!(
-    ///     Some(Line::new((0, 0), (5, 0))),
-    ///     lines.next()
-    /// );
-    /// assert_eq!(
-    ///     Some(Line::new((5, 0), (7, 9))),
-    ///     lines.next()
-    /// );
-    /// assert!(lines.next().is_none());
-    /// ```
     fn lines(&'_ self) -> impl ExactSizeIterator<Item = Line<<Self as LineStringTrait>::T>> + '_ {
         let num_coords = self.num_coords();
-        (0..num_coords - 1).map(|i| unsafe {
+        (0..num_coords.saturating_sub(1)).map(|i| unsafe {
             let coord1 = self.coord_unchecked(i);
             let coord2 = self.coord_unchecked(i + 1);
             Line::new(coord1.to_coord(), coord2.to_coord())
@@ -53,25 +34,6 @@ where
     ///
     /// Note: This is like [`Self::lines`], but the sequence **and** the orientation of
     /// segments are reversed.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use geo_types::{wkt, Line, LineString};
-    ///
-    /// let line_string = wkt!(LINESTRING(0 0,5 0,7 9));
-    /// let mut lines = line_string.rev_lines();
-    ///
-    /// assert_eq!(
-    ///     Some(Line::new((7, 9), (5, 0))),
-    ///     lines.next()
-    /// );
-    /// assert_eq!(
-    ///     Some(Line::new((5, 0), (0, 0))),
-    ///     lines.next()
-    /// );
-    /// assert!(lines.next().is_none());
-    /// ```
     fn rev_lines(
         &'_ self,
     ) -> impl ExactSizeIterator<Item = Line<<Self as LineStringTrait>::T>> + '_ {

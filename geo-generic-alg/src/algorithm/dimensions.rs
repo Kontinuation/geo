@@ -1,3 +1,7 @@
+use geo_traits::*;
+use geo_traits_ext::*;
+use geo_types::to_geo::{ToGeoCoord, ToGeoMultiLineString};
+
 use crate::geometry::*;
 use crate::Orientation::Collinear;
 use crate::{CoordNum, GeoNum, GeometryCow};
@@ -130,14 +134,6 @@ pub trait HasDimensions {
     fn boundary_dimensions(&self) -> Dimensions;
 }
 
-impl<C: GeoNum> HasDimensions for Geometry<C> {
-    crate::geometry_delegate_impl! {
-        fn is_empty(&self) -> bool;
-        fn dimensions(&self) -> Dimensions;
-        fn boundary_dimensions(&self) -> Dimensions;
-    }
-}
-
 impl<C: GeoNum> HasDimensions for GeometryCow<'_, C> {
     crate::geometry_cow_delegate_impl! {
         fn is_empty(&self) -> bool;
@@ -146,27 +142,67 @@ impl<C: GeoNum> HasDimensions for GeometryCow<'_, C> {
     }
 }
 
-impl<C: CoordNum> HasDimensions for Point<C> {
+impl<G> HasDimensions for G
+where
+    G: GeoTraitExtWithTypeTag + HasDimensionsTrait<G::Tag>,
+{
     fn is_empty(&self) -> bool {
-        false
+        self.is_empty_trait()
     }
 
     fn dimensions(&self) -> Dimensions {
-        Dimensions::ZeroDimensional
+        self.dimensions_trait()
     }
 
     fn boundary_dimensions(&self) -> Dimensions {
+        self.boundary_dimensions_trait()
+    }
+}
+
+pub trait HasDimensionsTrait<G: GeoTypeTag> {
+    fn is_empty_trait(&self) -> bool;
+    fn dimensions_trait(&self) -> Dimensions;
+    fn boundary_dimensions_trait(&self) -> Dimensions;
+}
+
+impl<C: GeoNum, G> HasDimensionsTrait<GeometryTag> for G
+where
+    G: GeometryTraitExt<T = C>,
+{
+    crate::geometry_trait_ext_delegate_impl! {
+        fn is_empty_trait(&self) -> bool;
+        fn dimensions_trait(&self) -> Dimensions;
+        fn boundary_dimensions_trait(&self) -> Dimensions;
+    }
+}
+
+impl<C: CoordNum, P> HasDimensionsTrait<PointTag> for P
+where
+    P: PointTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
+        false
+    }
+
+    fn dimensions_trait(&self) -> Dimensions {
+        Dimensions::ZeroDimensional
+    }
+
+    fn boundary_dimensions_trait(&self) -> Dimensions {
         Dimensions::Empty
     }
 }
 
-impl<C: CoordNum> HasDimensions for Line<C> {
-    fn is_empty(&self) -> bool {
+impl<C: CoordNum, L> HasDimensionsTrait<LineTag> for L
+where
+    L: LineTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
         false
     }
 
-    fn dimensions(&self) -> Dimensions {
-        if self.start == self.end {
+    fn dimensions_trait(&self) -> Dimensions {
+        if self.start_ext().to_coord() == self.end_ext().to_coord() {
             // degenerate line is a point
             Dimensions::ZeroDimensional
         } else {
@@ -174,8 +210,8 @@ impl<C: CoordNum> HasDimensions for Line<C> {
         }
     }
 
-    fn boundary_dimensions(&self) -> Dimensions {
-        if self.start == self.end {
+    fn boundary_dimensions_trait(&self) -> Dimensions {
+        if self.start_ext().to_coord() == self.end_ext().to_coord() {
             // degenerate line is a point, which has no boundary
             Dimensions::Empty
         } else {
@@ -184,18 +220,21 @@ impl<C: CoordNum> HasDimensions for Line<C> {
     }
 }
 
-impl<C: CoordNum> HasDimensions for LineString<C> {
-    fn is_empty(&self) -> bool {
-        self.0.is_empty()
+impl<C: CoordNum, LS> HasDimensionsTrait<LineStringTag> for LS
+where
+    LS: LineStringTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
+        self.num_coords() == 0
     }
 
-    fn dimensions(&self) -> Dimensions {
-        if self.0.is_empty() {
+    fn dimensions_trait(&self) -> Dimensions {
+        if self.num_coords() == 0 {
             return Dimensions::Empty;
         }
 
-        let first = self.0[0];
-        if self.0.iter().any(|&coord| first != coord) {
+        let first = self.coord_unchecked_ext(0).to_coord();
+        if self.coords().any(|coord| first != coord.to_coord()) {
             Dimensions::OneDimensional
         } else {
             // all coords are the same - i.e. a point
@@ -213,12 +252,12 @@ impl<C: CoordNum> HasDimensions for LineString<C> {
     /// let ls = line_string![(x: 0.,  y: 0.), (x: 0., y: 1.), (x: 1., y: 1.), (x: 0., y: 0.)];
     /// assert_eq!(Dimensions::Empty, ls.boundary_dimensions());
     ///```
-    fn boundary_dimensions(&self) -> Dimensions {
+    fn boundary_dimensions_trait(&self) -> Dimensions {
         if self.is_closed() {
             return Dimensions::Empty;
         }
 
-        match self.dimensions() {
+        match self.dimensions_trait() {
             Dimensions::Empty | Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => unreachable!("line_string cannot be 2 dimensional"),
@@ -226,35 +265,42 @@ impl<C: CoordNum> HasDimensions for LineString<C> {
     }
 }
 
-impl<C: CoordNum> HasDimensions for Polygon<C> {
-    fn is_empty(&self) -> bool {
-        self.exterior().is_empty()
+impl<C: CoordNum, P> HasDimensionsTrait<PolygonTag> for P
+where
+    P: PolygonTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
+        self.exterior_ext()
+            .map_or(true, |exterior| exterior.is_empty_trait())
     }
 
-    fn dimensions(&self) -> Dimensions {
-        use crate::CoordsIter;
-        let mut coords = self.exterior_coords_iter();
+    fn dimensions_trait(&self) -> Dimensions {
+        if let Some(exterior) = self.exterior_ext() {
+            let mut coords = exterior.coord_iter();
 
-        let Some(first) = coords.next() else {
-            // No coordinates - the polygon is empty
-            return Dimensions::Empty;
-        };
+            let Some(first) = coords.next() else {
+                // No coordinates - the polygon is empty
+                return Dimensions::Empty;
+            };
 
-        let Some(second) = coords.find(|next| *next != first) else {
-            // All coordinates in the polygon are the same point
-            return Dimensions::ZeroDimensional;
-        };
+            let Some(second) = coords.find(|next| *next != first) else {
+                // All coordinates in the polygon are the same point
+                return Dimensions::ZeroDimensional;
+            };
 
-        let Some(_third) = coords.find(|next| *next != first && *next != second) else {
-            // There are only two distinct coordinates in the Polygon - it's collapsed to a line
-            return Dimensions::OneDimensional;
-        };
+            let Some(_third) = coords.find(|next| *next != first && *next != second) else {
+                // There are only two distinct coordinates in the Polygon - it's collapsed to a line
+                return Dimensions::OneDimensional;
+            };
 
-        Dimensions::TwoDimensional
+            Dimensions::TwoDimensional
+        } else {
+            Dimensions::Empty
+        }
     }
 
-    fn boundary_dimensions(&self) -> Dimensions {
-        match self.dimensions() {
+    fn boundary_dimensions_trait(&self) -> Dimensions {
+        match self.dimensions_trait() {
             Dimensions::Empty | Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => Dimensions::OneDimensional,
@@ -262,33 +308,39 @@ impl<C: CoordNum> HasDimensions for Polygon<C> {
     }
 }
 
-impl<C: CoordNum> HasDimensions for MultiPoint<C> {
-    fn is_empty(&self) -> bool {
-        self.0.is_empty()
+impl<C: CoordNum, MP> HasDimensionsTrait<MultiPointTag> for MP
+where
+    MP: MultiPointTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
+        self.num_points() == 0
     }
 
-    fn dimensions(&self) -> Dimensions {
-        if self.0.is_empty() {
+    fn dimensions_trait(&self) -> Dimensions {
+        if self.num_points() == 0 {
             return Dimensions::Empty;
         }
 
         Dimensions::ZeroDimensional
     }
 
-    fn boundary_dimensions(&self) -> Dimensions {
+    fn boundary_dimensions_trait(&self) -> Dimensions {
         Dimensions::Empty
     }
 }
 
-impl<C: CoordNum> HasDimensions for MultiLineString<C> {
-    fn is_empty(&self) -> bool {
-        self.iter().all(LineString::is_empty)
+impl<C: CoordNum, MLS> HasDimensionsTrait<MultiLineStringTag> for MLS
+where
+    MLS: MultiLineStringTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
+        self.line_strings_ext().all(|ls| ls.is_empty_trait())
     }
 
-    fn dimensions(&self) -> Dimensions {
+    fn dimensions_trait(&self) -> Dimensions {
         let mut max = Dimensions::Empty;
-        for line in &self.0 {
-            match line.dimensions() {
+        for line in self.line_strings_ext() {
+            match line.dimensions_trait() {
                 Dimensions::Empty => {}
                 Dimensions::ZeroDimensional => max = Dimensions::ZeroDimensional,
                 Dimensions::OneDimensional => {
@@ -302,12 +354,14 @@ impl<C: CoordNum> HasDimensions for MultiLineString<C> {
         max
     }
 
-    fn boundary_dimensions(&self) -> Dimensions {
+    fn boundary_dimensions_trait(&self) -> Dimensions {
+        self.to_multi_line_string().is_closed();
+
         if self.is_closed() {
             return Dimensions::Empty;
         }
 
-        match self.dimensions() {
+        match self.dimensions_trait() {
             Dimensions::Empty | Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => unreachable!("line_string cannot be 2 dimensional"),
@@ -315,15 +369,18 @@ impl<C: CoordNum> HasDimensions for MultiLineString<C> {
     }
 }
 
-impl<C: CoordNum> HasDimensions for MultiPolygon<C> {
-    fn is_empty(&self) -> bool {
-        self.iter().all(Polygon::is_empty)
+impl<C: CoordNum, MP> HasDimensionsTrait<MultiPolygonTag> for MP
+where
+    MP: MultiPolygonTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
+        self.polygons_ext().all(|p| p.is_empty_trait())
     }
 
-    fn dimensions(&self) -> Dimensions {
+    fn dimensions_trait(&self) -> Dimensions {
         let mut max = Dimensions::Empty;
-        for geom in self {
-            let dimensions = geom.dimensions();
+        for geom in self.polygons_ext() {
+            let dimensions = geom.dimensions_trait();
             if dimensions == Dimensions::TwoDimensional {
                 // short-circuit since we know none can be larger
                 return Dimensions::TwoDimensional;
@@ -333,8 +390,8 @@ impl<C: CoordNum> HasDimensions for MultiPolygon<C> {
         max
     }
 
-    fn boundary_dimensions(&self) -> Dimensions {
-        match self.dimensions() {
+    fn boundary_dimensions_trait(&self) -> Dimensions {
+        match self.dimensions_trait() {
             Dimensions::Empty | Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => Dimensions::OneDimensional,
@@ -342,19 +399,22 @@ impl<C: CoordNum> HasDimensions for MultiPolygon<C> {
     }
 }
 
-impl<C: GeoNum> HasDimensions for GeometryCollection<C> {
-    fn is_empty(&self) -> bool {
-        if self.0.is_empty() {
+impl<C: GeoNum, GC> HasDimensionsTrait<GeometryCollectionTag> for GC
+where
+    GC: GeometryCollectionTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
+        if self.num_geometries() == 0 {
             true
         } else {
-            self.iter().all(Geometry::is_empty)
+            self.geometries_ext().all(|g| g.is_empty_trait())
         }
     }
 
-    fn dimensions(&self) -> Dimensions {
+    fn dimensions_trait(&self) -> Dimensions {
         let mut max = Dimensions::Empty;
-        for geom in self {
-            let dimensions = geom.dimensions();
+        for geom in self.geometries_ext() {
+            let dimensions = geom.dimensions_trait();
             if dimensions == Dimensions::TwoDimensional {
                 // short-circuit since we know none can be larger
                 return Dimensions::TwoDimensional;
@@ -364,10 +424,10 @@ impl<C: GeoNum> HasDimensions for GeometryCollection<C> {
         max
     }
 
-    fn boundary_dimensions(&self) -> Dimensions {
+    fn boundary_dimensions_trait(&self) -> Dimensions {
         let mut max = Dimensions::Empty;
-        for geom in self {
-            let d = geom.boundary_dimensions();
+        for geom in self.geometries_ext() {
+            let d = geom.boundary_dimensions_trait();
 
             if d == Dimensions::OneDimensional {
                 return Dimensions::OneDimensional;
@@ -379,16 +439,19 @@ impl<C: GeoNum> HasDimensions for GeometryCollection<C> {
     }
 }
 
-impl<C: CoordNum> HasDimensions for Rect<C> {
-    fn is_empty(&self) -> bool {
+impl<C: CoordNum, R> HasDimensionsTrait<RectTag> for R
+where
+    R: RectTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
         false
     }
 
-    fn dimensions(&self) -> Dimensions {
-        if self.min() == self.max() {
+    fn dimensions_trait(&self) -> Dimensions {
+        if self.min().to_coord() == self.max().to_coord() {
             // degenerate rectangle is a point
             Dimensions::ZeroDimensional
-        } else if self.min().x == self.max().x || self.min().y == self.max().y {
+        } else if self.min().x() == self.max().x() || self.min().y() == self.max().y() {
             // degenerate rectangle is a line
             Dimensions::OneDimensional
         } else {
@@ -396,8 +459,8 @@ impl<C: CoordNum> HasDimensions for Rect<C> {
         }
     }
 
-    fn boundary_dimensions(&self) -> Dimensions {
-        match self.dimensions() {
+    fn boundary_dimensions_trait(&self) -> Dimensions {
+        match self.dimensions_trait() {
             Dimensions::Empty => {
                 unreachable!("even a degenerate rect should be at least 0-Dimensional")
             }
@@ -408,15 +471,20 @@ impl<C: CoordNum> HasDimensions for Rect<C> {
     }
 }
 
-impl<C: GeoNum> HasDimensions for Triangle<C> {
-    fn is_empty(&self) -> bool {
+impl<C: GeoNum, T> HasDimensionsTrait<TriangleTag> for T
+where
+    T: TriangleTraitExt<T = C>,
+{
+    fn is_empty_trait(&self) -> bool {
         false
     }
 
-    fn dimensions(&self) -> Dimensions {
+    fn dimensions_trait(&self) -> Dimensions {
         use crate::Kernel;
-        if Collinear == C::Ker::orient2d(self.0, self.1, self.2) {
-            if self.0 == self.1 && self.1 == self.2 {
+        let [c0, c1, c2] = self.coords_ext();
+        let (c0, c1, c2) = (c0.to_coord(), c1.to_coord(), c2.to_coord());
+        if Collinear == C::Ker::orient2d(c0, c1, c2) {
+            if c0 == c1 && c1 == c2 {
                 // degenerate triangle is a point
                 Dimensions::ZeroDimensional
             } else {
@@ -428,8 +496,8 @@ impl<C: GeoNum> HasDimensions for Triangle<C> {
         }
     }
 
-    fn boundary_dimensions(&self) -> Dimensions {
-        match self.dimensions() {
+    fn boundary_dimensions_trait(&self) -> Dimensions {
+        match self.dimensions_trait() {
             Dimensions::Empty => {
                 unreachable!("even a degenerate triangle should be at least 0-dimensional")
             }
@@ -451,7 +519,7 @@ mod tests {
     fn point() {
         assert_eq!(
             Dimensions::ZeroDimensional,
-            wkt!(POINT(1.0 1.0)).dimensions()
+            wkt!(POINT(1.0 1.0)).dimensions_trait()
         );
     }
 
@@ -459,7 +527,7 @@ mod tests {
     fn line_string() {
         assert_eq!(
             Dimensions::OneDimensional,
-            wkt!(LINESTRING(1.0 1.0,2.0 2.0,3.0 3.0)).dimensions()
+            wkt!(LINESTRING(1.0 1.0,2.0 2.0,3.0 3.0)).dimensions_trait()
         );
     }
 
@@ -467,7 +535,7 @@ mod tests {
     fn polygon() {
         assert_eq!(
             Dimensions::TwoDimensional,
-            wkt!(POLYGON((1.0 1.0,2.0 2.0,3.0 3.0,1.0 1.0))).dimensions()
+            wkt!(POLYGON((1.0 1.0,2.0 2.0,3.0 3.0,1.0 1.0))).dimensions_trait()
         );
     }
 
@@ -475,7 +543,7 @@ mod tests {
     fn multi_point() {
         assert_eq!(
             Dimensions::ZeroDimensional,
-            wkt!(MULTIPOINT(1.0 1.0)).dimensions()
+            wkt!(MULTIPOINT(1.0 1.0)).dimensions_trait()
         );
     }
 
@@ -483,7 +551,7 @@ mod tests {
     fn multi_line_string() {
         assert_eq!(
             Dimensions::OneDimensional,
-            wkt!(MULTILINESTRING((1.0 1.0,2.0 2.0,3.0 3.0))).dimensions()
+            wkt!(MULTILINESTRING((1.0 1.0,2.0 2.0,3.0 3.0))).dimensions_trait()
         );
     }
 
@@ -491,7 +559,7 @@ mod tests {
     fn multi_polygon() {
         assert_eq!(
             Dimensions::TwoDimensional,
-            wkt!(MULTIPOLYGON(((1.0 1.0,2.0 2.0,3.0 3.0,1.0 1.0)))).dimensions()
+            wkt!(MULTIPOLYGON(((1.0 1.0,2.0 2.0,3.0 3.0,1.0 1.0)))).dimensions_trait()
         );
     }
 
@@ -501,7 +569,7 @@ mod tests {
         fn empty_line_string() {
             assert_eq!(
                 Dimensions::Empty,
-                (wkt!(LINESTRING EMPTY) as LineString<f64>).dimensions()
+                (wkt!(LINESTRING EMPTY) as LineString<f64>).dimensions_trait()
             );
         }
 
@@ -509,7 +577,7 @@ mod tests {
         fn empty_polygon() {
             assert_eq!(
                 Dimensions::Empty,
-                (wkt!(POLYGON EMPTY) as Polygon<f64>).dimensions()
+                (wkt!(POLYGON EMPTY) as Polygon<f64>).dimensions_trait()
             );
         }
 
@@ -517,7 +585,7 @@ mod tests {
         fn empty_multi_point() {
             assert_eq!(
                 Dimensions::Empty,
-                (wkt!(MULTIPOINT EMPTY) as MultiPoint<f64>).dimensions()
+                (wkt!(MULTIPOINT EMPTY) as MultiPoint<f64>).dimensions_trait()
             );
         }
 
@@ -525,7 +593,7 @@ mod tests {
         fn empty_multi_line_string() {
             assert_eq!(
                 Dimensions::Empty,
-                (wkt!(MULTILINESTRING EMPTY) as MultiLineString<f64>).dimensions()
+                (wkt!(MULTILINESTRING EMPTY) as MultiLineString<f64>).dimensions_trait()
             );
         }
 
@@ -533,14 +601,14 @@ mod tests {
         fn multi_line_string_with_empty_line_string() {
             let empty_line_string = wkt!(LINESTRING EMPTY) as LineString<f64>;
             let multi_line_string = MultiLineString::new(vec![empty_line_string]);
-            assert_eq!(Dimensions::Empty, multi_line_string.dimensions());
+            assert_eq!(Dimensions::Empty, multi_line_string.dimensions_trait());
         }
 
         #[test]
         fn empty_multi_polygon() {
             assert_eq!(
                 Dimensions::Empty,
-                (wkt!(MULTIPOLYGON EMPTY) as MultiPolygon<f64>).dimensions()
+                (wkt!(MULTIPOLYGON EMPTY) as MultiPolygon<f64>).dimensions_trait()
             );
         }
 
@@ -548,7 +616,7 @@ mod tests {
         fn multi_polygon_with_empty_polygon() {
             let empty_polygon = (wkt!(POLYGON EMPTY) as Polygon<f64>);
             let multi_polygon = MultiPolygon::new(vec![empty_polygon]);
-            assert_eq!(Dimensions::Empty, multi_polygon.dimensions());
+            assert_eq!(Dimensions::Empty, multi_polygon.dimensions_trait());
         }
     }
 
@@ -559,7 +627,7 @@ mod tests {
         fn line_collapsed_to_point() {
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                Line::new(ONE, ONE).dimensions()
+                Line::new(ONE, ONE).dimensions_trait()
             );
         }
 
@@ -567,11 +635,11 @@ mod tests {
         fn line_string_collapsed_to_point() {
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(LINESTRING(1.0 1.0)).dimensions()
+                wkt!(LINESTRING(1.0 1.0)).dimensions_trait()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(LINESTRING(1.0 1.0,1.0 1.0)).dimensions()
+                wkt!(LINESTRING(1.0 1.0,1.0 1.0)).dimensions_trait()
             );
         }
 
@@ -579,11 +647,11 @@ mod tests {
         fn polygon_collapsed_to_point() {
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(POLYGON((1.0 1.0))).dimensions()
+                wkt!(POLYGON((1.0 1.0))).dimensions_trait()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(POLYGON((1.0 1.0,1.0 1.0))).dimensions()
+                wkt!(POLYGON((1.0 1.0,1.0 1.0))).dimensions_trait()
             );
         }
 
@@ -591,7 +659,7 @@ mod tests {
         fn polygon_collapsed_to_line() {
             assert_eq!(
                 Dimensions::OneDimensional,
-                wkt!(POLYGON((1.0 1.0,2.0 2.0))).dimensions()
+                wkt!(POLYGON((1.0 1.0,2.0 2.0))).dimensions_trait()
             );
         }
 
@@ -599,15 +667,15 @@ mod tests {
         fn multi_line_string_with_line_string_collapsed_to_point() {
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTILINESTRING((1.0 1.0))).dimensions()
+                wkt!(MULTILINESTRING((1.0 1.0))).dimensions_trait()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTILINESTRING((1.0 1.0,1.0 1.0))).dimensions()
+                wkt!(MULTILINESTRING((1.0 1.0,1.0 1.0))).dimensions_trait()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTILINESTRING((1.0 1.0),(1.0 1.0))).dimensions()
+                wkt!(MULTILINESTRING((1.0 1.0),(1.0 1.0))).dimensions_trait()
             );
         }
 
@@ -615,11 +683,11 @@ mod tests {
         fn multi_polygon_with_polygon_collapsed_to_point() {
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTIPOLYGON(((1.0 1.0)))).dimensions()
+                wkt!(MULTIPOLYGON(((1.0 1.0)))).dimensions_trait()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTIPOLYGON(((1.0 1.0,1.0 1.0)))).dimensions()
+                wkt!(MULTIPOLYGON(((1.0 1.0,1.0 1.0)))).dimensions_trait()
             );
         }
 
@@ -627,7 +695,7 @@ mod tests {
         fn multi_polygon_with_polygon_collapsed_to_line() {
             assert_eq!(
                 Dimensions::OneDimensional,
-                wkt!(MULTIPOLYGON(((1.0 1.0,2.0 2.0)))).dimensions()
+                wkt!(MULTIPOLYGON(((1.0 1.0,2.0 2.0)))).dimensions_trait()
             );
         }
     }

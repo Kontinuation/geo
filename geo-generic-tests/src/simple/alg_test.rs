@@ -4,8 +4,9 @@ mod tests {
         coord::SimpleCoord, line_string::SimpleLineString, point::SimplePoint,
         polygon::SimplePolygon,
     };
-    use geo_generic_alg::*;
+    use geo_generic_alg::{dimensions::Dimensions, *};
     use geo_traits::PointTrait;
+    use geo_traits_ext::{GeoTraitExtWithTypeTag, LineStringTag, LineStringTraitExt};
     use geo_types::to_geo::ToGeoCoord;
 
     #[test]
@@ -23,6 +24,9 @@ mod tests {
         let rect = point_ref.bounding_rect();
         assert_eq!(rect.min(), point.coord().unwrap().to_coord());
         assert_eq!(rect.max(), point.coord().unwrap().to_coord());
+
+        let dim = point_ref.dimensions();
+        assert_eq!(dim, Dimensions::ZeroDimensional);
     }
 
     #[test]
@@ -36,11 +40,33 @@ mod tests {
         ]));
         let area = polygon.signed_area();
         assert_eq!(area, 1.0);
+        let dim = polygon.dimensions();
+        assert_eq!(dim, Dimensions::TwoDimensional);
+
+        let centroid = polygon.centroid().unwrap();
+        assert_eq!(centroid.x(), 0.5);
+        assert_eq!(centroid.y(), 0.5);
 
         let rect = polygon.bounding_rect().unwrap();
         assert_eq!(rect.min().x, 0.0);
         assert_eq!(rect.min().y, 0.0);
         assert_eq!(rect.max().x, 1.0);
         assert_eq!(rect.max().y, 1.0);
+        let dim = rect.dimensions();
+        assert_eq!(dim, Dimensions::TwoDimensional);
+    }
+
+    fn test_dimension<T: CoordNum>(polygon: SimplePolygon<T>) {
+        let dim = polygon.dimensions();
+        assert_eq!(dim, Dimensions::TwoDimensional);
+    }
+
+    fn test_dimension_general<LS>(line_string: &LS)
+    where
+        LS: GeoTraitExtWithTypeTag<Tag = LineStringTag>,
+        LS: LineStringTraitExt<T = f64>,
+    {
+        let dim = line_string.dimensions();
+        assert_eq!(dim, Dimensions::OneDimensional);
     }
 }

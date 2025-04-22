@@ -18,6 +18,13 @@ where
     fn line_string_unchecked_ext(&self, i: usize) -> Self::LineStringTypeExt<'_>;
     fn line_strings_ext(&self) -> impl Iterator<Item = Self::LineStringTypeExt<'_>>;
 
+    /// True if the MultiLineString is empty or if all of its LineStrings are closed - see
+    /// [`LineString::is_closed`].
+    fn is_closed(&self) -> bool {
+        // Note: Unlike JTS et al, we consider an empty MultiLineString as closed.
+        self.line_strings_ext().all(|ls| ls.is_closed())
+    }
+
     fn coord_iter(&self) -> impl Iterator<Item = Coord<<Self as MultiLineStringTrait>::T>> {
         CoordIter::new(self)
     }
