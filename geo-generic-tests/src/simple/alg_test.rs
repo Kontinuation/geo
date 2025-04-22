@@ -4,13 +4,10 @@ mod tests {
         coord::SimpleCoord, line_string::SimpleLineString, point::SimplePoint,
         polygon::SimplePolygon,
     };
-    use geo_generic_alg::area::AreaTrait;
+
     use geo_generic_alg::{dimensions::Dimensions, *};
-    use geo_traits::{LineTrait, PointTrait, PolygonTrait};
-    use geo_traits_ext::{
-        GeoTraitExtWithTypeTag, LineStringTag, LineStringTraitExt, PointTag, PointTraitExt,
-        PolygonTag, PolygonTraitExt, TriangleTag, TriangleTraitExt,
-    };
+    use geo_traits::PointTrait;
+    use geo_traits_ext::PolygonTraitExt;
     use geo_types::to_geo::ToGeoCoord;
 
     #[test]

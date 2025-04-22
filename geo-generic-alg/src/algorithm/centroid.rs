@@ -1,14 +1,13 @@
 use std::cmp::Ordering;
 
 use geo_traits_ext::*;
-use geo_types::to_geo::{ToGeoCoord, ToGeoLineString};
-use geo_types::CoordNum;
+use geo_types::to_geo::ToGeoCoord;
 
 use crate::area::{get_linestring_area, Area};
-use crate::dimensions::{Dimensions, Dimensions::*, HasDimensions, HasDimensionsTrait};
+use crate::dimensions::{Dimensions, Dimensions::*, HasDimensions};
+use crate::geometry::*;
 use crate::line_measures::{Euclidean, Length};
 use crate::GeoFloat;
-use crate::{geometry::*, GeoNum};
 
 /// Calculation of the centroid.
 /// The centroid is the arithmetic mean position of all points in the shape.

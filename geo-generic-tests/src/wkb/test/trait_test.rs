@@ -95,10 +95,10 @@ mod tests {
                 assert_eq!(area, 0.0);
 
                 let intersects = pt.intersects_trait(pt2);
-                assert_eq!(intersects, false);
+                assert!(!intersects);
 
                 let intersects = pt.intersects_geo(pt2);
-                assert_eq!(intersects, false);
+                assert!(!intersects);
             }
             (geo_traits::GeometryType::Point(pt), geo_traits::GeometryType::LineString(ls)) => {
                 let area = ls.signed_area();
@@ -107,27 +107,27 @@ mod tests {
                 assert_eq!(area, 0.0);
 
                 let intersects = pt.intersects_trait(ls);
-                assert_eq!(intersects, false);
+                assert!(!intersects);
 
                 let intersects = pt.intersects_geo(ls);
-                assert_eq!(intersects, false);
+                assert!(!intersects);
             }
             (geo_traits::GeometryType::LineString(ls), geo_traits::GeometryType::Point(pt)) => {
                 let intersects = ls.intersects_trait(pt);
-                assert_eq!(intersects, false);
+                assert!(!intersects);
 
                 let intersects = ls.intersects_geo(pt);
-                assert_eq!(intersects, false);
+                assert!(!intersects);
             }
             (
                 geo_traits::GeometryType::LineString(ls),
                 geo_traits::GeometryType::LineString(ls2),
             ) => {
                 let intersects = ls.intersects_trait(ls2);
-                assert_eq!(intersects, false);
+                assert!(!intersects);
 
                 let intersects = ls.intersects_geo(ls2);
-                assert_eq!(intersects, false);
+                assert!(!intersects);
             }
             _ => panic!("Expected a Point"),
         }
@@ -204,8 +204,9 @@ mod tests {
             geo_traits::GeometryType::GeometryCollection(gc) => {
                 assert_eq!(gc.num_geometries(), orig.0.len());
 
-                gc.geometries().into_iter().zip(orig.0.iter()).for_each(
-                    |(geom, orig_geom)| match (geom.as_type(), orig_geom) {
+                gc.geometries()
+                    .zip(orig.0.iter())
+                    .for_each(|(geom, orig_geom)| match (geom.as_type(), orig_geom) {
                         (geo_traits::GeometryType::Point(pt), Geometry::Point(orig_pt)) => {
                             assert_eq!(pt.coord().unwrap().x(), orig_pt.0.x);
                             assert_eq!(pt.coord().unwrap().y(), orig_pt.0.y);
@@ -247,8 +248,7 @@ mod tests {
                             assert_eq!(gc.num_geometries(), orig_gc.0.len());
                         }
                         _ => panic!("Expected a Point"),
-                    },
-                );
+                    });
             }
             _ => panic!("Expected a GeometryCollection"),
         }

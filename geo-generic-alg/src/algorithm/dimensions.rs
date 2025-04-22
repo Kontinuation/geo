@@ -2,7 +2,6 @@ use geo_traits::*;
 use geo_traits_ext::*;
 use geo_types::to_geo::{ToGeoCoord, ToGeoMultiLineString};
 
-use crate::geometry::*;
 use crate::Orientation::Collinear;
 use crate::{CoordNum, GeoNum, GeometryCow};
 
@@ -511,6 +510,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use geo_types::*;
 
     const ONE: Coord = crate::coord!(x: 1.0, y: 1.0);
     use crate::wkt;
