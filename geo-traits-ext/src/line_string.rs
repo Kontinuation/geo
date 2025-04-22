@@ -6,7 +6,8 @@ use geo_types::{Coord, CoordNum, Line, LineString, Triangle};
 
 use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, LineStringTag};
 
-pub trait LineStringTraitExt: LineStringTrait + GeoTraitExtWithTypeTag
+pub trait LineStringTraitExt:
+    LineStringTrait + GeoTraitExtWithTypeTag<Tag = LineStringTag>
 where
     <Self as LineStringTrait>::T: CoordNum,
 {

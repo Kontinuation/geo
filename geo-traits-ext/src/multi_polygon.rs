@@ -5,7 +5,8 @@ use geo_types::{CoordNum, MultiPolygon};
 
 use crate::{GeoTraitExtWithTypeTag, MultiPolygonTag, PolygonTraitExt};
 
-pub trait MultiPolygonTraitExt: MultiPolygonTrait + GeoTraitExtWithTypeTag
+pub trait MultiPolygonTraitExt:
+    MultiPolygonTrait + GeoTraitExtWithTypeTag<Tag = MultiPolygonTag>
 where
     <Self as MultiPolygonTrait>::T: CoordNum,
 {

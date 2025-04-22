@@ -4,9 +4,13 @@ mod tests {
         coord::SimpleCoord, line_string::SimpleLineString, point::SimplePoint,
         polygon::SimplePolygon,
     };
+    use geo_generic_alg::area::AreaTrait;
     use geo_generic_alg::{dimensions::Dimensions, *};
-    use geo_traits::PointTrait;
-    use geo_traits_ext::{GeoTraitExtWithTypeTag, LineStringTag, LineStringTraitExt};
+    use geo_traits::{LineTrait, PointTrait, PolygonTrait};
+    use geo_traits_ext::{
+        GeoTraitExtWithTypeTag, LineStringTag, LineStringTraitExt, PointTag, PointTraitExt,
+        PolygonTag, PolygonTraitExt, TriangleTag, TriangleTraitExt,
+    };
     use geo_types::to_geo::ToGeoCoord;
 
     #[test]
@@ -56,17 +60,27 @@ mod tests {
         assert_eq!(dim, Dimensions::TwoDimensional);
     }
 
-    fn test_dimension<T: CoordNum>(polygon: SimplePolygon<T>) {
-        let dim = polygon.dimensions();
-        assert_eq!(dim, Dimensions::TwoDimensional);
+    #[test]
+    fn test_call_general_function() {
+        let polygon = SimplePolygon::new(SimpleLineString::new(vec![
+            SimpleCoord::new(0.0, 0.0),
+            SimpleCoord::new(1.0, 0.0),
+            SimpleCoord::new(1.0, 1.0),
+            SimpleCoord::new(0.0, 1.0),
+            SimpleCoord::new(0.0, 0.0),
+        ]));
+
+        test_call_polygon_funcs_general(&polygon);
     }
 
-    fn test_dimension_general<LS>(line_string: &LS)
+    fn test_call_polygon_funcs_general<P>(polygon: &P)
     where
-        LS: GeoTraitExtWithTypeTag<Tag = LineStringTag>,
-        LS: LineStringTraitExt<T = f64>,
+        P: PolygonTraitExt<T: CoordFloat>,
     {
-        let dim = line_string.dimensions();
-        assert_eq!(dim, Dimensions::OneDimensional);
+        let area = polygon.signed_area();
+        println!("area: {:?}", area);
+
+        let dim = polygon.dimensions();
+        println!("dim: {:?}", dim);
     }
 }

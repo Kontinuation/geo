@@ -649,7 +649,7 @@ impl<T: GeoFloat> CentroidOperation<T> {
 
         let area = get_linestring_area(ring);
         if area == T::zero() {
-            match ring.dimensions_trait() {
+            match ring.dimensions() {
                 // empty ring doesn't contribute to centroid
                 Empty => {}
                 // degenerate ring is a point

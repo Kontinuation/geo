@@ -5,7 +5,8 @@ use geo_types::{CoordNum, GeometryCollection};
 
 use crate::{GeoTraitExtWithTypeTag, GeometryCollectionTag, GeometryTraitExt};
 
-pub trait GeometryCollectionTraitExt: GeometryCollectionTrait + GeoTraitExtWithTypeTag
+pub trait GeometryCollectionTraitExt:
+    GeometryCollectionTrait + GeoTraitExtWithTypeTag<Tag = GeometryCollectionTag>
 where
     <Self as GeometryCollectionTrait>::T: CoordNum,
 {

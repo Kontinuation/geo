@@ -6,7 +6,8 @@ use geo_types::{Coord, CoordNum, MultiLineString};
 
 use crate::{GeoTraitExtWithTypeTag, LineStringTraitExt, MultiLineStringTag};
 
-pub trait MultiLineStringTraitExt: MultiLineStringTrait + GeoTraitExtWithTypeTag
+pub trait MultiLineStringTraitExt:
+    MultiLineStringTrait + GeoTraitExtWithTypeTag<Tag = MultiLineStringTag>
 where
     <Self as MultiLineStringTrait>::T: CoordNum,
 {

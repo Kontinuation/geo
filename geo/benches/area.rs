@@ -13,7 +13,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         });
     });
 
-    c.bench_function("area_wkb", |bencher| {
+    c.bench_function("area_wkb_conv", |bencher| {
         let wkb_bytes = geo_test_fixtures::norway_main_wkb();
         bencher.iter(|| {
             let wkb_geom = wkb::reader::read_wkb(&wkb_bytes).unwrap();

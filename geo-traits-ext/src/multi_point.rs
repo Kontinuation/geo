@@ -5,7 +5,8 @@ use geo_types::{to_geo::ToGeoCoord, Coord, CoordNum, MultiPoint};
 
 use crate::{GeoTraitExtWithTypeTag, MultiPointTag, PointTraitExt};
 
-pub trait MultiPointTraitExt: MultiPointTrait + GeoTraitExtWithTypeTag
+pub trait MultiPointTraitExt:
+    MultiPointTrait + GeoTraitExtWithTypeTag<Tag = MultiPointTag>
 where
     <Self as MultiPointTrait>::T: CoordNum,
 {

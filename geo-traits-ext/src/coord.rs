@@ -5,7 +5,7 @@ use geo_types::{Coord, CoordNum};
 
 use crate::{CoordTag, GeoTraitExtWithTypeTag};
 
-pub trait CoordTraitExt: CoordTrait + GeoTraitExtWithTypeTag
+pub trait CoordTraitExt: CoordTrait + GeoTraitExtWithTypeTag<Tag = CoordTag>
 where
     <Self as CoordTrait>::T: CoordNum,
 {

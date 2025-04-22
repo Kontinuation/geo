@@ -5,7 +5,7 @@ use geo_types::{polygon, to_geo::ToGeoCoord, Coord, CoordNum, Line, Polygon, Tri
 
 use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, TriangleTag};
 
-pub trait TriangleTraitExt: TriangleTrait + GeoTraitExtWithTypeTag
+pub trait TriangleTraitExt: TriangleTrait + GeoTraitExtWithTypeTag<Tag = TriangleTag>
 where
     <Self as TriangleTrait>::T: CoordNum,
 {

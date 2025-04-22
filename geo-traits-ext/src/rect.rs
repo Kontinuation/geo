@@ -7,7 +7,7 @@ use crate::{CoordTraitExt, GeoTraitExtWithTypeTag, RectTag};
 
 static RECT_INVALID_BOUNDS_ERROR: &str = "Failed to create Rect: 'min' coordinate's x/y value must be smaller or equal to the 'max' x/y value";
 
-pub trait RectTraitExt: RectTrait + GeoTraitExtWithTypeTag
+pub trait RectTraitExt: RectTrait + GeoTraitExtWithTypeTag<Tag = RectTag>
 where
     <Self as RectTrait>::T: CoordNum,
 {
